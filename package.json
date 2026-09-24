@@ -1,0 +1,18 @@
+{
+  "name": "phi-blueprint",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PHI Enterprise Process Blueprint — SIPOC, BPMN 2.0 swimlanes and data matrix for the Odoo 19 implementation",
+  "workspaces": ["server", "client"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "dev:server": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "build": "npm run build -w client",
+    "start": "npm start -w server",
+    "migrate": "npm run migrate -w server",
+    "seed": "npm run seed -w server",
+    "seed:force": "npm run seed -w server -- --force",
+    "create-admin": "npm run create-admin -w server"
+  }
+}

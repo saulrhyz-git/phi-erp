@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DB_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DB_Collaboration">
+    <bpmn:documentation>B. Land-to-inventory — covers 04 Land acquisition · 05 Project setup · 07 Inventory setup. From a land opportunity to sellable lots: due diligence, agreement, milestone payments, title transfer, project creation, permits and License to Sell, then lot master and price-list creation.</bpmn:documentation>
+    <bpmn:participant id="DB_Part_PHI" name="Primary Homes, Inc." processRef="DB_Process" />
+    <bpmn:participant id="DB_Part_lo" name="Landowner / seller" />
+    <bpmn:participant id="DB_Part_gov" name="BIR, RD, LGU, DHSUD" />
+    <bpmn:messageFlow id="DB_MsgFlow_1" name="Signed agreement" sourceRef="DB_b5" targetRef="DB_Part_lo" />
+    <bpmn:messageFlow id="DB_MsgFlow_2" name="Milestone payment" sourceRef="DB_b6" targetRef="DB_Part_lo" />
+    <bpmn:messageFlow id="DB_MsgFlow_3" name="Taxes and transfer documents" sourceRef="DB_b7" targetRef="DB_Part_gov" />
+    <bpmn:messageFlow id="DB_MsgFlow_4" name="eCAR, new TCT" sourceRef="DB_Part_gov" targetRef="DB_b8" />
+    <bpmn:messageFlow id="DB_MsgFlow_5" name="Permit and LTS applications" sourceRef="DB_b10" targetRef="DB_Part_gov" />
+  </bpmn:collaboration>
+  <bpmn:process id="DB_Process" name="Land-to-inventory" isExecutable="false">
+    <bpmn:laneSet id="DB_LaneSet">
+      <bpmn:lane id="DB_Lane_bd" name="Land acquisition / BD">
+        <bpmn:flowNodeRef>DB_b1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b2</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DB_Lane_mc" name="ManCom">
+        <bpmn:flowNodeRef>DB_b3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b4n</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DB_Lane_legal" name="Legal &amp; titling">
+        <bpmn:flowNodeRef>DB_b5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b8</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DB_Lane_tre" name="Treasury &amp; AP">
+        <bpmn:flowNodeRef>DB_b6</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DB_Lane_pdd" name="Project Development">
+        <bpmn:flowNodeRef>DB_b9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b10</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DB_Lane_sadm" name="Sales admin">
+        <bpmn:flowNodeRef>DB_b11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DB_b12</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DB_b1" name="Land opportunity logged">
+      <bpmn:outgoing>DB_Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="DB_b2" name="Due diligence: title, survey, zoning, appraisal">
+      <bpmn:incoming>DB_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DB_b3" name="Evaluate acquisition and feasibility">
+      <bpmn:incoming>DB_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_3</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DB_b4" name="Approve?">
+      <bpmn:incoming>DB_Flow_3</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_4</bpmn:outgoing>
+      <bpmn:outgoing>DB_Flow_5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="DB_b4n" name="Declined">
+      <bpmn:incoming>DB_Flow_4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="DB_b5" name="Negotiate and execute agreement (deed or JV)">
+      <bpmn:incoming>DB_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DB_b6" name="Release milestone payments">
+      <bpmn:incoming>DB_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DB_b7" name="Pay CGT, DST and transfer tax; file for transfer">
+      <bpmn:incoming>DB_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DB_b8" name="New title issued">
+      <bpmn:incoming>DB_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_9</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DB_b8_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DB_b9" name="Create project, phases, WBS and analytic account">
+      <bpmn:incoming>DB_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DB_b10" name="Secure permits and License to Sell">
+      <bpmn:incoming>DB_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DB_b11" name="Create lots (unit master), price list and financing options">
+      <bpmn:incoming>DB_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DB_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DB_b12" name="Units open for sale">
+      <bpmn:incoming>DB_Flow_12</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DB_Flow_1" sourceRef="DB_b1" targetRef="DB_b2" />
+    <bpmn:sequenceFlow id="DB_Flow_2" sourceRef="DB_b2" targetRef="DB_b3" />
+    <bpmn:sequenceFlow id="DB_Flow_3" sourceRef="DB_b3" targetRef="DB_b4" />
+    <bpmn:sequenceFlow id="DB_Flow_4" name="No" sourceRef="DB_b4" targetRef="DB_b4n" />
+    <bpmn:sequenceFlow id="DB_Flow_5" name="Yes" sourceRef="DB_b4" targetRef="DB_b5" />
+    <bpmn:sequenceFlow id="DB_Flow_6" sourceRef="DB_b5" targetRef="DB_b6" />
+    <bpmn:sequenceFlow id="DB_Flow_7" sourceRef="DB_b6" targetRef="DB_b7" />
+    <bpmn:sequenceFlow id="DB_Flow_8" sourceRef="DB_b7" targetRef="DB_b8" />
+    <bpmn:sequenceFlow id="DB_Flow_9" sourceRef="DB_b8" targetRef="DB_b9" />
+    <bpmn:sequenceFlow id="DB_Flow_10" sourceRef="DB_b9" targetRef="DB_b10" />
+    <bpmn:sequenceFlow id="DB_Flow_11" sourceRef="DB_b10" targetRef="DB_b11" />
+    <bpmn:sequenceFlow id="DB_Flow_12" sourceRef="DB_b11" targetRef="DB_b12" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DB_Diagram" name="B. Land-to-inventory">
+    <bpmndi:BPMNPlane id="DB_Plane" bpmnElement="DB_Collaboration">
+      <bpmndi:BPMNShape id="DB_Part_PHI_di" bpmnElement="DB_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="88" width="1900" height="648" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Lane_bd_di" bpmnElement="DB_Lane_bd" isHorizontal="true"><dc:Bounds x="30" y="88" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Lane_mc_di" bpmnElement="DB_Lane_mc" isHorizontal="true"><dc:Bounds x="30" y="196" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Lane_legal_di" bpmnElement="DB_Lane_legal" isHorizontal="true"><dc:Bounds x="30" y="304" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Lane_tre_di" bpmnElement="DB_Lane_tre" isHorizontal="true"><dc:Bounds x="30" y="412" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Lane_pdd_di" bpmnElement="DB_Lane_pdd" isHorizontal="true"><dc:Bounds x="30" y="520" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Lane_sadm_di" bpmnElement="DB_Lane_sadm" isHorizontal="true"><dc:Bounds x="30" y="628" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Part_lo_di" bpmnElement="DB_Part_lo" isHorizontal="true"><dc:Bounds x="0" y="10" width="1900" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_Part_gov_di" bpmnElement="DB_Part_gov" isHorizontal="true"><dc:Bounds x="0" y="754" width="1900" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b1_di" bpmnElement="DB_b1"><dc:Bounds x="187" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="164" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b2_di" bpmnElement="DB_b2"><dc:Bounds x="289" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b3_di" bpmnElement="DB_b3"><dc:Bounds x="435" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b4_di" bpmnElement="DB_b4" isMarkerVisible="true"><dc:Bounds x="622" y="229" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="588" y="208" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b4n_di" bpmnElement="DB_b4n"><dc:Bounds x="771" y="232" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="734" y="272" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b5_di" bpmnElement="DB_b5"><dc:Bounds x="727" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b6_di" bpmnElement="DB_b6"><dc:Bounds x="873" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b7_di" bpmnElement="DB_b7"><dc:Bounds x="1019" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b8_di" bpmnElement="DB_b8"><dc:Bounds x="1209" y="340" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1172" y="380" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b9_di" bpmnElement="DB_b9"><dc:Bounds x="1311" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b10_di" bpmnElement="DB_b10"><dc:Bounds x="1457" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b11_di" bpmnElement="DB_b11"><dc:Bounds x="1603" y="652" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DB_b12_di" bpmnElement="DB_b12"><dc:Bounds x="1793" y="664" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1756" y="704" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DB_Flow_1_di" bpmnElement="DB_Flow_1"><di:waypoint x="223" y="142" /><di:waypoint x="289" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_2_di" bpmnElement="DB_Flow_2"><di:waypoint x="413" y="142" /><di:waypoint x="427" y="142" /><di:waypoint x="427" y="250" /><di:waypoint x="435" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_3_di" bpmnElement="DB_Flow_3"><di:waypoint x="559" y="250" /><di:waypoint x="622" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_4_di" bpmnElement="DB_Flow_4"><di:waypoint x="664" y="250" /><di:waypoint x="771" y="250" /><bpmndi:BPMNLabel><dc:Bounds x="668" y="232" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_5_di" bpmnElement="DB_Flow_5"><di:waypoint x="664" y="250" /><di:waypoint x="678" y="250" /><di:waypoint x="678" y="358" /><di:waypoint x="727" y="358" /><bpmndi:BPMNLabel><dc:Bounds x="682" y="340" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_6_di" bpmnElement="DB_Flow_6"><di:waypoint x="851" y="358" /><di:waypoint x="865" y="358" /><di:waypoint x="865" y="466" /><di:waypoint x="873" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_7_di" bpmnElement="DB_Flow_7"><di:waypoint x="997" y="466" /><di:waypoint x="1011" y="466" /><di:waypoint x="1011" y="358" /><di:waypoint x="1019" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_8_di" bpmnElement="DB_Flow_8"><di:waypoint x="1143" y="358" /><di:waypoint x="1209" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_9_di" bpmnElement="DB_Flow_9"><di:waypoint x="1245" y="358" /><di:waypoint x="1259" y="358" /><di:waypoint x="1259" y="574" /><di:waypoint x="1311" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_10_di" bpmnElement="DB_Flow_10"><di:waypoint x="1435" y="574" /><di:waypoint x="1457" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_11_di" bpmnElement="DB_Flow_11"><di:waypoint x="1581" y="574" /><di:waypoint x="1595" y="574" /><di:waypoint x="1595" y="682" /><di:waypoint x="1603" y="682" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_Flow_12_di" bpmnElement="DB_Flow_12"><di:waypoint x="1727" y="682" /><di:waypoint x="1793" y="682" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_MsgFlow_1_di" bpmnElement="DB_MsgFlow_1"><di:waypoint x="829" y="328" /><di:waypoint x="829" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="835" y="191" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_MsgFlow_2_di" bpmnElement="DB_MsgFlow_2"><di:waypoint x="935" y="436" /><di:waypoint x="935" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="941" y="245" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_MsgFlow_3_di" bpmnElement="DB_MsgFlow_3"><di:waypoint x="1081" y="388" /><di:waypoint x="1081" y="754" /><bpmndi:BPMNLabel><dc:Bounds x="1087" y="563" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_MsgFlow_4_di" bpmnElement="DB_MsgFlow_4"><di:waypoint x="1227" y="754" /><di:waypoint x="1227" y="376" /><bpmndi:BPMNLabel><dc:Bounds x="1233" y="557" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DB_MsgFlow_5_di" bpmnElement="DB_MsgFlow_5"><di:waypoint x="1519" y="604" /><di:waypoint x="1519" y="754" /><bpmndi:BPMNLabel><dc:Bounds x="1525" y="671" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

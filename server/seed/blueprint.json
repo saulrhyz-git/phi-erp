@@ -1,0 +1,1441 @@
+{
+ "groups": [
+  {
+   "id": "plan",
+   "name": "Plan & fund",
+   "color": "plan"
+  },
+  {
+   "id": "land",
+   "name": "Land",
+   "color": "land"
+  },
+  {
+   "id": "proj",
+   "name": "Project & inventory",
+   "color": "proj"
+  },
+  {
+   "id": "sales",
+   "name": "Sales & leasing",
+   "color": "sales"
+  },
+  {
+   "id": "acct",
+   "name": "Accounts monitoring & financing",
+   "color": "acct"
+  },
+  {
+   "id": "dlv",
+   "name": "Delivery & property management",
+   "color": "dlv"
+  },
+  {
+   "id": "ap",
+   "name": "Accounts payable",
+   "color": "ap"
+  },
+  {
+   "id": "x",
+   "name": "Forecasts & KPIs",
+   "color": "x"
+  }
+ ],
+ "stages": [
+  "Plan & fund",
+  "Acquire land",
+  "Develop",
+  "Stock & sell",
+  "Collect & finance",
+  "Deliver & manage"
+ ],
+ "processes": [
+  {
+   "id": "01",
+   "group": "plan",
+   "stage": "Plan & fund",
+   "name": "Budget setup (corporate & project)",
+   "owner_dept": "Finance – budget & FP&A",
+   "odoo_home": "Accounting › Budgets, Analytic plans; Approvals; Spreadsheet",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "ManCom / Executive",
+    "Department heads",
+    "Project Development",
+    "Finance – FP&A",
+    "Treasury"
+   ],
+   "inputs": [
+    "Strategic plan and targets",
+    "Prior-year actuals",
+    "Project feasibility studies",
+    "Sales, collection and cash forecasts",
+    "Chart of accounts and analytic structure"
+   ],
+   "steps": [
+    "Define budget structure (accounts × analytic plans: company, project, phase, cost center)",
+    "Annual corporate budget planning",
+    "Project (life-of-project) budget by phase and cost code",
+    "Consolidate and review",
+    "Approve and lock baseline; switch on budget checks"
+   ],
+   "outputs": [
+    "Approved corporate budget",
+    "Approved project budget baselines",
+    "Budget-control rules",
+    "Forecast baseline"
+   ],
+   "customers": [
+    "All spending departments",
+    "Accounting and Procurement",
+    "ManCom / Board",
+    "Lenders"
+   ]
+  },
+  {
+   "id": "02",
+   "group": "plan",
+   "stage": "Plan & fund",
+   "name": "Corporate & project financing",
+   "owner_dept": "Treasury",
+   "odoo_home": "Accounting (bank, loans, journals); Documents",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "Banks and lenders",
+    "Shareholders",
+    "Treasury",
+    "ManCom"
+   ],
+   "inputs": [
+    "Cash-flow forecast",
+    "Approved budgets",
+    "Term sheets and loan agreements",
+    "Collateral documents"
+   ],
+   "steps": [
+    "Identify funding need",
+    "Negotiate facility; Board approval",
+    "Drawdown and allocate to company / project",
+    "Accrue and capitalize interest where allowed",
+    "Schedule debt service"
+   ],
+   "outputs": [
+    "Loan records and amortization schedules",
+    "Funds availability per project",
+    "Interest accruals (expensed or capitalized)"
+   ],
+   "customers": [
+    "Projects",
+    "Accounts payable (loan payments)",
+    "Accounting",
+    "Lenders"
+   ]
+  },
+  {
+   "id": "03",
+   "group": "plan",
+   "stage": "Plan & fund",
+   "name": "Corporate expenses",
+   "owner_dept": "Administration / requesting departments",
+   "odoo_home": "Purchase; Approvals; Expenses; Accounting",
+   "fit": "Standard",
+   "from_reference": false,
+   "suppliers": [
+    "Departments (admin, branding, executive, HR)",
+    "Suppliers and service providers"
+   ],
+   "inputs": [
+    "Approved department budget",
+    "Purchase requests",
+    "Quotations and contracts"
+   ],
+   "steps": [
+    "Raise request",
+    "Budget check",
+    "Approve",
+    "Issue PO or contract",
+    "Receive and accept",
+    "Send bill to AP"
+   ],
+   "outputs": [
+    "POs and committed cost",
+    "Vendor bills",
+    "Expense by cost center"
+   ],
+   "customers": [
+    "Accounts payable",
+    "Accounting",
+    "Department heads"
+   ]
+  },
+  {
+   "id": "04",
+   "group": "land",
+   "stage": "Acquire land",
+   "name": "Land acquisition",
+   "owner_dept": "Land acquisition / business development",
+   "odoo_home": "Documents; Sign; Approvals; Purchase / Accounting (milestones); custom land register",
+   "fit": "Extend",
+   "from_reference": true,
+   "suppliers": [
+    "Landowners, heirs, land brokers",
+    "Appraisers and surveyors",
+    "Legal",
+    "BIR, Registry of Deeds, LGU assessor"
+   ],
+   "inputs": [
+    "Land offers",
+    "Title, tax declaration, survey, zoning",
+    "Appraisal",
+    "Acquisition budget and ManCom approval"
+   ],
+   "steps": [
+    "Source and log opportunity",
+    "Due diligence",
+    "Negotiate and execute agreement (deed, CTS or JV)",
+    "Pay per milestones",
+    "Pay CGT/DST/transfer tax and transfer title",
+    "Book land to project or land bank"
+   ],
+   "outputs": [
+    "Executed agreements",
+    "Milestone payments",
+    "Title in PHI's name",
+    "Capitalized land cost; land bank record"
+   ],
+   "customers": [
+    "Project Development",
+    "Accounting",
+    "Treasury",
+    "Legal"
+   ]
+  },
+  {
+   "id": "05",
+   "group": "proj",
+   "stage": "Develop",
+   "name": "Project setup & project financing",
+   "owner_dept": "Project Development",
+   "odoo_home": "Project; Accounting (analytic accounts); Documents; custom permit tracker",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "Project Development",
+    "Architects and engineers",
+    "Finance and Treasury",
+    "LGU, DENR, DHSUD"
+   ],
+   "inputs": [
+    "Approved project budget",
+    "Master plan and phasing",
+    "Land title",
+    "Permits: DP, ECC, BP, CR/LTS"
+   ],
+   "steps": [
+    "Create project master and analytic account",
+    "Define phases, blocks/towers and WBS",
+    "Set milestones",
+    "Secure project financing",
+    "Track permits and License to Sell"
+   ],
+   "outputs": [
+    "Project master data",
+    "WBS and milestones",
+    "Project funding lines",
+    "License-to-sell status"
+   ],
+   "customers": [
+    "Construction",
+    "Sales",
+    "Accounting",
+    "Inventory"
+   ]
+  },
+  {
+   "id": "06",
+   "group": "proj",
+   "stage": "Develop",
+   "name": "Project expenses & construction (milestone-based)",
+   "owner_dept": "Construction / cost control",
+   "odoo_home": "Purchase; Project; Accounting; progress-billing extension",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Contractors and subcontractors",
+    "Suppliers",
+    "Engineering and QS",
+    "Planning, permits, titling, marketing, sales, loan-interest cost owners"
+   ],
+   "inputs": [
+    "Project budget and WBS",
+    "Contracts and BOQ",
+    "Accomplishment reports",
+    "Variation orders"
+   ],
+   "steps": [
+    "Award contract / issue PO",
+    "Verify accomplishment by milestone",
+    "Process progress billing with retention and recoupment",
+    "Send to AP",
+    "Update % completion"
+   ],
+   "outputs": [
+    "Committed vs actual cost",
+    "% completion per unit/phase",
+    "Retention payable",
+    "Construction-in-progress cost"
+   ],
+   "customers": [
+    "Accounts payable",
+    "Accounting (POC revenue)",
+    "Inventory (unit status)",
+    "ManCom"
+   ]
+  },
+  {
+   "id": "07",
+   "group": "proj",
+   "stage": "Develop",
+   "name": "Inventory & financing options setup",
+   "owner_dept": "Sales admin / Project Development",
+   "odoo_home": "Lot master model (vendor-proposed) linked to Sales products, pricelists and payment terms; Studio",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Project Development",
+    "Construction",
+    "Finance",
+    "Sales admin"
+   ],
+   "inputs": [
+    "Approved subdivision / condo plans",
+    "Unit list, areas, models",
+    "Price list and escalation rules",
+    "Financing schemes"
+   ],
+   "steps": [
+    "Create lots as the unit master (project-phase-block-lot; tower-floor-unit for condos)",
+    "Set price lists",
+    "Track construction status: pre-construction → construction → ready",
+    "Track sales status: available → reserved → sold / hold / cancelled",
+    "Configure financing options and payment-term templates"
+   ],
+   "outputs": [
+    "Sellable inventory",
+    "Price lists",
+    "Payment-term templates",
+    "Availability board"
+   ],
+   "customers": [
+    "Sales channels",
+    "Accounts monitoring",
+    "Finance"
+   ]
+  },
+  {
+   "id": "08",
+   "group": "sales",
+   "stage": "Stock & sell",
+   "name": "Sales channel accreditation",
+   "owner_dept": "Sales admin",
+   "odoo_home": "Contacts; Documents; Sign; Approvals; Sales commission plans",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "Realty firms",
+    "Sales agents",
+    "Legal"
+   ],
+   "inputs": [
+    "Accreditation application",
+    "PRC license, DHSUD registration",
+    "BIR COR (Form 2303), TIN",
+    "Accreditation agreement"
+   ],
+   "steps": [
+    "Receive application",
+    "Verify documents",
+    "Approve",
+    "Create partner record and assign commission scheme",
+    "Renew before expiry"
+   ],
+   "outputs": [
+    "Accredited broker/agent master",
+    "Commission schemes",
+    "Validity dates"
+   ],
+   "customers": [
+    "Sales",
+    "Accounts payable (commissions)",
+    "Marketing"
+   ]
+  },
+  {
+   "id": "09",
+   "group": "sales",
+   "stage": "Stock & sell",
+   "name": "Sales (reservation to contract to sell)",
+   "owner_dept": "Sales / sales admin",
+   "odoo_home": "CRM; Sales; Sign; Documents; Accounting; custom sales computation",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Buyers and co-borrowers",
+    "Brokers and agents",
+    "Marketing",
+    "Credit & collection"
+   ],
+   "inputs": [
+    "Available unit",
+    "Price list, promos, discounts",
+    "Financing scheme",
+    "Buyer KYC documents",
+    "Reservation fee"
+   ],
+   "steps": [
+    "Prepare sales computation",
+    "Reserve unit and receive reservation fee",
+    "Collect documents; credit check",
+    "Generate CTS and payment schedule",
+    "Sign and notarize CTS; tag unit sold"
+   ],
+   "outputs": [
+    "Reservation agreement",
+    "CTS (contract to sell)",
+    "Payment schedule",
+    "Buyer master",
+    "Commission accrual"
+   ],
+   "customers": [
+    "Buyer",
+    "Accounts monitoring",
+    "Accounting",
+    "Brokers"
+   ]
+  },
+  {
+   "id": "10",
+   "group": "sales",
+   "stage": "Stock & sell",
+   "name": "Leasing",
+   "owner_dept": "Leasing / sales",
+   "odoo_home": "Rental or Subscriptions; Sign; Accounting",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "Tenants",
+    "Leasing team",
+    "Legal"
+   ],
+   "inputs": [
+    "Lease-available unit",
+    "Lease rate and term sheet",
+    "Security deposit, advance rent"
+   ],
+   "steps": [
+    "Issue term sheet",
+    "Approve",
+    "Sign lease contract",
+    "Bill rent, CUSA and utilities",
+    "Renew or terminate"
+   ],
+   "outputs": [
+    "Lease contracts",
+    "Recurring invoices",
+    "Deposit liability"
+   ],
+   "customers": [
+    "Tenants",
+    "Accounting",
+    "Property management"
+   ]
+  },
+  {
+   "id": "11",
+   "group": "acct",
+   "stage": "Collect & finance",
+   "name": "Accounts monitoring (documentation, receipting, collection)",
+   "owner_dept": "Credit & collection",
+   "odoo_home": "Accounting (invoicing, payments, follow-up); Documents; PH localization; custom amortization & penalty engine",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Buyers",
+    "Cashier",
+    "Sales admin",
+    "Banks (PDCs, transfers)"
+   ],
+   "inputs": [
+    "Signed CTS and payment schedule",
+    "Payments: cash, check, PDC, bank transfer, online",
+    "Buyer documents"
+   ],
+   "steps": [
+    "Manage contracts and documents",
+    "Issue BIR-compliant invoice / receipt",
+    "Post and allocate collections",
+    "Issue SOA",
+    "Compute delinquency and penalties",
+    "Produce aging"
+   ],
+   "outputs": [
+    "Posted collections",
+    "Invoices / receipts",
+    "SOA",
+    "Penalties and aging",
+    "Delinquency list"
+   ],
+   "customers": [
+    "Buyers",
+    "Accounting",
+    "Treasury",
+    "ManCom"
+   ]
+  },
+  {
+   "id": "12",
+   "group": "acct",
+   "stage": "Collect & finance",
+   "name": "Cancellations & return to inventory",
+   "owner_dept": "Credit & collection / Legal",
+   "odoo_home": "Accounting; Approvals; custom Maceda calculator",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Buyer (voluntary)",
+    "Credit & collection (default)",
+    "Legal"
+   ],
+   "inputs": [
+    "Cancellation request or default status",
+    "Payment history",
+    "Years of installments paid"
+   ],
+   "steps": [
+    "Observe grace period",
+    "Serve notarial notice",
+    "Compute cash surrender value or forfeiture",
+    "Approve",
+    "Reverse receivable, revenue and commission",
+    "Refund via AP; return unit"
+   ],
+   "outputs": [
+    "Cancellation record",
+    "Refund payable or forfeiture income",
+    "Unit back to available"
+   ],
+   "customers": [
+    "Buyer",
+    "Accounts payable",
+    "Accounting",
+    "Sales / inventory"
+   ]
+  },
+  {
+   "id": "13",
+   "group": "acct",
+   "stage": "Collect & finance",
+   "name": "Bank / Pag-IBIG takeout & in-house financing",
+   "owner_dept": "Loans & financing",
+   "odoo_home": "Accounting; Documents; custom takeout tracker and IHF amortization",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Buyer",
+    "Banks and Pag-IBIG",
+    "Titling"
+   ],
+   "inputs": [
+    "Equity fully paid",
+    "Loan requirements",
+    "Letter of guaranty / notice of approval",
+    "Title and DOAS"
+   ],
+   "steps": [
+    "Takeout: collect requirements, submit, receive decision, release documents, collect proceeds",
+    "IHF: approve, set amortization with interest, collect monthly"
+   ],
+   "outputs": [
+    "Loan proceeds applied",
+    "Closed buyer balance or IHF receivable",
+    "Interest income"
+   ],
+   "customers": [
+    "Accounts monitoring",
+    "Treasury",
+    "Accounting",
+    "Titling"
+   ]
+  },
+  {
+   "id": "14",
+   "group": "dlv",
+   "stage": "Deliver & manage",
+   "name": "TORC – taxes and other related charges",
+   "owner_dept": "Titling",
+   "odoo_home": "Accounting; Approvals; Expenses (cash advance / liquidation)",
+   "fit": "Configure",
+   "from_reference": true,
+   "suppliers": [
+    "Titling",
+    "BIR, LGU, Registry of Deeds"
+   ],
+   "inputs": [
+    "Deed of absolute sale",
+    "Computation of taxes (DST, transfer tax) and other related charges (registration, notarial, processing fees)",
+    "TORC budget"
+   ],
+   "steps": [
+    "Compute",
+    "Approve against budget",
+    "Fund cash advance or bill",
+    "Pay agencies",
+    "Liquidate",
+    "Charge to buyer or project"
+   ],
+   "outputs": [
+    "Paid TORC",
+    "Liquidation",
+    "Recoverable charges on buyer ledger"
+   ],
+   "customers": [
+    "Accounts payable",
+    "Title delivery",
+    "Accounting"
+   ]
+  },
+  {
+   "id": "15",
+   "group": "dlv",
+   "stage": "Deliver & manage",
+   "name": "Unit preparation & delivery",
+   "owner_dept": "Customer care / turnover",
+   "odoo_home": "Field Service or Project; Sign; Helpdesk",
+   "fit": "Configure",
+   "from_reference": true,
+   "suppliers": [
+    "Construction and QA",
+    "Credit & collection",
+    "Buyer"
+   ],
+   "inputs": [
+    "Ready-for-occupancy unit",
+    "Turnover eligibility (payment status)",
+    "Punch list"
+   ],
+   "steps": [
+    "Check eligibility",
+    "Schedule joint inspection",
+    "Rectify defects",
+    "Sign acceptance; hand over keys",
+    "Start warranty"
+   ],
+   "outputs": [
+    "Certificate of acceptance",
+    "Warranty period",
+    "Unit status: turned over"
+   ],
+   "customers": [
+    "Buyer",
+    "Property management",
+    "Accounting"
+   ]
+  },
+  {
+   "id": "16",
+   "group": "ap",
+   "stage": null,
+   "name": "Accounts payable processing",
+   "owner_dept": "Accounting – AP",
+   "odoo_home": "Accounting (bills, payments, batch payments); Purchase; Approvals; PH localization (2307)",
+   "fit": "Standard",
+   "from_reference": true,
+   "suppliers": [
+    "Corporate, land, project, sales, TORC and property-management expense owners",
+    "Loan servicing",
+    "Suppliers, contractors, brokers"
+   ],
+   "inputs": [
+    "Vendor bills",
+    "PO and receipts / accomplishment",
+    "Withholding tax codes"
+   ],
+   "steps": [
+    "Capture invoice",
+    "Match and validate",
+    "Budget check",
+    "Approve per DOA",
+    "Compute EWT; schedule payment",
+    "Disburse; issue BIR 2307"
+   ],
+   "outputs": [
+    "Payments",
+    "BIR 2307 certificates",
+    "AP aging",
+    "Actuals against budget"
+   ],
+   "customers": [
+    "Suppliers",
+    "Treasury",
+    "Accounting",
+    "BIR"
+   ]
+  },
+  {
+   "id": "17",
+   "group": "sales",
+   "stage": "Stock & sell",
+   "name": "Commissions & sales incentives",
+   "owner_dept": "Sales admin",
+   "odoo_home": "Sales commission plans; Purchase / Accounting (broker bills)",
+   "fit": "Extend",
+   "from_reference": false,
+   "suppliers": [
+    "Sales",
+    "Brokers and agents",
+    "Accounts monitoring"
+   ],
+   "inputs": [
+    "Signed CTS",
+    "Collection % per account",
+    "Commission scheme and release tranches",
+    "Non-cash incentive programs"
+   ],
+   "steps": [
+    "Accrue on sale",
+    "Release by tranche when collection thresholds are hit",
+    "Compute splits and EWT",
+    "Approve",
+    "Pay via AP"
+   ],
+   "outputs": [
+    "Commission payable",
+    "Released commissions",
+    "Non-cash incentives issued"
+   ],
+   "customers": [
+    "Brokers and agents",
+    "Accounts payable",
+    "Accounting"
+   ]
+  },
+  {
+   "id": "18",
+   "group": "dlv",
+   "stage": "Deliver & manage",
+   "name": "Property management",
+   "owner_dept": "Property management",
+   "odoo_home": "Subscriptions / Invoicing; Helpdesk; Field Service; Purchase",
+   "fit": "Configure",
+   "from_reference": true,
+   "suppliers": [
+    "Turnover",
+    "Homeowners",
+    "HOA",
+    "Utilities and service vendors"
+   ],
+   "inputs": [
+    "Turned-over units",
+    "Dues rates",
+    "Service requests",
+    "Vendor bills"
+   ],
+   "steps": [
+    "Onboard homeowner",
+    "Bill and collect dues",
+    "Service requests and maintenance",
+    "Process bills and expenses",
+    "Turn over to HOA"
+   ],
+   "outputs": [
+    "Dues invoices",
+    "Service tickets",
+    "PM expenses",
+    "HOA turnover package"
+   ],
+   "customers": [
+    "Homeowners",
+    "HOA",
+    "Accounts payable",
+    "Accounting"
+   ]
+  },
+  {
+   "id": "19",
+   "group": "dlv",
+   "stage": "Deliver & manage",
+   "name": "Title delivery",
+   "owner_dept": "Titling",
+   "odoo_home": "Documents; Project (checklist); custom title tracker",
+   "fit": "Extend",
+   "from_reference": true,
+   "suppliers": [
+    "Titling",
+    "Legal",
+    "BIR, Registry of Deeds, assessor",
+    "Bank / Pag-IBIG"
+   ],
+   "inputs": [
+    "Full payment or takeout",
+    "DOAS",
+    "Mother title / condo title",
+    "TORC paid"
+   ],
+   "steps": [
+    "Prepare documents",
+    "Pay fees and taxes",
+    "Process eCAR and transfer",
+    "Update tax declaration",
+    "Release to buyer or lender"
+   ],
+   "outputs": [
+    "TCT/CCT in buyer's name",
+    "Tax declaration",
+    "Delivery acknowledgment"
+   ],
+   "customers": [
+    "Buyer",
+    "Bank / Pag-IBIG",
+    "Accounts monitoring"
+   ]
+  },
+  {
+   "id": "X1",
+   "group": "x",
+   "stage": null,
+   "name": "Forecasts",
+   "owner_dept": "Finance – FP&A",
+   "odoo_home": "Spreadsheet; Dashboards; Accounting reports",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "Sales",
+    "Credit & collection",
+    "Construction",
+    "Treasury"
+   ],
+   "inputs": [
+    "Pipeline and reservations",
+    "Collection schedules",
+    "Cost-to-complete",
+    "Loan schedules"
+   ],
+   "steps": [
+    "Refresh monthly",
+    "Roll forward",
+    "Compare to budget",
+    "Publish"
+   ],
+   "outputs": [
+    "Sales, collection, cost and cash forecasts"
+   ],
+   "customers": [
+    "ManCom",
+    "Treasury",
+    "Lenders"
+   ]
+  },
+  {
+   "id": "X2",
+   "group": "x",
+   "stage": null,
+   "name": "KPIs & variance reports",
+   "owner_dept": "Finance – FP&A",
+   "odoo_home": "Accounting budget reports; Spreadsheet dashboards; BI",
+   "fit": "Configure",
+   "from_reference": false,
+   "suppliers": [
+    "All processes"
+   ],
+   "inputs": [
+    "Budgets and actuals by analytic account",
+    "Sales and collection data",
+    "Construction progress"
+   ],
+   "steps": [
+    "Close period",
+    "Compute KPIs",
+    "Explain variances",
+    "Review with owners"
+   ],
+   "outputs": [
+    "Budget vs actual",
+    "Absorption and sales velocity",
+    "Collection efficiency and aging",
+    "Cost variance"
+   ],
+   "customers": [
+    "ManCom",
+    "Board",
+    "Process owners"
+   ]
+  }
+ ],
+ "matrix": [
+  {
+   "ref": "01.1",
+   "process_id": "01",
+   "step": "Define budget structure",
+   "trigger_event": "Budget cycle opens (timer, prior-year Q3)",
+   "data_fields": "Fiscal year; company; account; analytic plans (business unit, project, phase, cost center, expense type); budget version; currency",
+   "handoff": "Accounting › Analytic plans → Budgets; templates out to Spreadsheet",
+   "exceptions": "New project mid-year needs lines; COA changes after load; intercompany charges across PHI entities",
+   "fit": "Configure"
+  },
+  {
+   "ref": "01.2",
+   "process_id": "01",
+   "step": "Corporate budget approval",
+   "trigger_event": "Templates issued to departments",
+   "data_fields": "Department; account; monthly amounts; justification; prior-year actual; version; approver; approval date",
+   "handoff": "Spreadsheet import → Budget (draft) → Approvals → Budget (confirmed) → budget check on PR/PO/bill",
+   "exceptions": "Realignment between lines; supplemental budget; rejected versions kept for audit; approved over-budget override",
+   "fit": "Configure"
+  },
+  {
+   "ref": "01.3",
+   "process_id": "01",
+   "step": "Project (life-of-project) budget",
+   "trigger_event": "Project approved on feasibility, or new phase launched",
+   "data_fields": "Project; phase; cost code; categories (land, planning, permits, titling, construction by milestone, marketing, sales, loan interest); contingency %; revenue forecast (units × price)",
+   "handoff": "Project Development → Budget on project analytic → Project WBS; baseline snapshot kept for variance",
+   "exceptions": "Budgets spanning several fiscal years; re-baseline after scope change; price escalation; overrun beyond contingency",
+   "fit": "Configure"
+  },
+  {
+   "ref": "02.1",
+   "process_id": "02",
+   "step": "Loan drawdown & allocation",
+   "trigger_event": "Loan agreement signed; approved funding requirement",
+   "data_fields": "Lender; facility; principal; fixed/floating rate; tenor; drawdown date; amortization schedule; collateral; project allocation; capitalize-interest flag",
+   "handoff": "Treasury → Accounting (loan liability, interest accrual) → project analytic (capitalized interest) → AP (debt-service schedule)",
+   "exceptions": "Repricing; prepayment penalties; stop capitalizing interest at completion; covenant breach",
+   "fit": "Configure"
+  },
+  {
+   "ref": "03.1",
+   "process_id": "03",
+   "step": "Corporate expense request",
+   "trigger_event": "Department need arises",
+   "data_fields": "Requester; cost center; category (branding, admin, departmental, executive); amount; budget line; vendor; attachments",
+   "handoff": "Purchase request / Approvals → budget check → PO → vendor bill (16)",
+   "exceptions": "Unbudgeted urgent spend; recurring contracts (utilities, subscriptions); petty cash and reimbursements via Expenses",
+   "fit": "Standard"
+  },
+  {
+   "ref": "04.1",
+   "process_id": "04",
+   "step": "Land due diligence",
+   "trigger_event": "Land opportunity logged",
+   "data_fields": "Owner(s); location; OCT/TCT no.; lot area; tax declaration no.; zoning; encumbrances; appraised value; asking price; broker",
+   "handoff": "Custom land register + Documents workspace → Approvals to ManCom",
+   "exceptions": "Title defects or adverse claims; multiple heirs (extrajudicial settlement); CARP/DAR coverage; informal settlers",
+   "fit": "Extend"
+  },
+  {
+   "ref": "04.2",
+   "process_id": "04",
+   "step": "Land agreement & milestone payments",
+   "trigger_event": "ManCom approval",
+   "data_fields": "Agreement type (deed of sale, CTS, JV); price; milestones (condition, date, %); taxes borne by; JV sharing ratio",
+   "handoff": "Sign → vendor bill per milestone → AP (16) → Accounting (land held for development / advances)",
+   "exceptions": "JV landowner paid in units (non-cash, inventory allocation); unmet milestone conditions; renegotiation; installment interest",
+   "fit": "Extend"
+  },
+  {
+   "ref": "04.3",
+   "process_id": "04",
+   "step": "Titling with fees",
+   "trigger_event": "Final payment made; deed notarized",
+   "data_fields": "CGT; DST; transfer tax; registration fees; eCAR no.; new TCT no.; dates",
+   "handoff": "Fees → AP; TCT no. → land register and project master; land cost capitalized to project analytic",
+   "exceptions": "Who shoulders taxes; late-filing surcharges; consolidation or subdivision of titles before development",
+   "fit": "Extend"
+  },
+  {
+   "ref": "05.1",
+   "process_id": "05",
+   "step": "Project setup",
+   "trigger_event": "Land titled and project budget approved",
+   "data_fields": "Project code; name; company; location; type (horizontal / vertical); phases; blocks or towers; WBS; analytic account; permits (DP, ECC, BP, CR/LTS)",
+   "handoff": "Project ↔ analytic account ↔ Budget; permit tracker; releases to unit creation (07.1)",
+   "exceptions": "Project across entities or JV; phasing changes; no LTS means no selling — system must block reservations",
+   "fit": "Configure"
+  },
+  {
+   "ref": "06.1",
+   "process_id": "06",
+   "step": "Construction contract & progress billing",
+   "trigger_event": "Contract awarded; accomplishment report submitted",
+   "data_fields": "Contractor; contract amount; BOQ / cost code; downpayment %; retention %; progress %; cumulative billed; recoupment; variation orders; EWT",
+   "handoff": "Purchase (contract/PO) → Project milestone % → vendor bill with retention and recoupment → AP; % completion → unit construction status and POC revenue",
+   "exceptions": "Variation orders; liquidated damages; back-charges; retention release after defects liability period; owner-furnished materials",
+   "fit": "Extend"
+  },
+  {
+   "ref": "07.1",
+   "process_id": "07",
+   "step": "Lot master creation & pricing",
+   "trigger_event": "Project released for sale (LTS issued)",
+   "data_fields": "Lot ID (project-phase-block-lot; tower-floor-unit for condos); house model; lot and floor area; list price / TCP; price per sqm; VAT treatment; parking; construction status; sales status; mother / derivative title",
+   "handoff": "Lot master (vendor-proposed) ↔ product and pricelist ↔ project analytic; availability board to CRM and brokers; every downstream document (reservation, CTS, ledger, turnover, title) references the Lot",
+   "exceptions": "Condo units, parking slots and house-and-lot packages modeled as lots; lot merge or split; price increases on unsold lots only; management / model-unit holds; VAT threshold treatment",
+   "fit": "Extend"
+  },
+  {
+   "ref": "07.2",
+   "process_id": "07",
+   "step": "Financing options setup",
+   "trigger_event": "New price list or promo scheme",
+   "data_fields": "Scheme (spot cash, deferred cash, bank, Pag-IBIG, IHF); reservation fee; DP % and months; discount %; interest rate; loanable %; term; validity",
+   "handoff": "Payment-term templates → sales computation (09.1) → amortization engine (11)",
+   "exceptions": "Promo expiry; scheme change after reservation (restructuring); Pag-IBIG loan ceilings",
+   "fit": "Extend"
+  },
+  {
+   "ref": "08.1",
+   "process_id": "08",
+   "step": "Broker / agent accreditation",
+   "trigger_event": "Application received",
+   "data_fields": "Firm and agent names; PRC license no. and expiry; DHSUD registration; TIN and COR 2303; bank details; commission tier; parent firm; validity",
+   "handoff": "Contacts (partner tags) → Documents → Approvals → commission plan; selectable on CRM / sales order",
+   "exceptions": "Expired license must block tagging; agent changing firms mid-deal; split commission between firms",
+   "fit": "Configure"
+  },
+  {
+   "ref": "09.1",
+   "process_id": "09",
+   "step": "Sales computation & reservation",
+   "trigger_event": "Buyer selects unit and scheme",
+   "data_fields": "Buyer name, TIN, IDs, civil status; co-borrower; unit; TCP; discounts; VAT; other charges; reservation fee; DP schedule; balance; scheme; broker / agent; promo code",
+   "handoff": "CRM opportunity → sales quotation (computation) → invoice / receipt for reservation fee → unit status reserved",
+   "exceptions": "Double reservation of one unit (lock needed); bounced RF check; reservation expiry and RF forfeiture; discount above authority; OFW buyers with SPA",
+   "fit": "Extend"
+  },
+  {
+   "ref": "09.2",
+   "process_id": "09",
+   "step": "CTS generation",
+   "trigger_event": "Documents complete and DP policy met",
+   "data_fields": "CTS no.; parties; unit; TCP; payment schedule (due dates, principal / interest split); penalty clause; Maceda clause; signatories; notarization date",
+   "handoff": "Sales order confirmed → Sign → Documents → buyer ledger and amortization schedule (11)",
+   "exceptions": "Amendments: transfer of rights, unit swap, restructuring; co-owner change; death of buyer",
+   "fit": "Extend"
+  },
+  {
+   "ref": "09.3",
+   "process_id": "09",
+   "step": "Revenue recognition",
+   "trigger_event": "CTS signed and collectability threshold met (per policy)",
+   "data_fields": "% completion; collections %; cost-to-complete; significant financing component",
+   "handoff": "Periodic journal in Accounting driven by project % complete (06.1) and collections (11.2)",
+   "exceptions": "PFRS 15 over-time recognition assumptions; reversal on cancellation; auditor-agreed thresholds",
+   "fit": "Extend"
+  },
+  {
+   "ref": "10.1",
+   "process_id": "10",
+   "step": "Lease contract & billing",
+   "trigger_event": "Tenant accepts term sheet",
+   "data_fields": "Tenant; unit; lease rate; escalation %; term; start / end; security deposit; advance rent; CUSA; utilities; PDCs; VAT / EWT",
+   "handoff": "Unit status leased → Rental or Subscription → recurring invoices → AR",
+   "exceptions": "Pre-termination; holdover; rent-free periods; applying deposit against damages",
+   "fit": "Configure"
+  },
+  {
+   "ref": "11.1",
+   "process_id": "11",
+   "step": "Buyer documentation",
+   "trigger_event": "Reservation or CTS stage reached",
+   "data_fields": "Checklist per scheme; document status; received date; expiry (IDs); file",
+   "handoff": "Documents workspace linked to buyer and unit; completeness gate for CTS (09.2) and takeout (13.1)",
+   "exceptions": "Expired documents; consularized documents from abroad",
+   "fit": "Configure"
+  },
+  {
+   "ref": "11.2",
+   "process_id": "11",
+   "step": "Receipting & collection posting",
+   "trigger_event": "Payment received",
+   "data_fields": "Payor; amount; mode (cash, check, PDC, transfer, online); check no., bank, date; allocation (RF, DP, amortization, penalty, other charges); invoice series; VAT breakdown",
+   "handoff": "Accounting payment → allocation on buyer ledger; BIR-registered invoice series (CAS / e-invoicing)",
+   "exceptions": "PDC warehousing; bounced checks; partial or over-payment; unidentified deposits; EOPT invoice-vs-receipt rules",
+   "fit": "Extend"
+  },
+  {
+   "ref": "11.3",
+   "process_id": "11",
+   "step": "SOA, delinquency & aging",
+   "trigger_event": "Monthly cycle (timer) or due date lapsed",
+   "data_fields": "Amount due; paid; balance; days past due; penalty rate and amount; aging bucket",
+   "handoff": "Follow-up reports → demand letters → collection dashboard → cancellation trigger (12.1)",
+   "exceptions": "Penalty waivers (approval); restructuring; grace periods under RA 6552",
+   "fit": "Extend"
+  },
+  {
+   "ref": "12.1",
+   "process_id": "12",
+   "step": "Cancellation & refund",
+   "trigger_event": "Buyer request, or default beyond grace",
+   "data_fields": "Reason code; total paid; years of installments; cash surrender value (50% + 5%/yr after 5 yrs, max 90%); deductions; notarial notice date; effective date; approval",
+   "handoff": "Accounting reversal (AR, revenue, commission clawback) → AP refund (16) → unit status available",
+   "exceptions": "Under 2 years paid (no CSV, 60-day grace); disputes; refunds in installments; unit already turned over",
+   "fit": "Extend"
+  },
+  {
+   "ref": "13.1",
+   "process_id": "13",
+   "step": "Bank / Pag-IBIG takeout",
+   "trigger_event": "Equity fully paid",
+   "data_fields": "Lender; loan amount; loanable %; requirements checklist; application date; LOG / NOA no. and date; release date; proceeds; deductions (fees, MRI); DOAS",
+   "handoff": "Takeout tracker → Titling (annotation) → Accounting (proceeds applied) → buyer balance closed",
+   "exceptions": "Disapproval or partial approval (buyer pays gap); Pag-IBIG buyback guarantee; LOG expiry",
+   "fit": "Extend"
+  },
+  {
+   "ref": "13.2",
+   "process_id": "13",
+   "step": "In-house financing",
+   "trigger_event": "IHF chosen and approved",
+   "data_fields": "Principal; rate; term; amortization method; due day; collateral",
+   "handoff": "Amortization schedule → monthly SOA (11.3) → interest income",
+   "exceptions": "Repricing; early payoff; later refinancing to a bank",
+   "fit": "Extend"
+  },
+  {
+   "ref": "14.1",
+   "process_id": "14",
+   "step": "TORC (taxes and other related charges) processing",
+   "trigger_event": "Full payment reached / title transfer started",
+   "data_fields": "DST; transfer tax; registration fees; other fees; budget line; payee agency; liquidation; amount rechargeable to buyer",
+   "handoff": "Titling → cash advance or bill → AP (16) → Accounting (buyer charge or project cost)",
+   "exceptions": "Zonal-value updates; unliquidated advances; surcharges",
+   "fit": "Configure"
+  },
+  {
+   "ref": "15.1",
+   "process_id": "15",
+   "step": "Turnover",
+   "trigger_event": "Unit ready and account eligible",
+   "data_fields": "Unit; inspection date; punch-list items; rectification status; acceptance date; keys; meter readings; warranty end date",
+   "handoff": "Field Service / Project tasks → Sign (acceptance) → unit status turned over → PM onboarding and dues (18.1)",
+   "exceptions": "Buyer no-show (deemed acceptance clause); major defects; turnover before full payment by exception",
+   "fit": "Configure"
+  },
+  {
+   "ref": "16.1",
+   "process_id": "16",
+   "step": "AP invoice processing",
+   "trigger_event": "Vendor bill received",
+   "data_fields": "Vendor; TIN; bill no. and date; PO ref; receipt / accomplishment ref; VAT; EWT ATC code; retention; due date; analytic distribution; approver",
+   "handoff": "Purchase ↔ bill (3-way match) → Approvals → payment batch → bank → BIR 2307 → budget actuals",
+   "exceptions": "Bills without PO; duplicates; partial payment; supplier advances; foreign currency",
+   "fit": "Standard"
+  },
+  {
+   "ref": "16.2",
+   "process_id": "16",
+   "step": "Disbursement",
+   "trigger_event": "Approved bill falls due",
+   "data_fields": "Payment method; bank; check no.; release date; 2307",
+   "handoff": "Accounting → bank file or check printing → bank reconciliation",
+   "exceptions": "Stale or cancelled checks; payment holds",
+   "fit": "Standard"
+  },
+  {
+   "ref": "17.1",
+   "process_id": "17",
+   "step": "Commission accrual & release",
+   "trigger_event": "CTS signed (accrual); collection threshold reached (release)",
+   "data_fields": "Broker / agent; rate; base (net TCP); tranche %; release condition; EWT; non-cash incentives; clawback rule",
+   "handoff": "Sales → commission computation → broker bill → AP (16); non-cash incentives via Purchase / Inventory",
+   "exceptions": "Clawback on cancellation; split deals; commission on discounted price; manager overrides",
+   "fit": "Extend"
+  },
+  {
+   "ref": "18.1",
+   "process_id": "18",
+   "step": "Homeowner onboarding & dues",
+   "trigger_event": "Turnover accepted",
+   "data_fields": "Homeowner; unit; dues rate; start date; billing cycle; utilities",
+   "handoff": "Subscription / recurring invoices → collection → HOA fund accounting",
+   "exceptions": "Dues arrears blocking services; developer-paid dues on unsold units",
+   "fit": "Configure"
+  },
+  {
+   "ref": "18.2",
+   "process_id": "18",
+   "step": "Servicing & PM expenses",
+   "trigger_event": "Service request or scheduled maintenance",
+   "data_fields": "Ticket; category; unit; SLA; warranty flag; cost; vendor",
+   "handoff": "Helpdesk / Field Service → Purchase → AP (property-management expenses)",
+   "exceptions": "Warranty vs chargeable; emergency repairs",
+   "fit": "Configure"
+  },
+  {
+   "ref": "18.3",
+   "process_id": "18",
+   "step": "HOA turnover",
+   "trigger_event": "Turnover criteria met",
+   "data_fields": "HOA registration; fund balance; assets; documents",
+   "handoff": "Final PM accounting close → Documents",
+   "exceptions": "Disputes on fund balance or common areas",
+   "fit": "Configure"
+  },
+  {
+   "ref": "19.1",
+   "process_id": "19",
+   "step": "Title processing & delivery",
+   "trigger_event": "Full payment, or lender requires title for release",
+   "data_fields": "DOAS date; eCAR no.; new TCT / CCT no.; tax declaration; release date; recipient (buyer or lender)",
+   "handoff": "Title tracker → Documents → buyer notice; feeds takeout release (13.1)",
+   "exceptions": "Mother title not yet subdivided; lost documents; unpaid real-property tax",
+   "fit": "Extend"
+  },
+  {
+   "ref": "X1.1",
+   "process_id": "X1",
+   "step": "Rolling forecasts",
+   "trigger_event": "Month-end close",
+   "data_fields": "Sales forecast; collection forecast; cost-to-complete; cash forecast",
+   "handoff": "All modules → Spreadsheet / dashboards",
+   "exceptions": "Unapproved reservations inflating pipeline; stale construction progress",
+   "fit": "Configure"
+  },
+  {
+   "ref": "X2.1",
+   "process_id": "X2",
+   "step": "KPIs & variance reporting",
+   "trigger_event": "Period close",
+   "data_fields": "Budget vs actual by analytic account; absorption and sales velocity; collection efficiency; aging / DSO; % completion; cost variance",
+   "handoff": "Accounting budget report → dashboards / BI",
+   "exceptions": "Timing differences (commitments vs actuals); reclassifications after close",
+   "fit": "Configure"
+  }
+ ],
+ "master_data": [
+  {
+   "object": "Company / entity",
+   "owning_process": "01",
+   "key_fields": "Legal name, TIN, BIR registration, CAS permit, fiscal year",
+   "odoo_home": "res.company",
+   "used_by": "All"
+  },
+  {
+   "object": "Analytic plans",
+   "owning_process": "01",
+   "key_fields": "Business unit, project, phase, cost center, expense type",
+   "odoo_home": "Accounting › Analytic plans",
+   "used_by": "01, 03, 06, 16, X2"
+  },
+  {
+   "object": "Budget line",
+   "owning_process": "01",
+   "key_fields": "Version, account, analytic, period, amount, status",
+   "odoo_home": "Accounting › Budgets",
+   "used_by": "03, 06, 14, 16, X2"
+  },
+  {
+   "object": "Land parcel",
+   "owning_process": "04",
+   "key_fields": "OCT/TCT, area, owner, cost, status, linked project",
+   "odoo_home": "Custom land register",
+   "used_by": "04, 05, 19"
+  },
+  {
+   "object": "Project / phase",
+   "owning_process": "05",
+   "key_fields": "Code, type, phases, blocks/towers, WBS, permits, LTS",
+   "odoo_home": "project.project + analytic account",
+   "used_by": "06, 07, 09, X1"
+  },
+  {
+   "object": "Lot (unit master)",
+   "owning_process": "07",
+   "key_fields": "Lot ID, project / phase / block, house model, lot and floor area, price, construction status, sales status, title no., current buyer / CTS",
+   "odoo_home": "Lot master model (vendor-proposed), linked to product.product and project analytic",
+   "used_by": "09–15, 18, 19"
+  },
+  {
+   "object": "Payment scheme",
+   "owning_process": "07",
+   "key_fields": "Scheme type, RF, DP %/months, rate, term, validity",
+   "odoo_home": "Payment terms + custom scheme",
+   "used_by": "09, 11, 13"
+  },
+  {
+   "object": "Buyer / co-borrower",
+   "owning_process": "09",
+   "key_fields": "Name, TIN, IDs, civil status, address, employer, SPA",
+   "odoo_home": "res.partner",
+   "used_by": "09–15, 18, 19"
+  },
+  {
+   "object": "Broker / agent",
+   "owning_process": "08",
+   "key_fields": "PRC license, DHSUD reg., TIN, tier, validity, parent firm",
+   "odoo_home": "res.partner (tagged)",
+   "used_by": "09, 17"
+  },
+  {
+   "object": "Contract to sell",
+   "owning_process": "09",
+   "key_fields": "CTS no., unit, TCP, schedule, clauses, signatures",
+   "odoo_home": "sale.order + sign.request",
+   "used_by": "11, 12, 13, 17"
+  },
+  {
+   "object": "Buyer ledger / schedule",
+   "owning_process": "11",
+   "key_fields": "Due lines, allocations, penalties, balance",
+   "odoo_home": "account.move / account.payment + custom schedule",
+   "used_by": "11, 12, 13, X1"
+  },
+  {
+   "object": "Vendor / contractor",
+   "owning_process": "03",
+   "key_fields": "TIN, VAT status, ATC codes, bank, accreditation",
+   "odoo_home": "res.partner",
+   "used_by": "03, 06, 14, 16, 18"
+  },
+  {
+   "object": "Title record",
+   "owning_process": "19",
+   "key_fields": "Mother / derivative title, eCAR, tax dec, custody, release",
+   "odoo_home": "Custom title tracker + documents.document",
+   "used_by": "04, 13, 19"
+  },
+  {
+   "object": "Service ticket",
+   "owning_process": "18",
+   "key_fields": "Unit, category, SLA, warranty flag, cost",
+   "odoo_home": "helpdesk.ticket",
+   "used_by": "15, 18"
+  }
+ ],
+ "lot_touchpoints": [
+  {
+   "process_label": "04 Land acquisition · 05 Project setup",
+   "effect": "Mother title and project / phase / block give the Lot its parent references"
+  },
+  {
+   "process_label": "06 Construction",
+   "effect": "Updates construction status and % completion"
+  },
+  {
+   "process_label": "07 Inventory",
+   "effect": "Creates the Lot, prices it, sets sales status to available"
+  },
+  {
+   "process_label": "09 Sales · 12 Cancellations",
+   "effect": "Reserved → sold; cancelled → available again (return inventory)"
+  },
+  {
+   "process_label": "11 Accounts monitoring · 13 Takeout",
+   "effect": "Buyer ledger, schedule and loan status hang off the Lot's active CTS"
+  },
+  {
+   "process_label": "15 Turnover · 18 Property management",
+   "effect": "Turned-over flag, warranty dates, homeowner and dues"
+  },
+  {
+   "process_label": "19 Title delivery",
+   "effect": "Derivative title number, custody and release"
+  }
+ ],
+ "open_items": [
+  {
+   "title": "TORC scope",
+   "detail": "TORC = taxes and other related charges. List each tax and charge PHI books under it, who shoulders each (buyer vs developer), and whether it is advanced and recharged or billed upfront."
+  },
+  {
+   "title": "Process numbering",
+   "detail": "Confirm the proposed numbers for 01–03, 05–13 and 17 so every BRD chapter uses one ID set."
+  },
+  {
+   "title": "Turnover eligibility",
+   "detail": "Which payment status allows turnover (equity paid, loan approved, fully paid) and who can approve exceptions?"
+  },
+  {
+   "title": "Revenue recognition",
+   "detail": "Agree the PFRS 15 method, collectability threshold and POC source with the external auditor before the Accounting design."
+  },
+  {
+   "title": "Commission release rules",
+   "detail": "Tranches, clawback on cancellation, and treatment of in-house vs external brokers."
+  },
+  {
+   "title": "Invoicing compliance",
+   "detail": "Current BIR CAS permit status and e-invoicing timeline — decides whether Odoo prints the official invoice series from go-live."
+  },
+  {
+   "title": "Lot as master model (vendor proposal)",
+   "detail": "Confirm whether \"Lot\" is a custom real-estate model or Odoo's serial/lot record (stock.lot), and how it represents condo units, parking slots, house-and-lot packages, and merged or split lots."
+  },
+  {
+   "title": "Lot status design",
+   "detail": "Separate construction status and sales status fields on the Lot, and who may change each (Construction, Sales admin, Credit & collection, Titling)."
+  },
+  {
+   "title": "Migration from In4 Velocity",
+   "detail": "How much buyer-ledger history moves (open balances only, or full payment history needed for Maceda computations)?"
+  },
+  {
+   "title": "Approval matrix (DOA)",
+   "detail": "Amount thresholds per document type, per company and per project to configure in Approvals."
+  }
+ ],
+ "diagrams": [
+  {
+   "id": "A",
+   "title": "Plan-to-budget",
+   "covers": "01 Budget setup · X1 Forecasts",
+   "description": "Annual cycle that produces both the corporate budget and life-of-project budgets, and hands a locked baseline to Accounting so every PR, PO and bill is checked against it.",
+   "file": "PHI_A_plan-to-budget.bpmn"
+  },
+  {
+   "id": "B",
+   "title": "Land-to-inventory",
+   "covers": "04 Land acquisition · 05 Project setup · 07 Inventory setup",
+   "description": "From a land opportunity to sellable lots: due diligence, agreement, milestone payments, title transfer, project creation, permits and License to Sell, then lot master and price-list creation.",
+   "file": "PHI_B_land-to-inventory.bpmn"
+  },
+  {
+   "id": "C",
+   "title": "Reserve-to-contract",
+   "covers": "08 Channel accreditation · 09 Sales · 17 Commissions",
+   "description": "A buyer picks a unit through an in-house or accredited broker; the reservation is receipted, documents and credit are checked, then the CTS and payment schedule are issued and the unit is tagged sold.",
+   "file": "PHI_C_reserve-to-contract.bpmn"
+  },
+  {
+   "id": "D1",
+   "title": "Collect-to-cancel",
+   "covers": "11 Accounts monitoring · 12 Cancellations",
+   "description": "Monthly billing and collection with an event-based gateway: either payment arrives, or the due date plus grace lapses and delinquency handling begins, ending in reinstatement or a Maceda-compliant cancellation that returns the unit to inventory.",
+   "file": "PHI_D1_collect-to-cancel.bpmn"
+  },
+  {
+   "id": "D2",
+   "title": "Equity-to-takeout",
+   "covers": "13 Bank / Pag-IBIG takeout & IHF",
+   "description": "Once equity is fully paid the account splits by financing scheme: external loan takeout with lender approval, title annotation and release of proceeds, or in-house financing with an interest-bearing amortization schedule.",
+   "file": "PHI_D2_equity-to-takeout.bpmn"
+  },
+  {
+   "id": "E",
+   "title": "Procure-to-pay",
+   "covers": "03 Corporate expenses · 06 Project expenses · 14 TORC (taxes and other related charges) · 16 AP · 17 Commissions",
+   "description": "One pattern for every spend stream in the reference flow — corporate, land, project, sales, TORC, property management and loan payments — so budget checks, approvals, withholding tax and 2307s behave the same everywhere.",
+   "file": "PHI_E_procure-to-pay.bpmn"
+  },
+  {
+   "id": "F",
+   "title": "Turnover-to-title & community",
+   "covers": "15 Unit preparation & delivery · 14 TORC · 19 Title delivery · 18 Property management",
+   "description": "A completed unit is inspected and turned over when the account is eligible; a parallel split then starts homeowner onboarding and the title-transfer track, which ends with the title delivered to the buyer or lender.",
+   "file": "PHI_F_turnover-to-title-community.bpmn"
+  }
+ ]
+}

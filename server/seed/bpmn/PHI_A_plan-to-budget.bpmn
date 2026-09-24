@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DA_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DA_Collaboration">
+    <bpmn:documentation>A. Plan-to-budget — covers 01 Budget setup · X1 Forecasts. Annual cycle that produces both the corporate budget and life-of-project budgets, and hands a locked baseline to Accounting so every PR, PO and bill is checked against it.</bpmn:documentation>
+    <bpmn:participant id="DA_Part_PHI" name="Primary Homes, Inc." processRef="DA_Process" />
+  </bpmn:collaboration>
+  <bpmn:process id="DA_Process" name="Plan-to-budget" isExecutable="false">
+    <bpmn:laneSet id="DA_LaneSet">
+      <bpmn:lane id="DA_Lane_mc" name="ManCom / Executive">
+        <bpmn:flowNodeRef>DA_a8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DA_a9</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DA_Lane_fin" name="Finance – budget &amp; FP&amp;A">
+        <bpmn:flowNodeRef>DA_a1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DA_a2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DA_a3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DA_a6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DA_a7</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DA_Lane_dept" name="Department heads">
+        <bpmn:flowNodeRef>DA_a4</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DA_Lane_pdd" name="Project Development">
+        <bpmn:flowNodeRef>DA_a5</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DA_Lane_acc" name="Accounting">
+        <bpmn:flowNodeRef>DA_a10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DA_a11</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DA_a1" name="Annual budget cycle opens">
+      <bpmn:outgoing>DA_Flow_1</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="DA_a1_Timer" />
+    </bpmn:startEvent>
+    <bpmn:task id="DA_a2" name="Issue budget calendar, templates and analytic structure">
+      <bpmn:incoming>DA_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="DA_a3">
+      <bpmn:incoming>DA_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>DA_Flow_4</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="DA_a4" name="Prepare corporate and departmental budgets">
+      <bpmn:incoming>DA_Flow_3</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DA_a5" name="Prepare project budgets by phase and cost code">
+      <bpmn:incoming>DA_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="DA_a6">
+      <bpmn:incoming>DA_Flow_5</bpmn:incoming>
+      <bpmn:incoming>DA_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_7</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="DA_a7" name="Consolidate; test against sales, collection and cash forecasts">
+      <bpmn:incoming>DA_Flow_7</bpmn:incoming>
+      <bpmn:incoming>DA_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DA_a8" name="Review budget and funding plan">
+      <bpmn:incoming>DA_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DA_a9" name="Approved?">
+      <bpmn:incoming>DA_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_10</bpmn:outgoing>
+      <bpmn:outgoing>DA_Flow_11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DA_a10" name="Load approved version; switch on budget checks">
+      <bpmn:incoming>DA_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DA_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DA_a11" name="Budget baseline locked">
+      <bpmn:incoming>DA_Flow_12</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DA_Flow_1" sourceRef="DA_a1" targetRef="DA_a2" />
+    <bpmn:sequenceFlow id="DA_Flow_2" sourceRef="DA_a2" targetRef="DA_a3" />
+    <bpmn:sequenceFlow id="DA_Flow_3" sourceRef="DA_a3" targetRef="DA_a4" />
+    <bpmn:sequenceFlow id="DA_Flow_4" sourceRef="DA_a3" targetRef="DA_a5" />
+    <bpmn:sequenceFlow id="DA_Flow_5" sourceRef="DA_a4" targetRef="DA_a6" />
+    <bpmn:sequenceFlow id="DA_Flow_6" sourceRef="DA_a5" targetRef="DA_a6" />
+    <bpmn:sequenceFlow id="DA_Flow_7" sourceRef="DA_a6" targetRef="DA_a7" />
+    <bpmn:sequenceFlow id="DA_Flow_8" sourceRef="DA_a7" targetRef="DA_a8" />
+    <bpmn:sequenceFlow id="DA_Flow_9" sourceRef="DA_a8" targetRef="DA_a9" />
+    <bpmn:sequenceFlow id="DA_Flow_10" name="Yes" sourceRef="DA_a9" targetRef="DA_a10" />
+    <bpmn:sequenceFlow id="DA_Flow_11" name="No – revise" sourceRef="DA_a9" targetRef="DA_a7" />
+    <bpmn:sequenceFlow id="DA_Flow_12" sourceRef="DA_a10" targetRef="DA_a11" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DA_Diagram" name="A. Plan-to-budget">
+    <bpmndi:BPMNPlane id="DA_Plane" bpmnElement="DA_Collaboration">
+      <bpmndi:BPMNShape id="DA_Part_PHI_di" bpmnElement="DA_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="10" width="1608" height="540" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_Lane_mc_di" bpmnElement="DA_Lane_mc" isHorizontal="true"><dc:Bounds x="30" y="10" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_Lane_fin_di" bpmnElement="DA_Lane_fin" isHorizontal="true"><dc:Bounds x="30" y="118" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_Lane_dept_di" bpmnElement="DA_Lane_dept" isHorizontal="true"><dc:Bounds x="30" y="226" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_Lane_pdd_di" bpmnElement="DA_Lane_pdd" isHorizontal="true"><dc:Bounds x="30" y="334" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_Lane_acc_di" bpmnElement="DA_Lane_acc" isHorizontal="true"><dc:Bounds x="30" y="442" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a1_di" bpmnElement="DA_a1"><dc:Bounds x="187" y="154" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="194" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a2_di" bpmnElement="DA_a2"><dc:Bounds x="289" y="142" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a3_di" bpmnElement="DA_a3"><dc:Bounds x="476" y="151" width="42" height="42" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a4_di" bpmnElement="DA_a4"><dc:Bounds x="581" y="250" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a5_di" bpmnElement="DA_a5"><dc:Bounds x="581" y="358" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a6_di" bpmnElement="DA_a6"><dc:Bounds x="768" y="151" width="42" height="42" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a7_di" bpmnElement="DA_a7"><dc:Bounds x="873" y="142" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a8_di" bpmnElement="DA_a8"><dc:Bounds x="1019" y="34" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a9_di" bpmnElement="DA_a9" isMarkerVisible="true"><dc:Bounds x="1206" y="43" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="1172" y="22" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a10_di" bpmnElement="DA_a10"><dc:Bounds x="1311" y="466" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DA_a11_di" bpmnElement="DA_a11"><dc:Bounds x="1501" y="478" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1464" y="518" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DA_Flow_1_di" bpmnElement="DA_Flow_1"><di:waypoint x="223" y="172" /><di:waypoint x="289" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_2_di" bpmnElement="DA_Flow_2"><di:waypoint x="413" y="172" /><di:waypoint x="476" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_3_di" bpmnElement="DA_Flow_3"><di:waypoint x="518" y="172" /><di:waypoint x="532" y="172" /><di:waypoint x="532" y="280" /><di:waypoint x="581" y="280" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_4_di" bpmnElement="DA_Flow_4"><di:waypoint x="518" y="172" /><di:waypoint x="532" y="172" /><di:waypoint x="532" y="388" /><di:waypoint x="581" y="388" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_5_di" bpmnElement="DA_Flow_5"><di:waypoint x="705" y="280" /><di:waypoint x="719" y="280" /><di:waypoint x="719" y="172" /><di:waypoint x="768" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_6_di" bpmnElement="DA_Flow_6"><di:waypoint x="705" y="388" /><di:waypoint x="719" y="388" /><di:waypoint x="719" y="172" /><di:waypoint x="768" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_7_di" bpmnElement="DA_Flow_7"><di:waypoint x="810" y="172" /><di:waypoint x="873" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_8_di" bpmnElement="DA_Flow_8"><di:waypoint x="997" y="172" /><di:waypoint x="1011" y="172" /><di:waypoint x="1011" y="64" /><di:waypoint x="1019" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_9_di" bpmnElement="DA_Flow_9"><di:waypoint x="1143" y="64" /><di:waypoint x="1206" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_10_di" bpmnElement="DA_Flow_10"><di:waypoint x="1248" y="64" /><di:waypoint x="1262" y="64" /><di:waypoint x="1262" y="496" /><di:waypoint x="1311" y="496" /><bpmndi:BPMNLabel><dc:Bounds x="1266" y="478" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_11_di" bpmnElement="DA_Flow_11"><di:waypoint x="1227" y="85" /><di:waypoint x="1227" y="126" /><di:waypoint x="935" y="126" /><di:waypoint x="935" y="142" /><bpmndi:BPMNLabel><dc:Bounds x="1231" y="67" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DA_Flow_12_di" bpmnElement="DA_Flow_12"><di:waypoint x="1435" y="496" /><di:waypoint x="1501" y="496" /></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

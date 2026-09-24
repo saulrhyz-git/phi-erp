@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DD2_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DD2_Collaboration">
+    <bpmn:documentation>D2. Equity-to-takeout — covers 13 Bank / Pag-IBIG takeout &amp; IHF. Once equity is fully paid the account splits by financing scheme: external loan takeout with lender approval, title annotation and release of proceeds, or in-house financing with an interest-bearing amortization schedule.</bpmn:documentation>
+    <bpmn:participant id="DD2_Part_PHI" name="Primary Homes, Inc." processRef="DD2_Process" />
+    <bpmn:participant id="DD2_Part_buyer" name="Buyer" />
+    <bpmn:participant id="DD2_Part_bank" name="Bank / Pag-IBIG" />
+    <bpmn:messageFlow id="DD2_MsgFlow_1" name="Loan application" sourceRef="DD2_e4" targetRef="DD2_Part_bank" />
+    <bpmn:messageFlow id="DD2_MsgFlow_2" name="LOG / NOA or disapproval" sourceRef="DD2_Part_bank" targetRef="DD2_e5" />
+    <bpmn:messageFlow id="DD2_MsgFlow_3" name="Title and release documents" sourceRef="DD2_e7" targetRef="DD2_Part_bank" />
+    <bpmn:messageFlow id="DD2_MsgFlow_4" name="Loan proceeds" sourceRef="DD2_Part_bank" targetRef="DD2_e8" />
+    <bpmn:messageFlow id="DD2_MsgFlow_5" name="Shortfall notice" sourceRef="DD2_e6n" targetRef="DD2_Part_buyer" />
+  </bpmn:collaboration>
+  <bpmn:process id="DD2_Process" name="Equity-to-takeout" isExecutable="false">
+    <bpmn:laneSet id="DD2_LaneSet">
+      <bpmn:lane id="DD2_Lane_cc" name="Credit &amp; collection">
+        <bpmn:flowNodeRef>DD2_e1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e6n</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e6e</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e13</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD2_Lane_loans" name="Loans &amp; financing">
+        <bpmn:flowNodeRef>DD2_e2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e6</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD2_Lane_acc" name="Cashier &amp; accounting">
+        <bpmn:flowNodeRef>DD2_e8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD2_e10</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD2_Lane_tit" name="Titling">
+        <bpmn:flowNodeRef>DD2_e7</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DD2_e1" name="Equity fully paid">
+      <bpmn:outgoing>DD2_Flow_1</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition id="DD2_e1_Cond">
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">Equity fully paid</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="DD2_e2" name="Financing scheme?">
+      <bpmn:incoming>DD2_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_2</bpmn:outgoing>
+      <bpmn:outgoing>DD2_Flow_3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DD2_e3" name="Collect and check loan requirements">
+      <bpmn:incoming>DD2_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_4</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DD2_e4" name="Submit loan application">
+      <bpmn:incoming>DD2_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DD2_e5" name="Lender decision received">
+      <bpmn:incoming>DD2_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_6</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DD2_e5_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:exclusiveGateway id="DD2_e6" name="Approved in full?">
+      <bpmn:incoming>DD2_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_7</bpmn:outgoing>
+      <bpmn:outgoing>DD2_Flow_8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DD2_e6n" name="Buyer covers shortfall or re-routes to IHF, cash or cancellation">
+      <bpmn:incoming>DD2_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DD2_e6e" name="Re-routed per policy">
+      <bpmn:incoming>DD2_Flow_9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="DD2_e7" name="Execute DOAS; annotate mortgage on title">
+      <bpmn:incoming>DD2_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DD2_e8" name="Loan proceeds received">
+      <bpmn:incoming>DD2_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_11</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DD2_e8_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DD2_e9" name="Apply proceeds; close buyer balance">
+      <bpmn:incoming>DD2_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DD2_e10" name="Fully paid – ready for title">
+      <bpmn:incoming>DD2_Flow_12</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="DD2_e11" name="Evaluate and approve IHF">
+      <bpmn:incoming>DD2_Flow_3</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DD2_e12" name="Set up IHF amortization with interest">
+      <bpmn:incoming>DD2_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>DD2_Flow_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DD2_e13" name="Handed to monthly collection">
+      <bpmn:incoming>DD2_Flow_14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DD2_Flow_1" sourceRef="DD2_e1" targetRef="DD2_e2" />
+    <bpmn:sequenceFlow id="DD2_Flow_2" name="Bank / Pag-IBIG" sourceRef="DD2_e2" targetRef="DD2_e3" />
+    <bpmn:sequenceFlow id="DD2_Flow_3" name="IHF" sourceRef="DD2_e2" targetRef="DD2_e11" />
+    <bpmn:sequenceFlow id="DD2_Flow_4" sourceRef="DD2_e3" targetRef="DD2_e4" />
+    <bpmn:sequenceFlow id="DD2_Flow_5" sourceRef="DD2_e4" targetRef="DD2_e5" />
+    <bpmn:sequenceFlow id="DD2_Flow_6" sourceRef="DD2_e5" targetRef="DD2_e6" />
+    <bpmn:sequenceFlow id="DD2_Flow_7" name="Yes" sourceRef="DD2_e6" targetRef="DD2_e7" />
+    <bpmn:sequenceFlow id="DD2_Flow_8" name="No" sourceRef="DD2_e6" targetRef="DD2_e6n" />
+    <bpmn:sequenceFlow id="DD2_Flow_9" sourceRef="DD2_e6n" targetRef="DD2_e6e" />
+    <bpmn:sequenceFlow id="DD2_Flow_10" sourceRef="DD2_e7" targetRef="DD2_e8" />
+    <bpmn:sequenceFlow id="DD2_Flow_11" sourceRef="DD2_e8" targetRef="DD2_e9" />
+    <bpmn:sequenceFlow id="DD2_Flow_12" sourceRef="DD2_e9" targetRef="DD2_e10" />
+    <bpmn:sequenceFlow id="DD2_Flow_13" sourceRef="DD2_e11" targetRef="DD2_e12" />
+    <bpmn:sequenceFlow id="DD2_Flow_14" sourceRef="DD2_e12" targetRef="DD2_e13" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DD2_Diagram" name="D2. Equity-to-takeout">
+    <bpmndi:BPMNPlane id="DD2_Plane" bpmnElement="DD2_Collaboration">
+      <bpmndi:BPMNShape id="DD2_Part_PHI_di" bpmnElement="DD2_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="88" width="1608" height="432" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_Lane_cc_di" bpmnElement="DD2_Lane_cc" isHorizontal="true"><dc:Bounds x="30" y="88" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_Lane_loans_di" bpmnElement="DD2_Lane_loans" isHorizontal="true"><dc:Bounds x="30" y="196" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_Lane_acc_di" bpmnElement="DD2_Lane_acc" isHorizontal="true"><dc:Bounds x="30" y="304" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_Lane_tit_di" bpmnElement="DD2_Lane_tit" isHorizontal="true"><dc:Bounds x="30" y="412" width="1578" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_Part_buyer_di" bpmnElement="DD2_Part_buyer" isHorizontal="true"><dc:Bounds x="0" y="10" width="1608" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_Part_bank_di" bpmnElement="DD2_Part_bank" isHorizontal="true"><dc:Bounds x="0" y="538" width="1608" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e1_di" bpmnElement="DD2_e1"><dc:Bounds x="187" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="164" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e2_di" bpmnElement="DD2_e2" isMarkerVisible="true"><dc:Bounds x="330" y="229" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="296" y="208" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e3_di" bpmnElement="DD2_e3"><dc:Bounds x="435" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e4_di" bpmnElement="DD2_e4"><dc:Bounds x="581" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e5_di" bpmnElement="DD2_e5"><dc:Bounds x="771" y="232" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="734" y="272" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e6_di" bpmnElement="DD2_e6" isMarkerVisible="true"><dc:Bounds x="914" y="229" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="880" y="208" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e6n_di" bpmnElement="DD2_e6n"><dc:Bounds x="1019" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e6e_di" bpmnElement="DD2_e6e"><dc:Bounds x="1209" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1172" y="164" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e7_di" bpmnElement="DD2_e7"><dc:Bounds x="1019" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e8_di" bpmnElement="DD2_e8"><dc:Bounds x="1209" y="340" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1172" y="380" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e9_di" bpmnElement="DD2_e9"><dc:Bounds x="1311" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e10_di" bpmnElement="DD2_e10"><dc:Bounds x="1501" y="340" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1464" y="380" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e11_di" bpmnElement="DD2_e11"><dc:Bounds x="435" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e12_di" bpmnElement="DD2_e12"><dc:Bounds x="581" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD2_e13_di" bpmnElement="DD2_e13"><dc:Bounds x="771" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="734" y="164" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DD2_Flow_1_di" bpmnElement="DD2_Flow_1"><di:waypoint x="223" y="142" /><di:waypoint x="237" y="142" /><di:waypoint x="237" y="250" /><di:waypoint x="330" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_2_di" bpmnElement="DD2_Flow_2"><di:waypoint x="372" y="250" /><di:waypoint x="435" y="250" /><bpmndi:BPMNLabel><dc:Bounds x="376" y="232" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_3_di" bpmnElement="DD2_Flow_3"><di:waypoint x="372" y="250" /><di:waypoint x="386" y="250" /><di:waypoint x="386" y="142" /><di:waypoint x="435" y="142" /><bpmndi:BPMNLabel><dc:Bounds x="390" y="124" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_4_di" bpmnElement="DD2_Flow_4"><di:waypoint x="559" y="250" /><di:waypoint x="581" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_5_di" bpmnElement="DD2_Flow_5"><di:waypoint x="705" y="250" /><di:waypoint x="771" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_6_di" bpmnElement="DD2_Flow_6"><di:waypoint x="807" y="250" /><di:waypoint x="914" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_7_di" bpmnElement="DD2_Flow_7"><di:waypoint x="956" y="250" /><di:waypoint x="970" y="250" /><di:waypoint x="970" y="466" /><di:waypoint x="1019" y="466" /><bpmndi:BPMNLabel><dc:Bounds x="974" y="448" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_8_di" bpmnElement="DD2_Flow_8"><di:waypoint x="956" y="250" /><di:waypoint x="970" y="250" /><di:waypoint x="970" y="142" /><di:waypoint x="1019" y="142" /><bpmndi:BPMNLabel><dc:Bounds x="974" y="124" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_9_di" bpmnElement="DD2_Flow_9"><di:waypoint x="1143" y="142" /><di:waypoint x="1209" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_10_di" bpmnElement="DD2_Flow_10"><di:waypoint x="1143" y="466" /><di:waypoint x="1157" y="466" /><di:waypoint x="1157" y="358" /><di:waypoint x="1209" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_11_di" bpmnElement="DD2_Flow_11"><di:waypoint x="1245" y="358" /><di:waypoint x="1311" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_12_di" bpmnElement="DD2_Flow_12"><di:waypoint x="1435" y="358" /><di:waypoint x="1501" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_13_di" bpmnElement="DD2_Flow_13"><di:waypoint x="559" y="142" /><di:waypoint x="581" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_Flow_14_di" bpmnElement="DD2_Flow_14"><di:waypoint x="705" y="142" /><di:waypoint x="771" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_MsgFlow_1_di" bpmnElement="DD2_MsgFlow_1"><di:waypoint x="643" y="280" /><di:waypoint x="643" y="538" /><bpmndi:BPMNLabel><dc:Bounds x="649" y="401" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_MsgFlow_2_di" bpmnElement="DD2_MsgFlow_2"><di:waypoint x="789" y="538" /><di:waypoint x="789" y="268" /><bpmndi:BPMNLabel><dc:Bounds x="795" y="395" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_MsgFlow_3_di" bpmnElement="DD2_MsgFlow_3"><di:waypoint x="1081" y="496" /><di:waypoint x="1081" y="538" /><bpmndi:BPMNLabel><dc:Bounds x="1087" y="509" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_MsgFlow_4_di" bpmnElement="DD2_MsgFlow_4"><di:waypoint x="1227" y="538" /><di:waypoint x="1227" y="376" /><bpmndi:BPMNLabel><dc:Bounds x="1233" y="449" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD2_MsgFlow_5_di" bpmnElement="DD2_MsgFlow_5"><di:waypoint x="1081" y="112" /><di:waypoint x="1081" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="1087" y="83" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

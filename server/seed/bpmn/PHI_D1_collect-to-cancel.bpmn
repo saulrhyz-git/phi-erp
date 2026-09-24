@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DD1_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DD1_Collaboration">
+    <bpmn:documentation>D1. Collect-to-cancel — covers 11 Accounts monitoring · 12 Cancellations. Monthly billing and collection with an event-based gateway: either payment arrives, or the due date plus grace lapses and delinquency handling begins, ending in reinstatement or a Maceda-compliant cancellation that returns the unit to inventory.</bpmn:documentation>
+    <bpmn:participant id="DD1_Part_PHI" name="Primary Homes, Inc." processRef="DD1_Process" />
+    <bpmn:participant id="DD1_Part_buyer" name="Buyer" />
+    <bpmn:messageFlow id="DD1_MsgFlow_1" name="SOA" sourceRef="DD1_d2" targetRef="DD1_Part_buyer" />
+    <bpmn:messageFlow id="DD1_MsgFlow_2" name="Payment" sourceRef="DD1_Part_buyer" targetRef="DD1_d4" />
+    <bpmn:messageFlow id="DD1_MsgFlow_3" name="Notice of cancellation" sourceRef="DD1_d10" targetRef="DD1_Part_buyer" />
+    <bpmn:messageFlow id="DD1_MsgFlow_4" name="Refund (if any)" sourceRef="DD1_d12" targetRef="DD1_Part_buyer" />
+  </bpmn:collaboration>
+  <bpmn:process id="DD1_Process" name="Collect-to-cancel" isExecutable="false">
+    <bpmn:laneSet id="DD1_LaneSet">
+      <bpmn:lane id="DD1_Lane_cc" name="Credit &amp; collection">
+        <bpmn:flowNodeRef>DD1_d1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d9</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD1_Lane_acc" name="Cashier &amp; accounting">
+        <bpmn:flowNodeRef>DD1_d4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d12</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD1_Lane_legal" name="Legal">
+        <bpmn:flowNodeRef>DD1_d10</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD1_Lane_mc" name="Approvers (DOA)">
+        <bpmn:flowNodeRef>DD1_d11</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DD1_Lane_sadm" name="Sales admin / inventory">
+        <bpmn:flowNodeRef>DD1_d13</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DD1_d14</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DD1_d1" name="Installment due per schedule">
+      <bpmn:outgoing>DD1_Flow_1</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="DD1_d1_Timer" />
+    </bpmn:startEvent>
+    <bpmn:task id="DD1_d2" name="Generate and send SOA">
+      <bpmn:incoming>DD1_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:eventBasedGateway id="DD1_d3">
+      <bpmn:incoming>DD1_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>DD1_Flow_4</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="DD1_d4" name="Payment received">
+      <bpmn:incoming>DD1_Flow_3</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_5</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DD1_d4_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DD1_d5" name="Issue invoice / receipt; allocate to principal, interest, penalties">
+      <bpmn:incoming>DD1_Flow_5</bpmn:incoming>
+      <bpmn:incoming>DD1_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DD1_d6" name="Account current">
+      <bpmn:incoming>DD1_Flow_6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:intermediateCatchEvent id="DD1_d7" name="Due date + grace lapsed">
+      <bpmn:incoming>DD1_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_7</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="DD1_d7_Timer" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DD1_d8" name="Compute penalties; send demand letter">
+      <bpmn:incoming>DD1_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DD1_d9" name="Paid within grace period?">
+      <bpmn:incoming>DD1_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_9</bpmn:outgoing>
+      <bpmn:outgoing>DD1_Flow_10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DD1_d10" name="Compute cash surrender value; serve notarial notice">
+      <bpmn:incoming>DD1_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DD1_d11" name="Approve cancellation and refund / forfeiture">
+      <bpmn:incoming>DD1_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DD1_d12" name="Reverse AR and revenue; claw back commission; refund via AP">
+      <bpmn:incoming>DD1_Flow_12</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DD1_d13" name="Return unit to inventory as available">
+      <bpmn:incoming>DD1_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>DD1_Flow_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DD1_d14" name="Unit re-listed">
+      <bpmn:incoming>DD1_Flow_14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DD1_Flow_1" sourceRef="DD1_d1" targetRef="DD1_d2" />
+    <bpmn:sequenceFlow id="DD1_Flow_2" sourceRef="DD1_d2" targetRef="DD1_d3" />
+    <bpmn:sequenceFlow id="DD1_Flow_3" sourceRef="DD1_d3" targetRef="DD1_d4" />
+    <bpmn:sequenceFlow id="DD1_Flow_4" sourceRef="DD1_d3" targetRef="DD1_d7" />
+    <bpmn:sequenceFlow id="DD1_Flow_5" sourceRef="DD1_d4" targetRef="DD1_d5" />
+    <bpmn:sequenceFlow id="DD1_Flow_6" sourceRef="DD1_d5" targetRef="DD1_d6" />
+    <bpmn:sequenceFlow id="DD1_Flow_7" sourceRef="DD1_d7" targetRef="DD1_d8" />
+    <bpmn:sequenceFlow id="DD1_Flow_8" sourceRef="DD1_d8" targetRef="DD1_d9" />
+    <bpmn:sequenceFlow id="DD1_Flow_9" name="Yes" sourceRef="DD1_d9" targetRef="DD1_d5" />
+    <bpmn:sequenceFlow id="DD1_Flow_10" name="No" sourceRef="DD1_d9" targetRef="DD1_d10" />
+    <bpmn:sequenceFlow id="DD1_Flow_11" sourceRef="DD1_d10" targetRef="DD1_d11" />
+    <bpmn:sequenceFlow id="DD1_Flow_12" sourceRef="DD1_d11" targetRef="DD1_d12" />
+    <bpmn:sequenceFlow id="DD1_Flow_13" sourceRef="DD1_d12" targetRef="DD1_d13" />
+    <bpmn:sequenceFlow id="DD1_Flow_14" sourceRef="DD1_d13" targetRef="DD1_d14" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DD1_Diagram" name="D1. Collect-to-cancel">
+    <bpmndi:BPMNPlane id="DD1_Plane" bpmnElement="DD1_Collaboration">
+      <bpmndi:BPMNShape id="DD1_Part_PHI_di" bpmnElement="DD1_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="10" width="1754" height="540" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_Lane_cc_di" bpmnElement="DD1_Lane_cc" isHorizontal="true"><dc:Bounds x="30" y="10" width="1724" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_Lane_acc_di" bpmnElement="DD1_Lane_acc" isHorizontal="true"><dc:Bounds x="30" y="118" width="1724" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_Lane_legal_di" bpmnElement="DD1_Lane_legal" isHorizontal="true"><dc:Bounds x="30" y="226" width="1724" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_Lane_mc_di" bpmnElement="DD1_Lane_mc" isHorizontal="true"><dc:Bounds x="30" y="334" width="1724" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_Lane_sadm_di" bpmnElement="DD1_Lane_sadm" isHorizontal="true"><dc:Bounds x="30" y="442" width="1724" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_Part_buyer_di" bpmnElement="DD1_Part_buyer" isHorizontal="true"><dc:Bounds x="0" y="568" width="1754" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d1_di" bpmnElement="DD1_d1"><dc:Bounds x="187" y="46" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="86" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d2_di" bpmnElement="DD1_d2"><dc:Bounds x="289" y="34" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d3_di" bpmnElement="DD1_d3"><dc:Bounds x="476" y="43" width="42" height="42" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d4_di" bpmnElement="DD1_d4"><dc:Bounds x="625" y="154" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="588" y="194" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d5_di" bpmnElement="DD1_d5"><dc:Bounds x="727" y="142" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d6_di" bpmnElement="DD1_d6"><dc:Bounds x="917" y="154" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="880" y="194" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d7_di" bpmnElement="DD1_d7"><dc:Bounds x="625" y="46" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="588" y="86" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d8_di" bpmnElement="DD1_d8"><dc:Bounds x="727" y="34" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d9_di" bpmnElement="DD1_d9" isMarkerVisible="true"><dc:Bounds x="914" y="43" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="880" y="9" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d10_di" bpmnElement="DD1_d10"><dc:Bounds x="1019" y="250" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d11_di" bpmnElement="DD1_d11"><dc:Bounds x="1165" y="358" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d12_di" bpmnElement="DD1_d12"><dc:Bounds x="1311" y="142" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d13_di" bpmnElement="DD1_d13"><dc:Bounds x="1457" y="466" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DD1_d14_di" bpmnElement="DD1_d14"><dc:Bounds x="1647" y="478" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1610" y="518" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DD1_Flow_1_di" bpmnElement="DD1_Flow_1"><di:waypoint x="223" y="64" /><di:waypoint x="289" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_2_di" bpmnElement="DD1_Flow_2"><di:waypoint x="413" y="64" /><di:waypoint x="476" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_3_di" bpmnElement="DD1_Flow_3"><di:waypoint x="518" y="64" /><di:waypoint x="532" y="64" /><di:waypoint x="532" y="172" /><di:waypoint x="625" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_4_di" bpmnElement="DD1_Flow_4"><di:waypoint x="518" y="64" /><di:waypoint x="625" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_5_di" bpmnElement="DD1_Flow_5"><di:waypoint x="661" y="172" /><di:waypoint x="727" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_6_di" bpmnElement="DD1_Flow_6"><di:waypoint x="851" y="172" /><di:waypoint x="917" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_7_di" bpmnElement="DD1_Flow_7"><di:waypoint x="661" y="64" /><di:waypoint x="727" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_8_di" bpmnElement="DD1_Flow_8"><di:waypoint x="851" y="64" /><di:waypoint x="914" y="64" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_9_di" bpmnElement="DD1_Flow_9"><di:waypoint x="935" y="85" /><di:waypoint x="935" y="126" /><di:waypoint x="789" y="126" /><di:waypoint x="789" y="142" /><bpmndi:BPMNLabel><dc:Bounds x="939" y="67" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_10_di" bpmnElement="DD1_Flow_10"><di:waypoint x="956" y="64" /><di:waypoint x="970" y="64" /><di:waypoint x="970" y="280" /><di:waypoint x="1019" y="280" /><bpmndi:BPMNLabel><dc:Bounds x="974" y="262" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_11_di" bpmnElement="DD1_Flow_11"><di:waypoint x="1143" y="280" /><di:waypoint x="1157" y="280" /><di:waypoint x="1157" y="388" /><di:waypoint x="1165" y="388" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_12_di" bpmnElement="DD1_Flow_12"><di:waypoint x="1289" y="388" /><di:waypoint x="1303" y="388" /><di:waypoint x="1303" y="172" /><di:waypoint x="1311" y="172" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_13_di" bpmnElement="DD1_Flow_13"><di:waypoint x="1435" y="172" /><di:waypoint x="1449" y="172" /><di:waypoint x="1449" y="496" /><di:waypoint x="1457" y="496" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_Flow_14_di" bpmnElement="DD1_Flow_14"><di:waypoint x="1581" y="496" /><di:waypoint x="1647" y="496" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_MsgFlow_1_di" bpmnElement="DD1_MsgFlow_1"><di:waypoint x="351" y="94" /><di:waypoint x="351" y="568" /><bpmndi:BPMNLabel><dc:Bounds x="357" y="323" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_MsgFlow_2_di" bpmnElement="DD1_MsgFlow_2"><di:waypoint x="643" y="568" /><di:waypoint x="643" y="190" /><bpmndi:BPMNLabel><dc:Bounds x="649" y="371" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_MsgFlow_3_di" bpmnElement="DD1_MsgFlow_3"><di:waypoint x="1081" y="310" /><di:waypoint x="1081" y="568" /><bpmndi:BPMNLabel><dc:Bounds x="1087" y="431" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DD1_MsgFlow_4_di" bpmnElement="DD1_MsgFlow_4"><di:waypoint x="1373" y="202" /><di:waypoint x="1373" y="568" /><bpmndi:BPMNLabel><dc:Bounds x="1379" y="377" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

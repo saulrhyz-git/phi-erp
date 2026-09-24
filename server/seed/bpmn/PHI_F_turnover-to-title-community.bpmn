@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DF_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DF_Collaboration">
+    <bpmn:documentation>F. Turnover-to-title &amp; community — covers 15 Unit preparation &amp; delivery · 14 TORC · 19 Title delivery · 18 Property management. A completed unit is inspected and turned over when the account is eligible; a parallel split then starts homeowner onboarding and the title-transfer track, which ends with the title delivered to the buyer or lender.</bpmn:documentation>
+    <bpmn:participant id="DF_Part_PHI" name="Primary Homes, Inc." processRef="DF_Process" />
+    <bpmn:participant id="DF_Part_buyer" name="Buyer" />
+    <bpmn:participant id="DF_Part_gov" name="BIR, RD, assessor" />
+    <bpmn:messageFlow id="DF_MsgFlow_1" name="Turnover schedule" sourceRef="DF_g4" targetRef="DF_Part_buyer" />
+    <bpmn:messageFlow id="DF_MsgFlow_2" name="Taxes, fees, filings" sourceRef="DF_g10" targetRef="DF_Part_gov" />
+    <bpmn:messageFlow id="DF_MsgFlow_3" name="New title, tax declaration" sourceRef="DF_Part_gov" targetRef="DF_g11" />
+    <bpmn:messageFlow id="DF_MsgFlow_4" name="Title (or to lender)" sourceRef="DF_g12" targetRef="DF_Part_buyer" />
+  </bpmn:collaboration>
+  <bpmn:process id="DF_Process" name="Turnover-to-title &amp; community" isExecutable="false">
+    <bpmn:laneSet id="DF_LaneSet">
+      <bpmn:lane id="DF_Lane_con" name="Construction &amp; QA">
+        <bpmn:flowNodeRef>DF_g1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g5n</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DF_Lane_cc" name="Credit &amp; collection">
+        <bpmn:flowNodeRef>DF_g3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g3n</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DF_Lane_cx" name="Customer care / turnover">
+        <bpmn:flowNodeRef>DF_g4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g7</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DF_Lane_pm" name="Property management">
+        <bpmn:flowNodeRef>DF_g8</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g14</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g15</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g16</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DF_Lane_tit" name="Titling">
+        <bpmn:flowNodeRef>DF_g9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g12</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DF_g13</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DF_g1" name="Unit ready for occupancy">
+      <bpmn:outgoing>DF_Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="DF_g2" name="Internal QA and punch list">
+      <bpmn:incoming>DF_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DF_g3" name="Turnover-eligible?">
+      <bpmn:incoming>DF_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>DF_Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="DF_g3n" name="Hold until eligible">
+      <bpmn:incoming>DF_Flow_4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="DF_g4" name="Schedule turnover and joint inspection">
+      <bpmn:incoming>DF_Flow_3</bpmn:incoming>
+      <bpmn:incoming>DF_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DF_g5" name="Buyer accepts unit?">
+      <bpmn:incoming>DF_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_6</bpmn:outgoing>
+      <bpmn:outgoing>DF_Flow_7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DF_g5n" name="Rectify defects">
+      <bpmn:incoming>DF_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DF_g6" name="Sign acceptance; hand over keys; start warranty">
+      <bpmn:incoming>DF_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:parallelGateway id="DF_g7">
+      <bpmn:incoming>DF_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_10</bpmn:outgoing>
+      <bpmn:outgoing>DF_Flow_11</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:task id="DF_g8" name="Onboard homeowner; start dues billing">
+      <bpmn:incoming>DF_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DF_g14" name="Service requests, dues collection, PM expenses">
+      <bpmn:incoming>DF_Flow_12</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DF_g15" name="Turn over to HOA when criteria are met">
+      <bpmn:incoming>DF_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DF_g16" name="HOA turned over">
+      <bpmn:incoming>DF_Flow_14</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:task id="DF_g9" name="Prepare DOAS; compute and fund TORC (taxes and other related charges)">
+      <bpmn:incoming>DF_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DF_g10" name="Pay taxes and fees; process eCAR and transfer">
+      <bpmn:incoming>DF_Flow_15</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_16</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DF_g11" name="New TCT / CCT issued">
+      <bpmn:incoming>DF_Flow_16</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_17</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DF_g11_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DF_g12" name="Deliver title to buyer or lender">
+      <bpmn:incoming>DF_Flow_17</bpmn:incoming>
+      <bpmn:outgoing>DF_Flow_18</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DF_g13" name="Title delivered">
+      <bpmn:incoming>DF_Flow_18</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DF_Flow_1" sourceRef="DF_g1" targetRef="DF_g2" />
+    <bpmn:sequenceFlow id="DF_Flow_2" sourceRef="DF_g2" targetRef="DF_g3" />
+    <bpmn:sequenceFlow id="DF_Flow_3" name="Yes" sourceRef="DF_g3" targetRef="DF_g4" />
+    <bpmn:sequenceFlow id="DF_Flow_4" name="No" sourceRef="DF_g3" targetRef="DF_g3n" />
+    <bpmn:sequenceFlow id="DF_Flow_5" sourceRef="DF_g4" targetRef="DF_g5" />
+    <bpmn:sequenceFlow id="DF_Flow_6" name="Yes" sourceRef="DF_g5" targetRef="DF_g6" />
+    <bpmn:sequenceFlow id="DF_Flow_7" name="No" sourceRef="DF_g5" targetRef="DF_g5n" />
+    <bpmn:sequenceFlow id="DF_Flow_8" sourceRef="DF_g5n" targetRef="DF_g4" />
+    <bpmn:sequenceFlow id="DF_Flow_9" sourceRef="DF_g6" targetRef="DF_g7" />
+    <bpmn:sequenceFlow id="DF_Flow_10" sourceRef="DF_g7" targetRef="DF_g8" />
+    <bpmn:sequenceFlow id="DF_Flow_11" sourceRef="DF_g7" targetRef="DF_g9" />
+    <bpmn:sequenceFlow id="DF_Flow_12" sourceRef="DF_g8" targetRef="DF_g14" />
+    <bpmn:sequenceFlow id="DF_Flow_13" sourceRef="DF_g14" targetRef="DF_g15" />
+    <bpmn:sequenceFlow id="DF_Flow_14" sourceRef="DF_g15" targetRef="DF_g16" />
+    <bpmn:sequenceFlow id="DF_Flow_15" sourceRef="DF_g9" targetRef="DF_g10" />
+    <bpmn:sequenceFlow id="DF_Flow_16" sourceRef="DF_g10" targetRef="DF_g11" />
+    <bpmn:sequenceFlow id="DF_Flow_17" sourceRef="DF_g11" targetRef="DF_g12" />
+    <bpmn:sequenceFlow id="DF_Flow_18" sourceRef="DF_g12" targetRef="DF_g13" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DF_Diagram" name="F. Turnover-to-title &amp; community">
+    <bpmndi:BPMNPlane id="DF_Plane" bpmnElement="DF_Collaboration">
+      <bpmndi:BPMNShape id="DF_Part_PHI_di" bpmnElement="DF_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="88" width="1900" height="540" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Lane_con_di" bpmnElement="DF_Lane_con" isHorizontal="true"><dc:Bounds x="30" y="88" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Lane_cc_di" bpmnElement="DF_Lane_cc" isHorizontal="true"><dc:Bounds x="30" y="196" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Lane_cx_di" bpmnElement="DF_Lane_cx" isHorizontal="true"><dc:Bounds x="30" y="304" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Lane_pm_di" bpmnElement="DF_Lane_pm" isHorizontal="true"><dc:Bounds x="30" y="412" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Lane_tit_di" bpmnElement="DF_Lane_tit" isHorizontal="true"><dc:Bounds x="30" y="520" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Part_buyer_di" bpmnElement="DF_Part_buyer" isHorizontal="true"><dc:Bounds x="0" y="10" width="1900" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_Part_gov_di" bpmnElement="DF_Part_gov" isHorizontal="true"><dc:Bounds x="0" y="646" width="1900" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g1_di" bpmnElement="DF_g1"><dc:Bounds x="187" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="164" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g2_di" bpmnElement="DF_g2"><dc:Bounds x="289" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g3_di" bpmnElement="DF_g3" isMarkerVisible="true"><dc:Bounds x="476" y="229" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="442" y="208" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g3n_di" bpmnElement="DF_g3n"><dc:Bounds x="625" y="232" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="588" y="272" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g4_di" bpmnElement="DF_g4"><dc:Bounds x="581" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g5_di" bpmnElement="DF_g5" isMarkerVisible="true"><dc:Bounds x="768" y="337" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="734" y="316" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g5n_di" bpmnElement="DF_g5n"><dc:Bounds x="873" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g6_di" bpmnElement="DF_g6"><dc:Bounds x="873" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g7_di" bpmnElement="DF_g7"><dc:Bounds x="1060" y="337" width="42" height="42" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g8_di" bpmnElement="DF_g8"><dc:Bounds x="1165" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g14_di" bpmnElement="DF_g14"><dc:Bounds x="1311" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g15_di" bpmnElement="DF_g15"><dc:Bounds x="1457" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g16_di" bpmnElement="DF_g16"><dc:Bounds x="1647" y="448" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1610" y="488" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g9_di" bpmnElement="DF_g9"><dc:Bounds x="1165" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g10_di" bpmnElement="DF_g10"><dc:Bounds x="1311" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g11_di" bpmnElement="DF_g11"><dc:Bounds x="1501" y="556" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1464" y="596" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g12_di" bpmnElement="DF_g12"><dc:Bounds x="1603" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DF_g13_di" bpmnElement="DF_g13"><dc:Bounds x="1793" y="556" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1756" y="596" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DF_Flow_1_di" bpmnElement="DF_Flow_1"><di:waypoint x="223" y="142" /><di:waypoint x="289" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_2_di" bpmnElement="DF_Flow_2"><di:waypoint x="413" y="142" /><di:waypoint x="427" y="142" /><di:waypoint x="427" y="250" /><di:waypoint x="476" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_3_di" bpmnElement="DF_Flow_3"><di:waypoint x="518" y="250" /><di:waypoint x="532" y="250" /><di:waypoint x="532" y="358" /><di:waypoint x="581" y="358" /><bpmndi:BPMNLabel><dc:Bounds x="536" y="340" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_4_di" bpmnElement="DF_Flow_4"><di:waypoint x="518" y="250" /><di:waypoint x="625" y="250" /><bpmndi:BPMNLabel><dc:Bounds x="522" y="232" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_5_di" bpmnElement="DF_Flow_5"><di:waypoint x="705" y="358" /><di:waypoint x="768" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_6_di" bpmnElement="DF_Flow_6"><di:waypoint x="810" y="358" /><di:waypoint x="873" y="358" /><bpmndi:BPMNLabel><dc:Bounds x="814" y="340" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_7_di" bpmnElement="DF_Flow_7"><di:waypoint x="810" y="358" /><di:waypoint x="824" y="358" /><di:waypoint x="824" y="142" /><di:waypoint x="873" y="142" /><bpmndi:BPMNLabel><dc:Bounds x="828" y="124" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_8_di" bpmnElement="DF_Flow_8"><di:waypoint x="935" y="172" /><di:waypoint x="935" y="312" /><di:waypoint x="643" y="312" /><di:waypoint x="643" y="328" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_9_di" bpmnElement="DF_Flow_9"><di:waypoint x="997" y="358" /><di:waypoint x="1060" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_10_di" bpmnElement="DF_Flow_10"><di:waypoint x="1102" y="358" /><di:waypoint x="1116" y="358" /><di:waypoint x="1116" y="466" /><di:waypoint x="1165" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_11_di" bpmnElement="DF_Flow_11"><di:waypoint x="1102" y="358" /><di:waypoint x="1116" y="358" /><di:waypoint x="1116" y="574" /><di:waypoint x="1165" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_12_di" bpmnElement="DF_Flow_12"><di:waypoint x="1289" y="466" /><di:waypoint x="1311" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_13_di" bpmnElement="DF_Flow_13"><di:waypoint x="1435" y="466" /><di:waypoint x="1457" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_14_di" bpmnElement="DF_Flow_14"><di:waypoint x="1581" y="466" /><di:waypoint x="1647" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_15_di" bpmnElement="DF_Flow_15"><di:waypoint x="1289" y="574" /><di:waypoint x="1311" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_16_di" bpmnElement="DF_Flow_16"><di:waypoint x="1435" y="574" /><di:waypoint x="1501" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_17_di" bpmnElement="DF_Flow_17"><di:waypoint x="1537" y="574" /><di:waypoint x="1603" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_Flow_18_di" bpmnElement="DF_Flow_18"><di:waypoint x="1727" y="574" /><di:waypoint x="1793" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_MsgFlow_1_di" bpmnElement="DF_MsgFlow_1"><di:waypoint x="683" y="328" /><di:waypoint x="683" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="689" y="191" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_MsgFlow_2_di" bpmnElement="DF_MsgFlow_2"><di:waypoint x="1373" y="604" /><di:waypoint x="1373" y="646" /><bpmndi:BPMNLabel><dc:Bounds x="1379" y="617" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_MsgFlow_3_di" bpmnElement="DF_MsgFlow_3"><di:waypoint x="1519" y="646" /><di:waypoint x="1519" y="592" /><bpmndi:BPMNLabel><dc:Bounds x="1525" y="611" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DF_MsgFlow_4_di" bpmnElement="DF_MsgFlow_4"><di:waypoint x="1705" y="544" /><di:waypoint x="1705" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="1711" y="299" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

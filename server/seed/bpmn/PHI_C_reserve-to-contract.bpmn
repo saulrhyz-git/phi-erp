@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DC_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DC_Collaboration">
+    <bpmn:documentation>C. Reserve-to-contract — covers 08 Channel accreditation · 09 Sales · 17 Commissions. A buyer picks a unit through an in-house or accredited broker; the reservation is receipted, documents and credit are checked, then the CTS and payment schedule are issued and the unit is tagged sold.</bpmn:documentation>
+    <bpmn:participant id="DC_Part_PHI" name="Primary Homes, Inc." processRef="DC_Process" />
+    <bpmn:participant id="DC_Part_buyer" name="Buyer" />
+    <bpmn:messageFlow id="DC_MsgFlow_1" name="Reservation request" sourceRef="DC_Part_buyer" targetRef="DC_c1" />
+    <bpmn:messageFlow id="DC_MsgFlow_2" name="Sales computation" sourceRef="DC_c2" targetRef="DC_Part_buyer" />
+    <bpmn:messageFlow id="DC_MsgFlow_3" name="Reservation fee" sourceRef="DC_Part_buyer" targetRef="DC_c4" />
+    <bpmn:messageFlow id="DC_MsgFlow_4" name="Invoice / receipt" sourceRef="DC_c5" targetRef="DC_Part_buyer" />
+    <bpmn:messageFlow id="DC_MsgFlow_5" name="KYC and financing documents" sourceRef="DC_Part_buyer" targetRef="DC_c7" />
+    <bpmn:messageFlow id="DC_MsgFlow_6" name="CTS for signature" sourceRef="DC_c9" targetRef="DC_Part_buyer" />
+    <bpmn:messageFlow id="DC_MsgFlow_7" name="Signed CTS" sourceRef="DC_Part_buyer" targetRef="DC_c10" />
+  </bpmn:collaboration>
+  <bpmn:process id="DC_Process" name="Reserve-to-contract" isExecutable="false">
+    <bpmn:laneSet id="DC_LaneSet">
+      <bpmn:lane id="DC_Lane_sc" name="Sales channel (in-house / broker)">
+        <bpmn:flowNodeRef>DC_c1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c3</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DC_Lane_sadm" name="Sales admin">
+        <bpmn:flowNodeRef>DC_c3n</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c6</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c8n</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c11</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c12</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DC_Lane_cash" name="Cashier &amp; accounting">
+        <bpmn:flowNodeRef>DC_c4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c5</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DC_Lane_cc" name="Credit &amp; collection">
+        <bpmn:flowNodeRef>DC_c7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c8</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DC_Lane_docs" name="Contracts &amp; documentation">
+        <bpmn:flowNodeRef>DC_c9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DC_c10</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DC_c1" name="Buyer selects unit and scheme">
+      <bpmn:outgoing>DC_Flow_1</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DC_c1_MsgDef" />
+    </bpmn:startEvent>
+    <bpmn:task id="DC_c2" name="Prepare sales computation (TCP, discounts, charges, terms)">
+      <bpmn:incoming>DC_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DC_c3" name="Discount within authority?">
+      <bpmn:incoming>DC_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>DC_Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DC_c3n" name="Approve special discount">
+      <bpmn:incoming>DC_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DC_c4" name="Reservation fee received">
+      <bpmn:incoming>DC_Flow_3</bpmn:incoming>
+      <bpmn:incoming>DC_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_6</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DC_c4_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DC_c5" name="Issue invoice / receipt; post reservation fee">
+      <bpmn:incoming>DC_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_7</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DC_c6" name="Tag unit reserved; create buyer and co-borrower records">
+      <bpmn:incoming>DC_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DC_c7" name="Check documents and credit per financing scheme">
+      <bpmn:incoming>DC_Flow_8</bpmn:incoming>
+      <bpmn:incoming>DC_Flow_12</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DC_c8" name="Complete and qualified?">
+      <bpmn:incoming>DC_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_10</bpmn:outgoing>
+      <bpmn:outgoing>DC_Flow_11</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DC_c8n" name="Follow up deficiencies before reservation expires">
+      <bpmn:incoming>DC_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DC_c9" name="Generate CTS and payment schedule">
+      <bpmn:incoming>DC_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_13</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DC_c10" name="Countersign and notarize CTS">
+      <bpmn:incoming>DC_Flow_13</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_14</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DC_c11" name="Tag unit sold; accrue broker commission">
+      <bpmn:incoming>DC_Flow_14</bpmn:incoming>
+      <bpmn:outgoing>DC_Flow_15</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DC_c12" name="Account handed to accounts monitoring">
+      <bpmn:incoming>DC_Flow_15</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DC_Flow_1" sourceRef="DC_c1" targetRef="DC_c2" />
+    <bpmn:sequenceFlow id="DC_Flow_2" sourceRef="DC_c2" targetRef="DC_c3" />
+    <bpmn:sequenceFlow id="DC_Flow_3" name="Yes" sourceRef="DC_c3" targetRef="DC_c4" />
+    <bpmn:sequenceFlow id="DC_Flow_4" name="No" sourceRef="DC_c3" targetRef="DC_c3n" />
+    <bpmn:sequenceFlow id="DC_Flow_5" sourceRef="DC_c3n" targetRef="DC_c4" />
+    <bpmn:sequenceFlow id="DC_Flow_6" sourceRef="DC_c4" targetRef="DC_c5" />
+    <bpmn:sequenceFlow id="DC_Flow_7" sourceRef="DC_c5" targetRef="DC_c6" />
+    <bpmn:sequenceFlow id="DC_Flow_8" sourceRef="DC_c6" targetRef="DC_c7" />
+    <bpmn:sequenceFlow id="DC_Flow_9" sourceRef="DC_c7" targetRef="DC_c8" />
+    <bpmn:sequenceFlow id="DC_Flow_10" name="Yes" sourceRef="DC_c8" targetRef="DC_c9" />
+    <bpmn:sequenceFlow id="DC_Flow_11" name="No" sourceRef="DC_c8" targetRef="DC_c8n" />
+    <bpmn:sequenceFlow id="DC_Flow_12" sourceRef="DC_c8n" targetRef="DC_c7" />
+    <bpmn:sequenceFlow id="DC_Flow_13" sourceRef="DC_c9" targetRef="DC_c10" />
+    <bpmn:sequenceFlow id="DC_Flow_14" sourceRef="DC_c10" targetRef="DC_c11" />
+    <bpmn:sequenceFlow id="DC_Flow_15" sourceRef="DC_c11" targetRef="DC_c12" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DC_Diagram" name="C. Reserve-to-contract">
+    <bpmndi:BPMNPlane id="DC_Plane" bpmnElement="DC_Collaboration">
+      <bpmndi:BPMNShape id="DC_Part_PHI_di" bpmnElement="DC_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="88" width="2192" height="540" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_Lane_sc_di" bpmnElement="DC_Lane_sc" isHorizontal="true"><dc:Bounds x="30" y="88" width="2162" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_Lane_sadm_di" bpmnElement="DC_Lane_sadm" isHorizontal="true"><dc:Bounds x="30" y="196" width="2162" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_Lane_cash_di" bpmnElement="DC_Lane_cash" isHorizontal="true"><dc:Bounds x="30" y="304" width="2162" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_Lane_cc_di" bpmnElement="DC_Lane_cc" isHorizontal="true"><dc:Bounds x="30" y="412" width="2162" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_Lane_docs_di" bpmnElement="DC_Lane_docs" isHorizontal="true"><dc:Bounds x="30" y="520" width="2162" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_Part_buyer_di" bpmnElement="DC_Part_buyer" isHorizontal="true"><dc:Bounds x="0" y="10" width="2192" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c1_di" bpmnElement="DC_c1"><dc:Bounds x="187" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="164" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c2_di" bpmnElement="DC_c2"><dc:Bounds x="289" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c3_di" bpmnElement="DC_c3" isMarkerVisible="true"><dc:Bounds x="476" y="121" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="442" y="87" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c3n_di" bpmnElement="DC_c3n"><dc:Bounds x="581" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c4_di" bpmnElement="DC_c4"><dc:Bounds x="771" y="340" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="734" y="380" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c5_di" bpmnElement="DC_c5"><dc:Bounds x="873" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c6_di" bpmnElement="DC_c6"><dc:Bounds x="1019" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c7_di" bpmnElement="DC_c7"><dc:Bounds x="1165" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c8_di" bpmnElement="DC_c8" isMarkerVisible="true"><dc:Bounds x="1352" y="445" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="1318" y="411" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c8n_di" bpmnElement="DC_c8n"><dc:Bounds x="1457" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c9_di" bpmnElement="DC_c9"><dc:Bounds x="1603" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c10_di" bpmnElement="DC_c10"><dc:Bounds x="1749" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c11_di" bpmnElement="DC_c11"><dc:Bounds x="1895" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DC_c12_di" bpmnElement="DC_c12"><dc:Bounds x="2085" y="232" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2048" y="272" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DC_Flow_1_di" bpmnElement="DC_Flow_1"><di:waypoint x="223" y="142" /><di:waypoint x="289" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_2_di" bpmnElement="DC_Flow_2"><di:waypoint x="413" y="142" /><di:waypoint x="476" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_3_di" bpmnElement="DC_Flow_3"><di:waypoint x="518" y="142" /><di:waypoint x="532" y="142" /><di:waypoint x="532" y="358" /><di:waypoint x="771" y="358" /><bpmndi:BPMNLabel><dc:Bounds x="536" y="340" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_4_di" bpmnElement="DC_Flow_4"><di:waypoint x="518" y="142" /><di:waypoint x="532" y="142" /><di:waypoint x="532" y="250" /><di:waypoint x="581" y="250" /><bpmndi:BPMNLabel><dc:Bounds x="536" y="232" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_5_di" bpmnElement="DC_Flow_5"><di:waypoint x="705" y="250" /><di:waypoint x="719" y="250" /><di:waypoint x="719" y="358" /><di:waypoint x="771" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_6_di" bpmnElement="DC_Flow_6"><di:waypoint x="807" y="358" /><di:waypoint x="873" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_7_di" bpmnElement="DC_Flow_7"><di:waypoint x="997" y="358" /><di:waypoint x="1011" y="358" /><di:waypoint x="1011" y="250" /><di:waypoint x="1019" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_8_di" bpmnElement="DC_Flow_8"><di:waypoint x="1143" y="250" /><di:waypoint x="1157" y="250" /><di:waypoint x="1157" y="466" /><di:waypoint x="1165" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_9_di" bpmnElement="DC_Flow_9"><di:waypoint x="1289" y="466" /><di:waypoint x="1352" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_10_di" bpmnElement="DC_Flow_10"><di:waypoint x="1394" y="466" /><di:waypoint x="1408" y="466" /><di:waypoint x="1408" y="574" /><di:waypoint x="1603" y="574" /><bpmndi:BPMNLabel><dc:Bounds x="1412" y="556" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_11_di" bpmnElement="DC_Flow_11"><di:waypoint x="1394" y="466" /><di:waypoint x="1408" y="466" /><di:waypoint x="1408" y="250" /><di:waypoint x="1457" y="250" /><bpmndi:BPMNLabel><dc:Bounds x="1412" y="232" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_12_di" bpmnElement="DC_Flow_12"><di:waypoint x="1519" y="280" /><di:waypoint x="1519" y="420" /><di:waypoint x="1227" y="420" /><di:waypoint x="1227" y="436" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_13_di" bpmnElement="DC_Flow_13"><di:waypoint x="1727" y="574" /><di:waypoint x="1749" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_14_di" bpmnElement="DC_Flow_14"><di:waypoint x="1873" y="574" /><di:waypoint x="1887" y="574" /><di:waypoint x="1887" y="250" /><di:waypoint x="1895" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_Flow_15_di" bpmnElement="DC_Flow_15"><di:waypoint x="2019" y="250" /><di:waypoint x="2085" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_1_di" bpmnElement="DC_MsgFlow_1"><di:waypoint x="205" y="70" /><di:waypoint x="205" y="124" /><bpmndi:BPMNLabel><dc:Bounds x="211" y="89" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_2_di" bpmnElement="DC_MsgFlow_2"><di:waypoint x="351" y="112" /><di:waypoint x="351" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="357" y="83" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_3_di" bpmnElement="DC_MsgFlow_3"><di:waypoint x="789" y="70" /><di:waypoint x="789" y="340" /><bpmndi:BPMNLabel><dc:Bounds x="795" y="197" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_4_di" bpmnElement="DC_MsgFlow_4"><di:waypoint x="935" y="328" /><di:waypoint x="935" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="941" y="191" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_5_di" bpmnElement="DC_MsgFlow_5"><di:waypoint x="1227" y="70" /><di:waypoint x="1227" y="436" /><bpmndi:BPMNLabel><dc:Bounds x="1233" y="245" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_6_di" bpmnElement="DC_MsgFlow_6"><di:waypoint x="1665" y="544" /><di:waypoint x="1665" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="1671" y="299" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DC_MsgFlow_7_di" bpmnElement="DC_MsgFlow_7"><di:waypoint x="1811" y="70" /><di:waypoint x="1811" y="544" /><bpmndi:BPMNLabel><dc:Bounds x="1817" y="299" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

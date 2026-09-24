@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="DE_Definitions" targetNamespace="https://primaryhomes.com.ph/bpmn/blueprint" exporter="PHI Enterprise Process Blueprint" exporterVersion="Rev B">
+  <bpmn:collaboration id="DE_Collaboration">
+    <bpmn:documentation>E. Procure-to-pay — covers 03 Corporate expenses · 06 Project expenses · 14 TORC (taxes and other related charges) · 16 AP · 17 Commissions. One pattern for every spend stream in the reference flow — corporate, land, project, sales, TORC, property management and loan payments — so budget checks, approvals, withholding tax and 2307s behave the same everywhere.</bpmn:documentation>
+    <bpmn:participant id="DE_Part_PHI" name="Primary Homes, Inc." processRef="DE_Process" />
+    <bpmn:participant id="DE_Part_sup" name="Supplier / contractor / broker" />
+    <bpmn:messageFlow id="DE_MsgFlow_1" name="PO / contract" sourceRef="DE_f4" targetRef="DE_Part_sup" />
+    <bpmn:messageFlow id="DE_MsgFlow_2" name="Goods, services, accomplishment" sourceRef="DE_Part_sup" targetRef="DE_f5" />
+    <bpmn:messageFlow id="DE_MsgFlow_3" name="Invoice / billing" sourceRef="DE_Part_sup" targetRef="DE_f7" />
+    <bpmn:messageFlow id="DE_MsgFlow_4" name="Payment and 2307" sourceRef="DE_f10" targetRef="DE_Part_sup" />
+  </bpmn:collaboration>
+  <bpmn:process id="DE_Process" name="Procure-to-pay" isExecutable="false">
+    <bpmn:laneSet id="DE_LaneSet">
+      <bpmn:lane id="DE_Lane_req" name="Requesting dept / project team">
+        <bpmn:flowNodeRef>DE_f1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DE_f2</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DE_f5</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DE_Lane_dao" name="Finance &amp; approvers (DOA)">
+        <bpmn:flowNodeRef>DE_f3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DE_f3n</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DE_f9</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DE_Lane_proc" name="Procurement">
+        <bpmn:flowNodeRef>DE_f4</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DE_Lane_qs" name="Cost control / QS">
+        <bpmn:flowNodeRef>DE_f6</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DE_Lane_ap" name="Accounting – AP">
+        <bpmn:flowNodeRef>DE_f7</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DE_f8</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="DE_Lane_tre" name="Treasury">
+        <bpmn:flowNodeRef>DE_f10</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>DE_f11</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="DE_f1" name="Spend need arises">
+      <bpmn:outgoing>DE_Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:task id="DE_f2" name="Raise purchase or payment request with budget line">
+      <bpmn:incoming>DE_Flow_1</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_2</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="DE_f3" name="Budget available?">
+      <bpmn:incoming>DE_Flow_2</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_3</bpmn:outgoing>
+      <bpmn:outgoing>DE_Flow_4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="DE_f3n" name="Realign budget or get exception approval">
+      <bpmn:incoming>DE_Flow_4</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_5</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DE_f4" name="Source and issue PO or contract">
+      <bpmn:incoming>DE_Flow_3</bpmn:incoming>
+      <bpmn:incoming>DE_Flow_5</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_6</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DE_f5" name="Delivered or accomplished">
+      <bpmn:incoming>DE_Flow_6</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_7</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DE_f5_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DE_f6" name="Verify receipt or % accomplishment; update progress">
+      <bpmn:incoming>DE_Flow_7</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:intermediateCatchEvent id="DE_f7" name="Vendor bill received">
+      <bpmn:incoming>DE_Flow_8</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_9</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="DE_f7_MsgDef" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:task id="DE_f8" name="3-way match; compute VAT, EWT, retention">
+      <bpmn:incoming>DE_Flow_9</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_10</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DE_f9" name="Approve per DOA matrix">
+      <bpmn:incoming>DE_Flow_10</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_11</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="DE_f10" name="Release payment; issue BIR 2307">
+      <bpmn:incoming>DE_Flow_11</bpmn:incoming>
+      <bpmn:outgoing>DE_Flow_12</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="DE_f11" name="Paid; actuals vs budget updated">
+      <bpmn:incoming>DE_Flow_12</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="DE_Flow_1" sourceRef="DE_f1" targetRef="DE_f2" />
+    <bpmn:sequenceFlow id="DE_Flow_2" sourceRef="DE_f2" targetRef="DE_f3" />
+    <bpmn:sequenceFlow id="DE_Flow_3" name="Yes" sourceRef="DE_f3" targetRef="DE_f4" />
+    <bpmn:sequenceFlow id="DE_Flow_4" name="No" sourceRef="DE_f3" targetRef="DE_f3n" />
+    <bpmn:sequenceFlow id="DE_Flow_5" sourceRef="DE_f3n" targetRef="DE_f4" />
+    <bpmn:sequenceFlow id="DE_Flow_6" sourceRef="DE_f4" targetRef="DE_f5" />
+    <bpmn:sequenceFlow id="DE_Flow_7" sourceRef="DE_f5" targetRef="DE_f6" />
+    <bpmn:sequenceFlow id="DE_Flow_8" sourceRef="DE_f6" targetRef="DE_f7" />
+    <bpmn:sequenceFlow id="DE_Flow_9" sourceRef="DE_f7" targetRef="DE_f8" />
+    <bpmn:sequenceFlow id="DE_Flow_10" sourceRef="DE_f8" targetRef="DE_f9" />
+    <bpmn:sequenceFlow id="DE_Flow_11" sourceRef="DE_f9" targetRef="DE_f10" />
+    <bpmn:sequenceFlow id="DE_Flow_12" sourceRef="DE_f10" targetRef="DE_f11" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="DE_Diagram" name="E. Procure-to-pay">
+    <bpmndi:BPMNPlane id="DE_Plane" bpmnElement="DE_Collaboration">
+      <bpmndi:BPMNShape id="DE_Part_PHI_di" bpmnElement="DE_Part_PHI" isHorizontal="true"><dc:Bounds x="0" y="88" width="1900" height="648" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Lane_req_di" bpmnElement="DE_Lane_req" isHorizontal="true"><dc:Bounds x="30" y="88" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Lane_dao_di" bpmnElement="DE_Lane_dao" isHorizontal="true"><dc:Bounds x="30" y="196" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Lane_proc_di" bpmnElement="DE_Lane_proc" isHorizontal="true"><dc:Bounds x="30" y="304" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Lane_qs_di" bpmnElement="DE_Lane_qs" isHorizontal="true"><dc:Bounds x="30" y="412" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Lane_ap_di" bpmnElement="DE_Lane_ap" isHorizontal="true"><dc:Bounds x="30" y="520" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Lane_tre_di" bpmnElement="DE_Lane_tre" isHorizontal="true"><dc:Bounds x="30" y="628" width="1870" height="108" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_Part_sup_di" bpmnElement="DE_Part_sup" isHorizontal="true"><dc:Bounds x="0" y="10" width="1900" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f1_di" bpmnElement="DE_f1"><dc:Bounds x="187" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="150" y="164" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f2_di" bpmnElement="DE_f2"><dc:Bounds x="289" y="112" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f3_di" bpmnElement="DE_f3" isMarkerVisible="true"><dc:Bounds x="476" y="229" width="42" height="42" /><bpmndi:BPMNLabel><dc:Bounds x="442" y="208" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f3n_di" bpmnElement="DE_f3n"><dc:Bounds x="581" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f4_di" bpmnElement="DE_f4"><dc:Bounds x="727" y="328" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f5_di" bpmnElement="DE_f5"><dc:Bounds x="917" y="124" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="880" y="164" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f6_di" bpmnElement="DE_f6"><dc:Bounds x="1019" y="436" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f7_di" bpmnElement="DE_f7"><dc:Bounds x="1209" y="556" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1172" y="596" width="110" height="13" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f8_di" bpmnElement="DE_f8"><dc:Bounds x="1311" y="544" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f9_di" bpmnElement="DE_f9"><dc:Bounds x="1457" y="220" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f10_di" bpmnElement="DE_f10"><dc:Bounds x="1603" y="652" width="124" height="60" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DE_f11_di" bpmnElement="DE_f11"><dc:Bounds x="1793" y="664" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1756" y="704" width="110" height="26" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="DE_Flow_1_di" bpmnElement="DE_Flow_1"><di:waypoint x="223" y="142" /><di:waypoint x="289" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_2_di" bpmnElement="DE_Flow_2"><di:waypoint x="413" y="142" /><di:waypoint x="427" y="142" /><di:waypoint x="427" y="250" /><di:waypoint x="476" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_3_di" bpmnElement="DE_Flow_3"><di:waypoint x="518" y="250" /><di:waypoint x="532" y="250" /><di:waypoint x="532" y="358" /><di:waypoint x="727" y="358" /><bpmndi:BPMNLabel><dc:Bounds x="536" y="340" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_4_di" bpmnElement="DE_Flow_4"><di:waypoint x="518" y="250" /><di:waypoint x="581" y="250" /><bpmndi:BPMNLabel><dc:Bounds x="522" y="232" width="90" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_5_di" bpmnElement="DE_Flow_5"><di:waypoint x="705" y="250" /><di:waypoint x="719" y="250" /><di:waypoint x="719" y="358" /><di:waypoint x="727" y="358" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_6_di" bpmnElement="DE_Flow_6"><di:waypoint x="851" y="358" /><di:waypoint x="865" y="358" /><di:waypoint x="865" y="142" /><di:waypoint x="917" y="142" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_7_di" bpmnElement="DE_Flow_7"><di:waypoint x="953" y="142" /><di:waypoint x="967" y="142" /><di:waypoint x="967" y="466" /><di:waypoint x="1019" y="466" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_8_di" bpmnElement="DE_Flow_8"><di:waypoint x="1143" y="466" /><di:waypoint x="1157" y="466" /><di:waypoint x="1157" y="574" /><di:waypoint x="1209" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_9_di" bpmnElement="DE_Flow_9"><di:waypoint x="1245" y="574" /><di:waypoint x="1311" y="574" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_10_di" bpmnElement="DE_Flow_10"><di:waypoint x="1435" y="574" /><di:waypoint x="1449" y="574" /><di:waypoint x="1449" y="250" /><di:waypoint x="1457" y="250" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_11_di" bpmnElement="DE_Flow_11"><di:waypoint x="1581" y="250" /><di:waypoint x="1595" y="250" /><di:waypoint x="1595" y="682" /><di:waypoint x="1603" y="682" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_Flow_12_di" bpmnElement="DE_Flow_12"><di:waypoint x="1727" y="682" /><di:waypoint x="1793" y="682" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_MsgFlow_1_di" bpmnElement="DE_MsgFlow_1"><di:waypoint x="789" y="328" /><di:waypoint x="789" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="795" y="191" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_MsgFlow_2_di" bpmnElement="DE_MsgFlow_2"><di:waypoint x="935" y="70" /><di:waypoint x="935" y="124" /><bpmndi:BPMNLabel><dc:Bounds x="941" y="89" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_MsgFlow_3_di" bpmnElement="DE_MsgFlow_3"><di:waypoint x="1227" y="70" /><di:waypoint x="1227" y="556" /><bpmndi:BPMNLabel><dc:Bounds x="1233" y="305" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DE_MsgFlow_4_di" bpmnElement="DE_MsgFlow_4"><di:waypoint x="1665" y="652" /><di:waypoint x="1665" y="70" /><bpmndi:BPMNLabel><dc:Bounds x="1671" y="353" width="160" height="16" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
