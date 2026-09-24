@@ -129,6 +129,8 @@ export default function ProcessDetail() {
             <dt>Indicative Odoo 19 home</dt><dd>{p.odoo_home}</dd>
             <dt>Fit</dt><dd><Fit fit={p.fit} /></dd>
             {p.diagrams.length > 0 && <><dt>Swimlanes</dt><dd>{p.diagrams.map((d, i) => <span key={d.id}>{i > 0 && ' · '}<Link to={`/diagrams/${d.id}`}>{d.id}. {d.title}</Link></span>)}</dd></>}
+            {p.sow_gap && <><dt>AWB SOW coverage</dt><dd><Link to="/sow?tab=gaps"><span className={`rating ${p.sow_gap.rating}`}>{p.sow_gap.rating}</span></Link> <span className="small muted">{p.sow_gap.status}{p.sow_gap.rating !== 'Covered' ? ` · ${p.sow_gap.gaps}` : ''}</span></dd></>}
+            {p.reengineering.length > 0 && <><dt>Re-engineering</dt><dd>{p.reengineering.map((r) => <Link key={r.id} className="pill" to={`/reengineering/${r.id}`}>{r.id} {r.title}{r.phi_decision ? ` · ${r.phi_decision}` : ''}</Link>)}</dd></>}
             <dt>Last updated</dt><dd>{fmtDateTime(p.updated_at)}{p.updated_by_name && ` by ${p.updated_by_name}`}</dd>
           </dl>
         )}

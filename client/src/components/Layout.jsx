@@ -12,6 +12,9 @@ export default function Layout() {
     ['/matrix', 'S-3', 'Data matrix'],
     ['/master-data', 'S-4', 'Master data & Lot'],
     ['/open-items', 'S-5', 'Open items'],
+    ['/reengineering', 'S-6', 'Re-engineering'],
+    ['/sow', 'S-7', 'SOW & vendor'],
+    ['/documents', 'S-8', 'Documents'],
     ['/activity', '', 'Activity'],
     ...(isAdmin ? [['/users', '', 'Users']] : []),
   ];

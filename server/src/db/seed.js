@@ -16,7 +16,7 @@ async function seedContent() {
   await tx(async (c) => {
     if (force) {
       await c.query(`TRUNCATE comments, activity_log, diagram_versions, diagrams, open_items, lot_touchpoints,
-        master_data, matrix_steps, process_owners, processes, stages, process_groups RESTART IDENTITY CASCADE`);
+        master_data, matrix_steps, process_owners, sow_gaps, processes, stages, process_groups RESTART IDENTITY CASCADE`);
     }
     for (const [i, g] of data.groups.entries()) {
       await c.query('INSERT INTO process_groups(id,name,color,sort) VALUES ($1,$2,$3,$4)', [g.id, g.name, g.color, i]);
@@ -59,6 +59,49 @@ async function seedContent() {
   console.log(`Seeded ${data.processes.length} processes, ${data.matrix.length} matrix steps, ${data.diagrams.length} diagrams.`);
 }
 
+async function seedProject() {
+  const data = JSON.parse(readFileSync(join(config.seedDir, 'project.json'), 'utf8'));
+  const empty = async (table) => (await pool.query(`SELECT count(*)::int AS n FROM ${table}`)).rows[0].n === 0;
+  const done = [];
+  await tx(async (c) => {
+    if (force) await c.query('TRUNCATE reengineering, sow_meta, sow_items, sow_effort, sow_gaps, sow_observations, sow_appendix RESTART IDENTITY');
+    if (force || await empty('reengineering')) {
+      for (const r of data.reengineering) {
+        await c.query(
+          `INSERT INTO reengineering (id,title,process_refs,current_process,pain_points,proposed,justification,controls,benefits,wave,continues,
+             odoo_enabler,sow_status,kpi,target,why_problem,how_fixes,control_effect,before_steps,after_steps,what_changes,roles_affected,
+             sow_sections,sow_items,impact_type,awb_change,appendix_ref,effort_low,effort_high,offset_low,offset_high,build_phase,sow_wording,
+             flex_category,risk,sort)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$33,$34,$35,$36)`,
+          [r.id, r.title, r.process_refs, r.current_process, r.pain_points, r.proposed, r.justification, r.controls, r.benefits, r.wave, r.continues,
+            r.odoo_enabler, r.sow_status, r.kpi, r.target, r.why_problem, r.how_fixes, r.control_effect, JSON.stringify(r.before_steps),
+            JSON.stringify(r.after_steps), r.what_changes, r.roles_affected, r.sow_sections, JSON.stringify(r.sow_items), r.impact_type, r.awb_change,
+            r.appendix_ref, r.effort_low, r.effort_high, r.offset_low, r.offset_high, r.build_phase, r.sow_wording, r.flex_category, r.risk, r.sort]);
+      }
+      done.push(`${data.reengineering.length} re-engineering opportunities`);
+    }
+    if (force || await empty('sow_items')) {
+      for (const [k, v] of Object.entries(data.sow_meta)) await c.query('INSERT INTO sow_meta(key,value) VALUES ($1,$2) ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value', [k, JSON.stringify(v)]);
+      for (const i of data.sow_items) await c.query('INSERT INTO sow_items(no,section,feature,dev_days,process_refs) VALUES ($1,$2,$3,$4,$5)', [i.no, i.section, i.feature, i.dev_days, i.process_refs]);
+      for (const e of data.sow_effort) await c.query('INSERT INTO sow_effort(workstream,lead,ba,dev_lead,dev,qa,infra,stated_total,sort) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+        [e.workstream, e.lead, e.ba, e.dev_lead, e.dev, e.qa, e.infra, e.stated_total, e.sort]);
+      for (const g of data.sow_gaps) await c.query(
+        `INSERT INTO sow_gaps(ref,kind,process_id,title,requirement,sow_coverage,rating,gaps,action,priority,steps_affected,status,sort)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+        [g.ref, g.kind, g.process_id, g.title, g.requirement, g.sow_coverage, g.rating, g.gaps, g.action, g.priority, g.steps_affected, g.status, g.sort]);
+      for (const o of data.sow_observations) await c.query(
+        `INSERT INTO sow_observations(code,title,reference,finding,impact,internal_ask,letter_observation,letter_request,status,sort)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+        [o.code, o.title, o.reference, o.finding, o.impact, o.internal_ask, o.letter_observation, o.letter_request, o.status, o.sort]);
+      for (const a of data.appendix) await c.query(
+        'INSERT INTO sow_appendix(code,part,title,process_ref,scope,priority,status,sort) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+        [a.code, a.part, a.title, a.process_ref, a.scope, a.priority, a.status, a.sort]);
+      done.push(`SOW review (${data.sow_items.length} items, ${data.sow_gaps.length} gaps, ${data.sow_observations.length} observations, ${data.appendix.length} appendix items)`);
+    }
+  });
+  console.log(done.length ? `Seeded ${done.join('; ')}.` : 'Project workspace data already present — skipping.');
+}
+
 async function seedAdmin() {
   const { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_NAME } = process.env;
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
@@ -74,4 +117,4 @@ async function seedAdmin() {
   console.log(`Created admin ${ADMIN_EMAIL} — they'll be asked to change the password on first sign-in.`);
 }
 
-seedContent().then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });
+seedContent().then(seedProject).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });

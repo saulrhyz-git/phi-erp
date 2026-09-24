@@ -12,7 +12,7 @@ r.get('/meta', async (req, res) => {
 });
 
 r.get('/dashboard', async (req, res) => {
-  const [steps, fit, items, diagrams, recent] = await Promise.all([
+  const [steps, fit, items, diagrams, recent, reeng, gaps, obs, docs] = await Promise.all([
     q(`SELECT validation_status AS status, count(*)::int AS n FROM matrix_steps GROUP BY 1`),
     q(`SELECT g.id AS group_id, g.name, g.color, m.fit, count(*)::int AS n
          FROM matrix_steps m JOIN processes p ON p.id=m.process_id JOIN process_groups g ON g.id=p.group_id
@@ -20,6 +20,14 @@ r.get('/dashboard', async (req, res) => {
     q(`SELECT status, count(*)::int AS n FROM open_items GROUP BY 1`),
     q(`SELECT count(*)::int AS n, COALESCE(sum(current_version - 1),0)::int AS revisions FROM diagrams`),
     q(`SELECT a.*, u.name AS user_name FROM activity_log a LEFT JOIN users u ON u.id=a.user_id ORDER BY a.at DESC LIMIT 8`),
+    q(`SELECT count(*)::int AS total, count(*) FILTER (WHERE phi_decision IN ('Accept','Accept with changes'))::int AS accepted,
+              count(*) FILTER (WHERE phi_decision='')::int AS undecided FROM reengineering`),
+    q(`SELECT count(*) FILTER (WHERE kind='process')::int AS processes,
+              count(*) FILTER (WHERE kind='process' AND rating='Covered')::int AS covered,
+              count(*) FILTER (WHERE rating<>'Covered' AND priority='High' AND status NOT IN ('Closed','Agreed in scope','Deferred (next phase)'))::int AS open_high
+         FROM sow_gaps`),
+    q(`SELECT count(*) FILTER (WHERE status NOT IN ('Resolved','Accepted','Closed'))::int AS open, count(*)::int AS total FROM sow_observations`),
+    q('SELECT count(*)::int AS n FROM documents'),
   ]);
   const byStatus = Object.fromEntries(steps.rows.map((x) => [x.status, x.n]));
   const fitByGroup = {};
@@ -33,6 +41,7 @@ r.get('/dashboard', async (req, res) => {
     openItems: { open: 0, in_progress: 0, closed: 0, ...Object.fromEntries(items.rows.map((x) => [x.status, x.n])) },
     diagrams: diagrams.rows[0],
     recent: recent.rows,
+    reengineering: reeng.rows[0], sowGaps: gaps.rows[0], observations: obs.rows[0], documents: docs.rows[0].n,
   });
 });
 

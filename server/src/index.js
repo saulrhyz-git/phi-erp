@@ -18,6 +18,9 @@ import commentRoutes from './routes/comments.js';
 import userRoutes from './routes/users.js';
 import activityRoutes from './routes/activity.js';
 import exportRoutes from './routes/exports.js';
+import reengineeringRoutes from './routes/reengineering.js';
+import sowRoutes from './routes/sow.js';
+import documentRoutes from './routes/documents.js';
 
 const app = express();
 app.set('trust proxy', 1); // behind Nginx
@@ -40,7 +43,9 @@ app.use(helmet({
   hsts: config.cookieSecure,
 }));
 app.use(compression());
-app.use(express.json({ limit: '6mb' }));
+const jsonBody = express.json({ limit: '6mb' });
+// Document uploads send the raw file as the body; everything else is JSON.
+app.use((req, res, next) => (req.method === 'POST' && req.path.startsWith('/api/documents') ? next() : jsonBody(req, res, next)));
 app.use(cookieParser());
 
 // ---- API ----
@@ -60,6 +65,9 @@ api.use('/diagrams', diagramRoutes);
 api.use('/comments', commentRoutes);
 api.use('/activity', activityRoutes);
 api.use('/export', exportRoutes);
+api.use('/reengineering', reengineeringRoutes);
+api.use('/sow', sowRoutes);
+api.use('/documents', documentRoutes);
 api.use('/users', requireRole('admin'), userRoutes);
 api.use((req, res) => res.status(404).json({ error: 'Not found.' }));
 app.use('/api', api);

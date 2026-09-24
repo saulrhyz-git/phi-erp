@@ -31,7 +31,7 @@ function addSheet(wb, name, columns, rows) {
 }
 
 r.get('/xlsx', async (req, res) => {
-  const [procs, steps, md, lot, items] = await Promise.all([
+  const [procs, steps, md, lot, items, reeng, gaps, obs, app] = await Promise.all([
     q(`SELECT p.*, g.name AS group_name, s.name AS stage_name,
               COALESCE((SELECT string_agg(u.name, ', ') FROM process_owners po JOIN users u ON u.id=po.user_id WHERE po.process_id=p.id),'') AS owners
          FROM processes p JOIN process_groups g ON g.id=p.group_id LEFT JOIN stages s ON s.id=p.stage_id ORDER BY p.sort`),
@@ -40,6 +40,10 @@ r.get('/xlsx', async (req, res) => {
     q('SELECT * FROM master_data ORDER BY sort'),
     q('SELECT * FROM lot_touchpoints ORDER BY sort'),
     q('SELECT * FROM open_items ORDER BY sort, id'),
+    q('SELECT * FROM reengineering ORDER BY sort'),
+    q('SELECT * FROM sow_gaps ORDER BY sort'),
+    q('SELECT * FROM sow_observations ORDER BY sort'),
+    q('SELECT * FROM sow_appendix ORDER BY sort'),
   ]);
   const wb = new ExcelJS.Workbook();
   wb.creator = 'PHI Enterprise Process Blueprint';
@@ -52,7 +56,7 @@ r.get('/xlsx', async (req, res) => {
     [],
     ['Exported', new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' })],
     ['Exported by', req.user.name],
-    ['Contents', 'Process Catalogue · SIPOC · Data Matrix (with validation status) · Master Data · Lot Touchpoints · Open Items'],
+    ['Contents', 'Process Catalogue · SIPOC · Data Matrix (with validation status) · Master Data · Lot Touchpoints · Open Items · Re-engineering · SOW Gap Analysis · SOW Observations · SOW Appendix A-B'],
     ['Key decisions', 'Vendor proposes the Lot as the master model. TORC = taxes and other related charges.'],
     ['Note', 'This is a snapshot of the live blueprint. Make changes in the web app so validation history is kept.'],
   ]);
@@ -77,6 +81,26 @@ r.get('/xlsx', async (req, res) => {
   addSheet(wb, 'Open Items',
     [['#', 'code', 6], ['Item', 'title', 36], ['Detail', 'detail', 70], ['Owner', 'owner', 20], ['Decision', 'decision', 40], ['Target date', 'target_date', 13], ['Status', 'status', 12]],
     items.rows);
+
+  const stepText = (a) => (a || []).map((s, i) => `${i + 1}. ${s.tag ? `[${s.tag}] ` : ''}${s.text}`).join('\n');
+  addSheet(wb, 'Re-engineering',
+    [['ID', 'id', 7], ['Opportunity', 'title', 28], ['Process', 'process_refs', 10], ['Current process', 'current_process', 40], ['Proposed', 'proposed', 44],
+      ['Why change', 'why_problem', 40], ['How it fixes it', 'how_fixes', 40], ['Control effect', 'control_effect', 34], ['Before steps', 'before', 44], ['After steps', 'after', 46],
+      ['Wave', 'wave', 18], ['Impact on SOW', 'impact_type', 20], ['AWB change', 'awb_change', 40], ['Appendix', 'appendix_ref', 9],
+      ['Effort low (md)', 'effort_low', 9], ['Effort high (md)', 'effort_high', 9], ['KPI', 'kpi', 28], ['Target', 'target', 18], ['Baseline', 'kpi_baseline', 14],
+      ['PHI decision', 'phi_decision', 16], ['PHI owner', 'phi_owner', 16], ['Negotiation status', 'negotiation_status', 16], ['PHI comments', 'phi_comments', 30]],
+    reeng.rows.map((r) => ({ ...r, before: stepText(r.before_steps), after: stepText(r.after_steps), effort_low: Number(r.effort_low), effort_high: Number(r.effort_high) })));
+  addSheet(wb, 'SOW Gap Analysis',
+    [['Ref', 'ref', 7], ['Kind', 'kind', 10], ['Title / process', 'title', 28], ['Rating', 'rating', 12], ['SOW coverage', 'sow_coverage', 36], ['Gaps', 'gaps', 50],
+      ['Action', 'action', 40], ['Priority', 'priority', 10], ['PHI response', 'phi_response', 30], ['Vendor response', 'vendor_response', 30], ['Status', 'status', 18]],
+    gaps.rows.map((g) => ({ ...g, title: g.title || g.process_id })));
+  addSheet(wb, 'SOW Observations',
+    [['#', 'code', 6], ['Observation', 'title', 30], ['SOW reference', 'reference', 18], ['Finding', 'finding', 50], ['Request to AWB', 'letter_request', 50],
+      ['Owner', 'owner', 16], ['Vendor response', 'vendor_response', 36], ['Status', 'status', 16]], obs.rows);
+  addSheet(wb, 'SOW Appendix A-B',
+    [['#', 'code', 6], ['Item', 'title', 30], ['Process', 'process_ref', 10], ['Scope / confirmation', 'scope', 60], ['Priority', 'priority', 10],
+      ['Vendor response', 'vendor_response', 36], ['Vendor estimate (md)', 'vendor_estimate', 12], ['Status', 'status', 16]],
+    app.rows.map((a) => ({ ...a, vendor_estimate: a.vendor_estimate === null ? null : Number(a.vendor_estimate) })));
 
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', `attachment; filename="PHI_Process_Blueprint_${stamp()}.xlsx"`);

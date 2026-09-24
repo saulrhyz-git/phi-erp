@@ -1,0 +1,3887 @@
+{
+ "reengineering": [
+  {
+   "id": "RE-01",
+   "title": "Driver-based budget with commitment control",
+   "process_refs": "01",
+   "current_process": "Annual static budget: departments and PDD fill templates, Finance consolidates, ManCom approves. Spending is checked against budget mainly when the bill arrives.",
+   "pain_points": "Budget is outdated within months. Overspend is found after the commitment is made. Consolidation is heavy manual work.",
+   "proposed": "Build the budget from drivers (units, prices, cost per sqm, headcount) and reforecast quarterly. Check budget availability at purchase request and reserve the amount (commitment control).",
+   "justification": "Overspend is caught before PHI is committed, not after the invoice. Reforecasting replaces most re-budgeting. Drivers make consolidation automatic and explainable.",
+   "controls": "Approved baseline locked and versioned. Realignments above threshold need DOA approval. Every override logged.",
+   "benefits": "Efficiency, Transparency, Reporting",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Budgets (analytic plans), Purchase approvals, Spreadsheet",
+   "sow_status": "Gap — Appendix A8",
+   "kpi": "% of POs budget-checked at request; full-year forecast accuracy",
+   "target": "100% of POs; within ±5% by Q3",
+   "why_problem": "The budget is a once-a-year spreadsheet with no link to what PHI actually commits. Spend is checked only when bills post, after PHI is already contractually committed, so the budget reports variances but cannot prevent them.",
+   "how_fixes": "A driver model ties the budget to operational reality (units sold, cost per sqm), so a change in drivers updates the budget instead of forcing a re-budget. Checking and reserving budget at the purchase request stops overspend at the cheapest point — before a supplier is engaged.",
+   "control_effect": "Strengthens control: a detective check (variance after posting) becomes a preventive one (block or escalate before commitment). Baseline versions and every override are logged for audit.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Finance issues budget templates to departments and PDD"
+    },
+    {
+     "tag": "Manual",
+     "text": "Departments fill in templates line by line"
+    },
+    {
+     "tag": "Rekey",
+     "text": "Finance consolidates spreadsheets into one file"
+    },
+    {
+     "tag": "",
+     "text": "ManCom reviews and approves the annual budget"
+    },
+    {
+     "tag": "Manual",
+     "text": "Purchase request raised with no budget check"
+    },
+    {
+     "tag": "Manual",
+     "text": "PO issued; supplier delivers; bill received"
+    },
+    {
+     "tag": "Wait",
+     "text": "Overspend found when the bill posts against the budget report"
+    },
+    {
+     "tag": "Manual",
+     "text": "Budget realignment requested after the fact"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "Finance sets budget drivers (units, prices, cost per sqm, headcount)"
+    },
+    {
+     "tag": "Same",
+     "text": "Departments and PDD enter or adjust drivers and assumptions"
+    },
+    {
+     "tag": "Auto",
+     "text": "System computes and consolidates budget lines from drivers"
+    },
+    {
+     "tag": "Same",
+     "text": "ManCom approves; baseline locked and versioned"
+    },
+    {
+     "tag": "Rule",
+     "text": "Purchase request checked against available budget; amount reserved"
+    },
+    {
+     "tag": "Rule",
+     "text": "Requests over budget routed to the DOA approver before any PO"
+    },
+    {
+     "tag": "Auto",
+     "text": "PO and bill consume the reserved commitment"
+    },
+    {
+     "tag": "New",
+     "text": "Quarterly reforecast updates drivers and explains variances"
+    }
+   ],
+   "what_changes": "Consolidation automated. Budget check moved from the bill to the purchase request. After-the-fact realignment replaced by approval before commitment. Quarterly reforecast added.",
+   "roles_affected": "Finance: from consolidating spreadsheets to maintaining drivers and explaining variances. Requesters: see available budget when they raise a request. Department heads: approve reforecasts.",
+   "sow_sections": "§3.1 G Finance Core (corporate & department budget; TORC budget)",
+   "sow_items": [],
+   "impact_type": "Extends SOW scope",
+   "awb_change": "Build a driver-based budget with versioned quarterly reforecasts. Check and reserve budget at purchase request for all spend (not only TORC), and route over-budget requests to the DOA approver before a PO is issued.",
+   "appendix_ref": "A8",
+   "effort_low": 3,
+   "effort_high": 6,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Budget control applies at purchase-request (commitment) stage for all spend, with reserved amounts released on PO cancellation.",
+   "flex_category": "Change Order",
+   "risk": "Budget stays a reporting tool; overspend is found only after bills post.",
+   "sort": 0
+  },
+  {
+   "id": "RE-02",
+   "title": "One digital Delegation of Authority matrix",
+   "process_refs": "All",
+   "current_process": "Sequential approval chains defined per document type (e.g., LAD Officer → Head → Legal → Finance → CFO/CEO; Dept Head → OM → Budget Authority), largely on paper and email.",
+   "pain_points": "Long cycle times. Documents wait in inboxes with no visibility of where they are stuck. Thresholds differ by department.",
+   "proposed": "One Board-approved DOA matrix by document type, amount and risk, configured once in Odoo. Independent reviews (e.g., Legal and Finance) run in parallel. Approval SLAs with auto-escalation. Low-value, in-budget items auto-approved and sampled monthly.",
+   "justification": "Removes waiting time, not controls. Every approval is visible with timestamps. One matrix to maintain instead of department-specific rules.",
+   "controls": "Requester ≠ approver enforced by the system. Thresholds set by the Board. Monthly post-approval sampling by Internal Audit. Delegations have end dates.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Approvals, Studio rules, activity SLAs",
+   "sow_status": "Covered (§3.4 approval matrices); PHI defines the DOA",
+   "kpi": "Median approval cycle time; % approvals within SLA",
+   "target": "≤ 2 working days; ≥ 90% within SLA",
+   "why_problem": "Approval rules differ by department and live in people's heads or on paper routing slips. Approvals run one after another even when reviewers check unrelated things, and nobody can see where a document is waiting.",
+   "how_fixes": "One matrix means one set of limits to maintain and audit. Parallel review removes queueing time without removing any reviewer. SLAs and escalation make delays visible. Auto-approval with sampling focuses senior attention on high-value, high-risk items.",
+   "control_effect": "Maintains or strengthens control: approvers and limits come from a Board-approved matrix; the system prevents self-approval; every decision is timestamped; Internal Audit samples auto-approved items monthly.",
+   "before_steps": [
+    {
+     "tag": "Paper",
+     "text": "Requester prepares document and routing slip"
+    },
+    {
+     "tag": "Manual",
+     "text": "Document passed to first approver"
+    },
+    {
+     "tag": "Wait",
+     "text": "Waits in first approver's inbox"
+    },
+    {
+     "tag": "Manual",
+     "text": "Passed to second approver (e.g., Legal)"
+    },
+    {
+     "tag": "Wait",
+     "text": "Waits; then passed to third approver (e.g., Finance)"
+    },
+    {
+     "tag": "Wait",
+     "text": "Waits; then passed to final approver (CFO/CEO)"
+    },
+    {
+     "tag": "Manual",
+     "text": "Requester follows up by phone to find the document"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Requester submits document in Odoo"
+    },
+    {
+     "tag": "Auto",
+     "text": "System selects approvers from the DOA matrix by type, amount and risk"
+    },
+    {
+     "tag": "Rule",
+     "text": "Low-value, in-budget items auto-approved and flagged for sampling"
+    },
+    {
+     "tag": "Parallel",
+     "text": "Independent reviewers (e.g., Legal and Finance) approve at the same time"
+    },
+    {
+     "tag": "Rule",
+     "text": "Approval SLA timer; auto-escalation when overdue"
+    },
+    {
+     "tag": "Same",
+     "text": "Final approver approves"
+    },
+    {
+     "tag": "Auto",
+     "text": "Status and full approval history visible to requester"
+    }
+   ],
+   "what_changes": "Routing slips and follow-up calls removed. Approver selection automated. Sequential reviews made parallel where independent. Escalation and sampling added.",
+   "roles_affected": "Approvers: see only items they must decide, with deadlines. Requesters: track status without calling. Internal Audit: new monthly sampling of auto-approved items. Board: approves the DOA matrix.",
+   "sow_sections": "§3.4 Custom workflows (approval matrices); §3.1 B subcontractor approval matrix",
+   "sow_items": [
+    21,
+    45,
+    60,
+    62,
+    63,
+    64
+   ],
+   "impact_type": "Design change within existing SOW item",
+   "awb_change": "Build one configurable DOA engine (document type × amount × risk) used by every approval flow, with parallel steps, SLA escalation, auto-approval below threshold and a sampling flag — instead of separate Project, Lot and Broker approval workflows.",
+   "appendix_ref": "—",
+   "effort_low": 2,
+   "effort_high": 4,
+   "offset_low": 5,
+   "offset_high": 11.52,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "All approval workflows (#21, #45, #60, #62–64, subcontractor billing) use a single DOA matrix that PHI can maintain without code changes.",
+   "flex_category": "User Access and Approval Matrix",
+   "risk": "Three or more hard-coded workflows; every DOA change becomes a change request.",
+   "sort": 1
+  },
+  {
+   "id": "RE-03",
+   "title": "Two-stage land due diligence with deal scorecard",
+   "process_refs": "04",
+   "current_process": "Due diligence on title, survey, zoning and appraisal runs largely one step after another before ManCom evaluates the deal.",
+   "pain_points": "Fatal flaws (title defects, CARP/DAR coverage, no road access) surface late, after DD spend. ManCom compares deals presented in different formats.",
+   "proposed": "Stage 1: screen knock-out criteria (title, CARP/DAR, zoning, access) within days. Stage 2: run the full DD workstreams in parallel. Present every deal to ManCom on one standard scorecard (price, yield, risks). One digital deal room per parcel.",
+   "justification": "Weak deals stop early, cutting wasted DD cost. Standard scorecards let ManCom decide faster and compare like with like.",
+   "controls": "Gate decisions recorded. DD evidence retained per parcel. Broker conflict-of-interest declarations.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Land Acquisition (lam.lot), DD checklist, Documents",
+   "sow_status": "Covered (§3.3 #19–21)",
+   "kpi": "Days from opportunity logged to go/no-go; DD spend on rejected deals",
+   "target": "Go/no-go ≤ 15 working days",
+   "why_problem": "Due diligence runs as one long sequence, so a fatal flaw (title defect, CARP coverage, no access) may only surface after surveys and appraisals are paid for. ManCom receives deals in different formats, which slows decisions.",
+   "how_fixes": "A short knock-out screen kills doomed deals within days. Running the remaining DD workstreams in parallel shortens the elapsed time. A standard scorecard lets ManCom compare deals on the same terms and decide in one sitting.",
+   "control_effect": "Strengthens governance: every gate decision and its evidence is recorded per parcel; broker conflicts of interest are declared up front.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Land opportunity received from broker or owner"
+    },
+    {
+     "tag": "Manual",
+     "text": "Title verification requested"
+    },
+    {
+     "tag": "Wait",
+     "text": "Survey commissioned after title check"
+    },
+    {
+     "tag": "Wait",
+     "text": "Zoning and access verified after survey"
+    },
+    {
+     "tag": "Wait",
+     "text": "Appraisal commissioned"
+    },
+    {
+     "tag": "Manual",
+     "text": "Deal memo prepared in its own format"
+    },
+    {
+     "tag": "",
+     "text": "ManCom evaluates; fatal flaws sometimes found late"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Land opportunity logged in the land module"
+    },
+    {
+     "tag": "New",
+     "text": "Knock-out screen: title, CARP/DAR, zoning, access (days, not weeks)"
+    },
+    {
+     "tag": "Rule",
+     "text": "Deals failing any knock-out closed with reason"
+    },
+    {
+     "tag": "Parallel",
+     "text": "Title, survey, zoning and appraisal run at the same time"
+    },
+    {
+     "tag": "Auto",
+     "text": "DD results populate the standard deal scorecard"
+    },
+    {
+     "tag": "",
+     "text": "ManCom decides go/no-go on the scorecard"
+    },
+    {
+     "tag": "Auto",
+     "text": "Evidence kept in the parcel's deal room"
+    }
+   ],
+   "what_changes": "Knock-out screen added up front. Sequential DD made parallel. Custom deal memos replaced by a standard scorecard.",
+   "roles_affected": "Land acquisition: runs the screen and coordinates parallel DD. Legal, surveyors, appraisers: work in parallel. ManCom: decides from one format.",
+   "sow_sections": "§3.1 C Land Acquisition",
+   "sow_items": [
+    7,
+    20,
+    21,
+    86
+   ],
+   "impact_type": "Design change within existing SOW item",
+   "awb_change": "Split the DD checklist into a knock-out stage and a full stage, allow parallel task assignment, and add a standard deal scorecard view for ManCom.",
+   "appendix_ref": "—",
+   "effort_low": 2,
+   "effort_high": 3,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "DD checklists support staged gates (knock-out, full) with parallel tasks and a standard scorecard report.",
+   "flex_category": "Requirements Analysis",
+   "risk": "DD stays sequential in the system; doomed deals consume DD spend.",
+   "sort": 2
+  },
+  {
+   "id": "RE-04",
+   "title": "Evidence-based land payments and filing calendar",
+   "process_refs": "04",
+   "current_process": "Milestone payments released on request; tax filings and title transfer tracked manually.",
+   "pain_points": "Risk of paying before conditions are met. Surcharges for late filings. Little visibility of titles in transit.",
+   "proposed": "Release a milestone payment only when its evidence is uploaded and verified by Legal. Generate a statutory filing calendar (CGT, DST, transfer tax, RD) automatically at deed signing. Keep a titles-in-transit register.",
+   "justification": "Paying on evidence prevents premature payments. The calendar avoids penalties. ManCom sees which titles are at risk.",
+   "controls": "Legal verifies evidence independently of the requester. Each filing closed with proof of payment.",
+   "benefits": "Transparency, Efficiency",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "Land Acquisition, Approvals, Documents",
+   "sow_status": "Covered (§3.3 #24, #26, #60)",
+   "kpi": "Filing penalties paid; % milestone payments with verified evidence",
+   "target": "Zero penalties; 100%",
+   "why_problem": "Payments to landowners are released on request, so evidence that the milestone was met may be checked late or informally. Tax and title filings are tracked manually, which risks surcharges and lost visibility of titles in transit.",
+   "how_fixes": "Payment requests cannot be created until evidence is uploaded and verified. The filing calendar is generated automatically from the deed, so deadlines are never missed. A titles-in-transit register shows where every title is.",
+   "control_effect": "Strengthens control: pay-on-evidence is preventive; verification by Legal separates duties from the requester; each filing closes only with proof of payment (BIR, LGU, RD).",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Landowner or broker requests milestone payment"
+    },
+    {
+     "tag": "Manual",
+     "text": "Land team prepares payment request"
+    },
+    {
+     "tag": "Manual",
+     "text": "Evidence of milestone checked informally, if at all"
+    },
+    {
+     "tag": "",
+     "text": "Payment approved and released"
+    },
+    {
+     "tag": "Manual",
+     "text": "Tax filings tracked in a personal spreadsheet"
+    },
+    {
+     "tag": "Wait",
+     "text": "Late filing discovered; surcharge paid"
+    },
+    {
+     "tag": "Manual",
+     "text": "Title status found by asking the liaison"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Rule",
+     "text": "Milestone evidence uploaded against the milestone"
+    },
+    {
+     "tag": "New",
+     "text": "Legal verifies evidence"
+    },
+    {
+     "tag": "Auto",
+     "text": "Payment request created only after verification"
+    },
+    {
+     "tag": "Same",
+     "text": "Payment approved per DOA and released"
+    },
+    {
+     "tag": "Auto",
+     "text": "Filing calendar (CGT, DST, transfer tax, RD) generated at deed signing"
+    },
+    {
+     "tag": "Auto",
+     "text": "Reminders before each deadline; filing closed with proof of payment"
+    },
+    {
+     "tag": "Auto",
+     "text": "Title-in-transit register updated at each step"
+    }
+   ],
+   "what_changes": "Informal evidence check replaced by a verification gate. Filing tracking automated with reminders. Title status made visible.",
+   "roles_affected": "Legal: new verification step before payment. Land team: uploads evidence instead of chasing approvals. Finance: pays only verified milestones.",
+   "sow_sections": "§3.1 C Acquisition & Payments",
+   "sow_items": [
+    24,
+    26,
+    29,
+    60
+   ],
+   "impact_type": "Design change within existing SOW item",
+   "awb_change": "Block milestone payment requests until evidence is uploaded and verified by Legal; generate the filing calendar from deed data; add a titles-in-transit view.",
+   "appendix_ref": "—",
+   "effort_low": 1,
+   "effort_high": 3,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "Milestone payment requests require verified evidence; BIR/LGU filing calendar auto-generated at deed signing.",
+   "flex_category": "Requirements Analysis",
+   "risk": "Payments can still be released before conditions are met.",
+   "sort": 3
+  },
+  {
+   "id": "RE-05",
+   "title": "Project templates and a hard License-to-Sell gate",
+   "process_refs": "05",
+   "current_process": "Each project is set up with its own structure. Permits are tracked separately and selling readiness is judged case by case.",
+   "pain_points": "Inconsistent WBS and cost codes make cross-project comparison hard. Risk of selling before the License to Sell is issued.",
+   "proposed": "Project templates by type (horizontal, vertical, mixed-use) that clone WBS, cost codes, milestones and required documents. A launch gate with DP and License to Sell as hard criteria before any reservation can be made.",
+   "justification": "Setup takes hours instead of weeks, and every project reports the same way. Regulatory exposure from pre-selling is eliminated.",
+   "controls": "PD 957: system blocks reservations without an LTS. Gate approval logged.",
+   "benefits": "Efficiency, Reporting, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Project setup wizard, launch-readiness gate",
+   "sow_status": "Partial — LTS gate is Appendix A7",
+   "kpi": "Project setup time; reservations made before LTS",
+   "target": "≤ 5 working days; zero",
+   "why_problem": "Each project is set up from scratch, so WBS, cost codes and documents differ between projects and cannot be compared. Selling readiness is judged case by case, which risks selling before the License to Sell is issued.",
+   "how_fixes": "Templates by project type make setup a copy-and-adjust task and guarantee the same structure across projects. A hard launch gate makes the License to Sell a system condition rather than a reminder.",
+   "control_effect": "Strengthens compliance: PD 957 requirement enforced by the system — no reservation can be created without an LTS. Gate approvals logged.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Project team designs WBS and cost codes for the new project"
+    },
+    {
+     "tag": "Manual",
+     "text": "Finance creates accounts and analytic structure"
+    },
+    {
+     "tag": "Manual",
+     "text": "Permits tracked in a separate spreadsheet"
+    },
+    {
+     "tag": "Manual",
+     "text": "Sales told informally the project may launch"
+    },
+    {
+     "tag": "Wait",
+     "text": "Reservations may start while LTS is pending"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Project team selects the template for the project type"
+    },
+    {
+     "tag": "Auto",
+     "text": "WBS, cost codes, milestones and required documents cloned"
+    },
+    {
+     "tag": "Same",
+     "text": "Team adjusts project-specific details"
+    },
+    {
+     "tag": "New",
+     "text": "Permit register tracks DP, ECC, BP, CR/LTS"
+    },
+    {
+     "tag": "Rule",
+     "text": "Launch gate blocks reservations until DP and LTS are recorded"
+    },
+    {
+     "tag": "Auto",
+     "text": "Sales notified when the gate passes"
+    }
+   ],
+   "what_changes": "Manual structure design replaced by templates. Permits moved into the system. Informal launch replaced by a system gate.",
+   "roles_affected": "Project Development: configures from templates. Finance: approves template changes only. Sales: can reserve only after the gate passes. Legal/permits: maintains the permit register.",
+   "sow_sections": "§3.1 C Project Setup Wizard; launch readiness gate",
+   "sow_items": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    33,
+    37,
+    70
+   ],
+   "impact_type": "Extends SOW scope",
+   "awb_change": "Add a template library per project type that clones WBS, cost codes, milestones and documents. Add a permit register, and make DP and License to Sell hard gate criteria that block reservation (#33), not only SO confirmation (#37).",
+   "appendix_ref": "A7",
+   "effort_low": 2,
+   "effort_high": 4,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "Launch gate criteria include DP and License to Sell and are enforced at reservation.",
+   "flex_category": "Change Order",
+   "risk": "Reservations possible before LTS; project structures remain inconsistent.",
+   "sort": 4
+  },
+  {
+   "id": "RE-06",
+   "title": "One Group cost-code structure",
+   "process_refs": "01, 06, 16, X2",
+   "current_process": "Budget, POs, bills and reports may use different cost categories by project or department.",
+   "pain_points": "Project P&L and cost-per-sqm benchmarks need manual mapping. Data migration becomes harder.",
+   "proposed": "One Group cost breakdown structure and set of analytic plans, used identically in budget, PO, bill, progress billing and reports. Owned by Finance with change control.",
+   "justification": "Enables automatic drill-down project P&L and benchmarking across projects and Group affiliates. It is a foundation of the Odoo data model, so it must be settled before BRD.",
+   "controls": "Cost-code changes need Finance approval. Analytic account mandatory on every cost line, enforced by the system.",
+   "benefits": "Reporting, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Analytic plans, Chart of Accounts",
+   "sow_status": "Covered (§3.1 F, G analytic enforcement)",
+   "kpi": "% of cost lines with a valid cost code",
+   "target": "100%",
+   "why_problem": "Cost categories differ across budget, purchasing, billing and reporting, so every cross-project report needs manual mapping. This also makes the Odoo data model and migration harder.",
+   "how_fixes": "A single cost breakdown structure used in every transaction means project P&L and cost-per-sqm benchmarks come straight from the system. Settling it before BRD avoids rebuilding reports later.",
+   "control_effect": "Strengthens reporting integrity: analytic tagging mandatory on every cost line; cost-code changes controlled by Finance.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Budget uses its own cost categories"
+    },
+    {
+     "tag": "Manual",
+     "text": "POs coded to different categories"
+    },
+    {
+     "tag": "Manual",
+     "text": "Bills coded by AP staff judgment"
+    },
+    {
+     "tag": "Rekey",
+     "text": "Finance maps categories for each project report"
+    },
+    {
+     "tag": "Manual",
+     "text": "Cross-project benchmarks built by hand"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "Finance publishes one Group cost-code structure"
+    },
+    {
+     "tag": "Rule",
+     "text": "Budget, PO, bill and progress billing all require a valid cost code"
+    },
+    {
+     "tag": "Auto",
+     "text": "Costs roll up by project, phase and cost code"
+    },
+    {
+     "tag": "Auto",
+     "text": "Project P&L and cost-per-sqm benchmarks generated"
+    },
+    {
+     "tag": "Rule",
+     "text": "New cost codes added only through Finance change control"
+    }
+   ],
+   "what_changes": "Manual mapping removed. Cost code mandatory at every transaction. Benchmarks generated automatically.",
+   "roles_affected": "Finance: owns the structure. Requesters and AP: choose from one list. Management: gets comparable project reports.",
+   "sow_sections": "§3.1 G Foundation and data spine (analytic tags, Chart of Accounts)",
+   "sow_items": [],
+   "impact_type": "PHI internal — no AWB effort",
+   "awb_change": "No change in effort: configure PHI's Group cost-code structure as the analytic plans, with the analytic account mandatory on every cost line. PHI must hand over the structure before BRD sign-off.",
+   "appendix_ref": "—",
+   "effort_low": 0,
+   "effort_high": 1,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 1 – Discovery & BRD (wk 1–4)",
+   "sow_wording": "Analytic plans follow the Group cost-code structure supplied by PHI; analytic mandatory on all cost lines.",
+   "flex_category": "—",
+   "risk": "Reports and migration built on the wrong structure; rework after go-live.",
+   "sort": 5
+  },
+  {
+   "id": "RE-07",
+   "title": "Measure construction progress once, use it three times",
+   "process_refs": "06, 07, Finance",
+   "current_process": "Contractor submits an accomplishment report, QS verifies, progress billing is processed, and unit construction status is updated separately.",
+   "pain_points": "The same progress is measured and keyed several times. Disputes over % complete. Revenue (POC) and inventory status lag reality.",
+   "proposed": "One joint site verification per billing cycle, captured on mobile with geotagged photos and % per BOQ line. The verified % drives progress billing (with retention and recoupment), unit construction status, and the POC input for revenue.",
+   "justification": "One measurement feeds three processes, removing re-keying and reconciliations. Photo evidence reduces disputes.",
+   "controls": "QS verification independent of the project team. Contractors cannot bill above verified %. Retention and recoupment computed, not typed.",
+   "benefits": "Efficiency, Transparency, Reporting",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "Project, Purchase, progress photo gallery",
+   "sow_status": "Partial — recoupment/VOs are Appendix A6",
+   "kpi": "Days from cut-off to approved progress billing; billing disputes",
+   "target": "≤ 7 days",
+   "why_problem": "Construction progress is measured separately for contractor billing, unit status and revenue, so the same fact is keyed and reconciled several times and the numbers can disagree.",
+   "how_fixes": "One verified measurement per cycle becomes the single source for billing, inventory status and revenue. Mobile capture with photos provides evidence and shortens disputes.",
+   "control_effect": "Strengthens control: QS verification independent of the project team; contractors cannot bill above verified progress; retention and recoupment computed by rule, not typed.",
+   "before_steps": [
+    {
+     "tag": "Paper",
+     "text": "Contractor submits accomplishment report"
+    },
+    {
+     "tag": "Manual",
+     "text": "QS reviews report and visits site"
+    },
+    {
+     "tag": "Manual",
+     "text": "Progress billing prepared; retention computed by hand"
+    },
+    {
+     "tag": "Rekey",
+     "text": "Engineering updates unit construction status separately"
+    },
+    {
+     "tag": "Rekey",
+     "text": "Finance collects % completion again for revenue"
+    },
+    {
+     "tag": "Manual",
+     "text": "Differences between the three figures reconciled"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Contractor submits billing claim in the portal or system"
+    },
+    {
+     "tag": "New",
+     "text": "Joint site verification captured on mobile with geotagged photos"
+    },
+    {
+     "tag": "Rule",
+     "text": "QS verifies % complete per BOQ line"
+    },
+    {
+     "tag": "Auto",
+     "text": "Progress billing computed with retention and recoupment"
+    },
+    {
+     "tag": "Auto",
+     "text": "Unit construction status updated from verified %"
+    },
+    {
+     "tag": "Auto",
+     "text": "Verified % feeds POC revenue input"
+    }
+   ],
+   "what_changes": "Two re-keying steps and the reconciliation removed. Retention and recoupment automated. Photo evidence added.",
+   "roles_affected": "QS: verifies once, on mobile. Engineering: no separate status update. Finance: uses verified % directly. Contractors: bill against verified progress.",
+   "sow_sections": "§3.1 B Construction; F Contracts & retention; D Construction schedule",
+   "sow_items": [
+    30,
+    66,
+    67,
+    68,
+    69
+   ],
+   "impact_type": "Extends SOW scope",
+   "awb_change": "Capture % complete per BOQ line on mobile with geotagged photos; use the verified % to drive progress billing (retention, recoupment), unit status (#69) and the POC revenue input.",
+   "appendix_ref": "A6, A3",
+   "effort_low": 4,
+   "effort_high": 8,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Verified construction progress is the single source for contractor billing, unit construction status and revenue recognition.",
+   "flex_category": "Change Order",
+   "risk": "Progress keyed three times; billing disputes and revenue lag remain.",
+   "sort": 6
+  },
+  {
+   "id": "RE-08",
+   "title": "Pricing governance and a single price source",
+   "process_refs": "07",
+   "current_process": "Price lists maintained per project; discounts approved case by case.",
+   "pain_points": "Margin leakage from discounts. Inconsistent approvals. Brokers sometimes quote outdated prices.",
+   "proposed": "Price floor per lot, a discount matrix by authority level, and scheduled price escalations per phase approved by ManCom. Live availability and prices published to brokers only through the portal.",
+   "justification": "Protects margin. One version of price and availability for everyone. Fewer calls to Sales admin.",
+   "controls": "System blocks under-floor quotes. Discounts beyond the matrix need DOA approval. Price changes logged.",
+   "benefits": "Transparency, Efficiency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Pricelists, pricing rules engine, broker portal",
+   "sow_status": "Covered (§3.1 D, H; §3.3 #49)",
+   "kpi": "Average discount vs list; % of sales with exception discounts",
+   "target": "Exception discounts < 5% of sales",
+   "why_problem": "Discounts are approved case by case with no consistent limits, and brokers may quote from outdated price lists, which leaks margin and creates disputes.",
+   "how_fixes": "A price floor and discount matrix set the limits once; the system enforces them. Publishing prices and availability only through the portal means everyone works from the same live data.",
+   "control_effect": "Strengthens control: under-floor quotes blocked; discounts above the matrix need DOA approval; every price change logged.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Sales admin maintains price list per project"
+    },
+    {
+     "tag": "Manual",
+     "text": "Price list sent to brokers by email"
+    },
+    {
+     "tag": "Manual",
+     "text": "Broker requests a special discount"
+    },
+    {
+     "tag": "Wait",
+     "text": "Discount approved case by case"
+    },
+    {
+     "tag": "Manual",
+     "text": "Availability confirmed by phone"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "ManCom approves price floors, discount matrix and escalation schedule"
+    },
+    {
+     "tag": "Auto",
+     "text": "Prices and availability published live on the broker portal"
+    },
+    {
+     "tag": "Rule",
+     "text": "Discounts within the matrix applied at quotation"
+    },
+    {
+     "tag": "Rule",
+     "text": "Discounts beyond the matrix routed to DOA approver"
+    },
+    {
+     "tag": "Rule",
+     "text": "Quotes below the floor blocked"
+    },
+    {
+     "tag": "Auto",
+     "text": "Scheduled price escalations applied to unsold lots"
+    }
+   ],
+   "what_changes": "Emailed price lists and phone checks removed. Case-by-case approvals replaced by a matrix. Floor enforced by the system.",
+   "roles_affected": "ManCom: sets pricing policy. Sales admin: maintains data, not email lists. Brokers: self-serve prices and availability. Approvers: see only exceptions.",
+   "sow_sections": "§3.1 D Pricing controls; H Pricing rules engine",
+   "sow_items": [
+    49
+   ],
+   "impact_type": "Adoption only — configure as scoped",
+   "awb_change": "Configure the discount matrix by authority level and scheduled price escalations per phase; publish prices only via the broker portal.",
+   "appendix_ref": "—",
+   "effort_low": 0,
+   "effort_high": 2,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "—",
+   "flex_category": "—",
+   "risk": "Discount leakage continues if the matrix isn't configured.",
+   "sort": 7
+  },
+  {
+   "id": "RE-09",
+   "title": "Digital deal jacket from reservation to CTS",
+   "process_refs": "09",
+   "current_process": "Reservation, then document collection, credit check, CTS drafting and notarization in sequence, mostly on paper.",
+   "pain_points": "Long reservation-to-CTS cycle. Buyers asked for documents repeatedly. Retyping errors in the CTS. Collections start late.",
+   "proposed": "Buyer uploads KYC and financing documents at reservation (portal with OCR). Completeness checklist per financing scheme. CTS generated from the confirmed sales order with no retyping. Weekly notarization batches. SLA dashboard from reservation to notarized CTS.",
+   "justification": "Cuts cycle time and errors. Buyers submit documents once. Management sees the aging of unsigned CTSs.",
+   "controls": "Data Privacy Act (RA 10173) consent and access controls on buyer data. CTS still notarized. Changes after generation need approval.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "CRM, Sales, Sign, Documents (OCR), buyer portal",
+   "sow_status": "Partial — CTS generation is Appendix A2",
+   "kpi": "Days from reservation to notarized CTS; % of documents complete at reservation",
+   "target": "≤ 30 days; ≥ 80%",
+   "why_problem": "Reservation, documentation, credit check and contract drafting happen one after another on paper. Buyers are asked for documents more than once, and CTS details are retyped, so errors and delays push back the start of collections.",
+   "how_fixes": "Collecting documents once at reservation, with a checklist per financing scheme, removes repeat requests. Generating the CTS from the confirmed sales order removes retyping. An SLA dashboard makes delays visible.",
+   "control_effect": "Strengthens compliance: Data Privacy Act consent captured at upload; access restricted by role; CTS still notarized; post-generation changes need approval.",
+   "before_steps": [
+    {
+     "tag": "Paper",
+     "text": "Buyer signs reservation form and pays reservation fee"
+    },
+    {
+     "tag": "Wait",
+     "text": "Sales admin later requests documents"
+    },
+    {
+     "tag": "Manual",
+     "text": "Buyer submits documents in several rounds"
+    },
+    {
+     "tag": "Manual",
+     "text": "Credit check performed"
+    },
+    {
+     "tag": "Rekey",
+     "text": "CTS typed from the reservation and computation"
+    },
+    {
+     "tag": "Manual",
+     "text": "CTS signed and sent for notarization individually"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Buyer reserves and pays reservation fee"
+    },
+    {
+     "tag": "Earlier",
+     "text": "Buyer uploads KYC and financing documents at reservation (OCR)"
+    },
+    {
+     "tag": "Auto",
+     "text": "Completeness checked against the scheme's checklist"
+    },
+    {
+     "tag": "Same",
+     "text": "Credit check performed"
+    },
+    {
+     "tag": "Auto",
+     "text": "CTS generated from the confirmed sales order"
+    },
+    {
+     "tag": "New",
+     "text": "Weekly notarization batches"
+    },
+    {
+     "tag": "Auto",
+     "text": "SLA dashboard tracks reservation-to-CTS aging"
+    }
+   ],
+   "what_changes": "Document collection moved to reservation. CTS retyping removed. Notarization batched. SLA tracking added.",
+   "roles_affected": "Buyers: submit documents once. Sales admin: checks completeness instead of chasing. Contracts: reviews generated CTSs. Management: monitors aging.",
+   "sow_sections": "§3.1 A Buyer documents (OCR); H Reservation, buyer portal",
+   "sow_items": [
+    31,
+    32,
+    33,
+    34,
+    35,
+    54
+   ],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "Checklist per financing scheme enforced at reservation; CTS generated from the confirmed SO (A2); notarization batch tracking; reservation-to-CTS SLA dashboard.",
+   "appendix_ref": "A2",
+   "effort_low": 2,
+   "effort_high": 4,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "Buyer document checklist per financing scheme enforced at reservation; CTS generated from the sales order.",
+   "flex_category": "Change Order",
+   "risk": "Documents still collected in rounds; CTS retyped.",
+   "sort": 8
+  },
+  {
+   "id": "RE-10",
+   "title": "Electronic collections with automatic bank matching",
+   "process_refs": "11",
+   "current_process": "Buyers pay at the cashier or by check/PDC. Cashier issues receipts. Posting and bank matching are manual.",
+   "pain_points": "PDC handling and bounced checks. Posting delays make SOAs stale. High cashier workload.",
+   "proposed": "Move buyers to electronic payment using per-buyer bank references (InstaPay, PESONet, bank over-the-counter). Daily bank file (CSV/MT940) auto-matched to the buyer ledger. Invoice issued on posting. Cashier handles exceptions only. No PDCs for new buyers.",
+   "justification": "Same-day posting and accurate SOAs. Fewer bounced checks. Less cash-handling risk.",
+   "controls": "Daily bank reconciliation. Separate duties for receipting, posting and reconciliation. BIR-registered invoice series (EOPT).",
+   "benefits": "Efficiency, Transparency, Reporting",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Accounting bank import (CSV/MT940), reconciliation models",
+   "sow_status": "Partial — bank file import in scope; gateway out of scope (§9)",
+   "kpi": "% of collections received electronically; posting lag",
+   "target": "≥ 70% within 12 months; ≤ 1 working day",
+   "why_problem": "Most payments arrive at the cashier or as checks, so posting depends on manual matching and statements of account lag reality. PDCs create handling risk and bounced-check follow-up.",
+   "how_fixes": "Giving each buyer a unique bank reference lets the daily bank file be matched to the right ledger automatically. The cashier handles only exceptions, and SOAs are current the same day.",
+   "control_effect": "Maintains segregation (receipting, posting, reconciliation by different people), adds daily reconciliation, and issues BIR-registered invoices on posting in line with EOPT.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Buyer pays at cashier or issues check / PDC"
+    },
+    {
+     "tag": "Paper",
+     "text": "Cashier issues receipt"
+    },
+    {
+     "tag": "Manual",
+     "text": "PDCs stored and deposited on due dates"
+    },
+    {
+     "tag": "Manual",
+     "text": "Deposits matched to buyers by hand"
+    },
+    {
+     "tag": "Wait",
+     "text": "Posting lag; SOA outdated"
+    },
+    {
+     "tag": "Manual",
+     "text": "Bounced checks followed up"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "Buyer assigned a unique bank payment reference"
+    },
+    {
+     "tag": "Same",
+     "text": "Buyer pays by InstaPay, PESONet or bank over-the-counter"
+    },
+    {
+     "tag": "Auto",
+     "text": "Daily bank file (CSV/MT940) imported and matched to buyer ledger"
+    },
+    {
+     "tag": "Auto",
+     "text": "Invoice issued on posting; SOA updated same day"
+    },
+    {
+     "tag": "Rule",
+     "text": "Unmatched items routed to cashier as exceptions"
+    },
+    {
+     "tag": "Rule",
+     "text": "Daily bank reconciliation signed off"
+    }
+   ],
+   "what_changes": "Manual matching and PDC handling removed for new buyers. Posting automated. Cashier role narrowed to exceptions.",
+   "roles_affected": "Treasury: sets up bank references. Cashier: handles exceptions. Accounting: reviews reconciliation. Buyers: pay without visiting.",
+   "sow_sections": "§9 bank statement import (CSV/MT940); §3.3 Customer Portal and Customer Loans",
+   "sow_items": [
+    76,
+    97
+   ],
+   "impact_type": "Design change within existing SOW item",
+   "awb_change": "Configure per-buyer payment references and bank-file reconciliation models that match receipts to the buyer ledger, issue the invoice on posting, and queue exceptions. Item #76 becomes proof-of-payment upload plus bank-reference matching — no gateway.",
+   "appendix_ref": "—",
+   "effort_low": 2,
+   "effort_high": 4,
+   "offset_low": 3,
+   "offset_high": 8.64,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Item #76 delivers proof-of-payment upload and bank-reference matching; payment gateway excluded and #76 man-days adjusted.",
+   "flex_category": "—",
+   "risk": "PHI pays for gateway work in #76 that §9 excludes.",
+   "sort": 9
+  },
+  {
+   "id": "RE-11",
+   "title": "Collections playbook by aging bucket",
+   "process_refs": "11, 12",
+   "current_process": "Aging reports reviewed; demand letters prepared manually; cancellation when default persists.",
+   "pain_points": "Late intervention. Inconsistent treatment of buyers. Cancellations that could have been saved.",
+   "proposed": "Automated reminders before and after due date. Account officer assigned at 30 days past due. Restructuring offer before 60 days. Maceda notice clock started automatically when criteria are met.",
+   "justification": "Earlier contact reduces cancellations and refunds. Uniform, defensible treatment. Clear workload per collector.",
+   "controls": "Penalty waivers and restructuring need DOA approval. RA 6552 grace periods and notices tracked by the system. Full contact log.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Payment reminders, customer loans, activities",
+   "sow_status": "Partial — demand letters A5, Maceda A1",
+   "kpi": "Accounts > 60 days past due; cancellation rate",
+   "target": "Set after baseline; e.g., −25% in year one",
+   "why_problem": "Collection effort starts when aging reports are reviewed, often weeks after a missed payment, and treatment varies by collector. Accounts slide into cancellation that earlier contact could have prevented.",
+   "how_fixes": "A playbook by aging bucket starts contact automatically before and just after due date, assigns an officer at 30 days, and offers restructuring before 60 days — while the Maceda clock is tracked by the system.",
+   "control_effect": "Strengthens compliance: RA 6552 grace periods and notices tracked automatically; penalty waivers and restructuring require DOA approval; full contact log.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Monthly aging report reviewed"
+    },
+    {
+     "tag": "Manual",
+     "text": "Collector calls overdue buyers as time allows"
+    },
+    {
+     "tag": "Manual",
+     "text": "Demand letters drafted individually"
+    },
+    {
+     "tag": "Wait",
+     "text": "Account continues to age"
+    },
+    {
+     "tag": "Manual",
+     "text": "Cancellation considered when default persists"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Auto",
+     "text": "Reminders sent before and after due date"
+    },
+    {
+     "tag": "Rule",
+     "text": "Account officer assigned automatically at 30 days past due"
+    },
+    {
+     "tag": "Auto",
+     "text": "Demand letter generated from template"
+    },
+    {
+     "tag": "New",
+     "text": "Restructuring offer before 60 days, approved per DOA"
+    },
+    {
+     "tag": "Auto",
+     "text": "Maceda grace period and notice clock started when criteria are met"
+    },
+    {
+     "tag": "Same",
+     "text": "Cancellation only after statutory steps are complete"
+    }
+   ],
+   "what_changes": "Contact moved earlier and automated. Demand letters generated. Restructuring step added before cancellation.",
+   "roles_affected": "Collectors: work an assigned queue. Credit head: approves restructuring. Legal: receives cases only after statutory steps.",
+   "sow_sections": "§3.1 I Collection & aging; loan restructuring",
+   "sow_items": [
+    57,
+    58,
+    77,
+    95,
+    97,
+    98
+   ],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "Automate the aging-bucket playbook: officer assignment at 30 days, restructuring offer via the loan restructuring workflow, demand letters (A5) and the Maceda notice clock (A1).",
+   "appendix_ref": "A1, A5",
+   "effort_low": 2,
+   "effort_high": 4,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Collections workflow includes aging-bucket assignment, demand letters and statutory Maceda timelines.",
+   "flex_category": "Change Order",
+   "risk": "Late intervention; avoidable cancellations.",
+   "sort": 10
+  },
+  {
+   "id": "RE-12",
+   "title": "Same-week cancellation and re-listing",
+   "process_refs": "12",
+   "current_process": "Cancellation computed and approved manually; unit returned to inventory afterwards.",
+   "pain_points": "Slow refunds and re-listing. Computation errors. No insight into why buyers cancel.",
+   "proposed": "Workflow computes cash surrender value, deductions and commission clawback automatically. Unit re-priced and re-listed the day cancellation takes effect. Cancellation reason codes mandatory.",
+   "justification": "Inventory recycles faster. Statutory computation is consistent. Reason codes inform sales and product decisions.",
+   "controls": "Maceda computation rules locked. Refund approval per DOA. Reversal journals automatic and auditable.",
+   "benefits": "Efficiency, Reporting",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "Sales, Accounting, custom cancellation workflow",
+   "sow_status": "Gap — Appendix A1",
+   "kpi": "Days from effective cancellation to re-listing",
+   "target": "≤ 5 working days",
+   "why_problem": "Cancellations are computed and approved manually, then the unit is returned to inventory, so refunds and re-listing are slow and the reasons buyers cancel are not captured.",
+   "how_fixes": "The workflow computes cash surrender value, deductions and clawback in one step and re-lists the unit the day cancellation takes effect. Mandatory reason codes turn cancellations into sales insight.",
+   "control_effect": "Strengthens compliance: Maceda computation rules locked; refund approval per DOA; reversals posted automatically with an audit trail.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Cancellation request or default confirmed"
+    },
+    {
+     "tag": "Manual",
+     "text": "Refund or forfeiture computed in a spreadsheet"
+    },
+    {
+     "tag": "Wait",
+     "text": "Approvals gathered"
+    },
+    {
+     "tag": "Manual",
+     "text": "Accounting reverses receivable and revenue"
+    },
+    {
+     "tag": "Manual",
+     "text": "Commission clawback computed separately"
+    },
+    {
+     "tag": "Wait",
+     "text": "Unit returned to inventory later"
+    },
+    {
+     "tag": "Manual",
+     "text": "Unit re-priced and re-listed"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Cancellation initiated with a mandatory reason code"
+    },
+    {
+     "tag": "Auto",
+     "text": "Cash surrender value, deductions and clawback computed"
+    },
+    {
+     "tag": "Same",
+     "text": "Approval per DOA"
+    },
+    {
+     "tag": "Auto",
+     "text": "Reversal journals and refund payable posted"
+    },
+    {
+     "tag": "Auto",
+     "text": "Unit status set to available on the effective date"
+    },
+    {
+     "tag": "Auto",
+     "text": "Unit re-priced per current price list and re-listed"
+    }
+   ],
+   "what_changes": "Spreadsheet computations removed. Reversals and clawback automated. Re-listing immediate. Reason codes added.",
+   "roles_affected": "Credit & collection: initiates with reason. Accounting: reviews auto-postings. Sales admin: no manual re-listing. Sales and marketing: use reason-code reports.",
+   "sow_sections": "§3.1 H Reservation lifecycle; commission clawback",
+   "sow_items": [
+    36,
+    43
+   ],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "On top of the Maceda workflow (A1): mandatory cancellation reason codes, automatic re-pricing and re-listing on the effective date.",
+   "appendix_ref": "A1",
+   "effort_low": 1,
+   "effort_high": 2,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "Cancellation workflow captures reason codes and re-lists the lot automatically on the effective date.",
+   "flex_category": "Change Order",
+   "risk": "Slow inventory recycling; no insight into cancellations.",
+   "sort": 11
+  },
+  {
+   "id": "RE-13",
+   "title": "Start loan takeout at reservation",
+   "process_refs": "13",
+   "current_process": "Loan documents collected after equity is fully paid; takeout tracked by the Loans team.",
+   "pain_points": "Loan approval risk found late. Long gap between equity completion and cash release — PHI's largest single inflow waits.",
+   "proposed": "Bank / Pag-IBIG pre-qualification at reservation. Loan document pack built during the equity period. Takeout pipeline with lender SLAs and a weekly review. DOAS and title annotation prepared in parallel with lender approval.",
+   "justification": "Shorter cash conversion cycle. Financing failures detected months earlier, with time to re-route the buyer.",
+   "controls": "Buyer consent for credit checks (Data Privacy Act). Lender correspondence retained. Proceeds matched to the buyer ledger.",
+   "benefits": "Efficiency, Transparency, Reporting",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Customer Loans & Financing, Documents",
+   "sow_status": "Partial — Appendix A4",
+   "kpi": "Days from equity fully paid to loan release; takeout failure rate",
+   "target": "≤ 60 days",
+   "why_problem": "Loan documents are collected only after equity is paid, so a buyer who cannot get financing is discovered late, and PHI's largest cash inflow waits while documents are gathered.",
+   "how_fixes": "Pre-qualifying at reservation and building the document pack during the equity period means the loan can be filed as soon as equity completes. A pipeline with lender SLAs makes delays visible weekly.",
+   "control_effect": "Maintains control: buyer consent for credit checks under the Data Privacy Act; lender correspondence retained; proceeds matched to the buyer ledger.",
+   "before_steps": [
+    {
+     "tag": "Same",
+     "text": "Buyer pays equity over months"
+    },
+    {
+     "tag": "Wait",
+     "text": "Equity completed"
+    },
+    {
+     "tag": "Manual",
+     "text": "Loans team requests loan documents"
+    },
+    {
+     "tag": "Wait",
+     "text": "Documents gathered"
+    },
+    {
+     "tag": "Manual",
+     "text": "Loan filed with bank or Pag-IBIG"
+    },
+    {
+     "tag": "Wait",
+     "text": "Approval; financing problems found at this point"
+    },
+    {
+     "tag": "Manual",
+     "text": "DOAS and title annotation prepared"
+    },
+    {
+     "tag": "Wait",
+     "text": "Proceeds released"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Earlier",
+     "text": "Pre-qualification with bank or Pag-IBIG at reservation"
+    },
+    {
+     "tag": "Earlier",
+     "text": "Loan document pack built during the equity period"
+    },
+    {
+     "tag": "Auto",
+     "text": "Loan filed as soon as equity completes"
+    },
+    {
+     "tag": "New",
+     "text": "Takeout pipeline reviewed weekly against lender SLAs"
+    },
+    {
+     "tag": "Parallel",
+     "text": "DOAS and title annotation prepared while approval is pending"
+    },
+    {
+     "tag": "Auto",
+     "text": "Proceeds matched to the buyer ledger on release"
+    }
+   ],
+   "what_changes": "Pre-qualification and document collection moved earlier. DOAS preparation made parallel. Weekly pipeline review added.",
+   "roles_affected": "Loans team: works during the equity period, not after. Sales: explains pre-qualification at reservation. Titling: prepares documents in parallel. Treasury: sees expected proceeds.",
+   "sow_sections": "§3.1 I Customer Loans & Financing; B turnover aging",
+   "sow_items": [
+    39,
+    96
+   ],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "On top of the takeout tracker (A4): pre-qualification captured at reservation, loan document pack collected during the equity period, weekly pipeline view with lender SLAs.",
+   "appendix_ref": "A4",
+   "effort_low": 2,
+   "effort_high": 4,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Takeout tracker starts at reservation, with pre-qualification status and lender SLA monitoring.",
+   "flex_category": "Change Order",
+   "risk": "Financing failures found late; cash inflow delayed.",
+   "sort": 12
+  },
+  {
+   "id": "RE-14",
+   "title": "Hands-off commission cycle",
+   "process_refs": "17",
+   "current_process": "Commissions computed and released by tranche; brokers call for status.",
+   "pain_points": "Manual computation and disputes. Broker follow-up calls. Clawbacks hard to enforce.",
+   "proposed": "Use the SOW commission engine fully: compute at CTS, release automatically when collection thresholds are hit, broker self-service statements, broker invoice upload before payout, and automatic clawback netting on cancellation.",
+   "justification": "Removes manual work and disputes, and builds broker trust.",
+   "controls": "EWT computed automatically. Broker BIR invoice required before payment. Clawbacks enforced by netting.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "Sales commissions, broker portal",
+   "sow_status": "Covered (§3.3 #41–47, #53)",
+   "kpi": "Days from release trigger to payout; disputes per month",
+   "target": "≤ 10 days",
+   "why_problem": "Commissions are computed and released by hand, brokers call for status, and clawbacks are hard to enforce once paid.",
+   "how_fixes": "The commission engine already in the SOW computes at CTS and releases on collection thresholds. Brokers see their own statements, and clawbacks are netted automatically against future payouts.",
+   "control_effect": "Strengthens control: EWT computed automatically; payout only after a BIR-compliant broker invoice is uploaded; clawbacks enforced by netting.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Sales admin computes commission per sale"
+    },
+    {
+     "tag": "Manual",
+     "text": "Collection status checked to decide releases"
+    },
+    {
+     "tag": "Manual",
+     "text": "Voucher prepared and approved"
+    },
+    {
+     "tag": "Manual",
+     "text": "Broker calls for status"
+    },
+    {
+     "tag": "Manual",
+     "text": "Clawback on cancellation tracked separately"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Auto",
+     "text": "Commission computed when the CTS is confirmed"
+    },
+    {
+     "tag": "Auto",
+     "text": "Tranche released when the collection threshold is reached"
+    },
+    {
+     "tag": "Rule",
+     "text": "Broker uploads invoice before payout"
+    },
+    {
+     "tag": "Auto",
+     "text": "Voucher with EWT generated and routed per DOA"
+    },
+    {
+     "tag": "Auto",
+     "text": "Broker sees statement on the portal"
+    },
+    {
+     "tag": "Auto",
+     "text": "Clawbacks netted against the next payout"
+    }
+   ],
+   "what_changes": "Computation, release and clawback automated. Status calls replaced by self-service.",
+   "roles_affected": "Sales admin: handles exceptions and disputes. Brokers: self-serve. AP: pays vouchers generated by the system.",
+   "sow_sections": "§3.1 A, E Commissions; broker portal",
+   "sow_items": [
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    53
+   ],
+   "impact_type": "Adoption only — configure as scoped",
+   "awb_change": "Configure as scoped; require broker invoice upload before payout.",
+   "appendix_ref": "—",
+   "effort_low": 0,
+   "effort_high": 0,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 2 – Build Wave 1 (wk 5–10)",
+   "sow_wording": "—",
+   "flex_category": "—",
+   "risk": "Manual workarounds persist if PHI doesn't adopt the engine.",
+   "sort": 13
+  },
+  {
+   "id": "RE-15",
+   "title": "No PO, no pay — with scheduled payment runs",
+   "process_refs": "03, 06, 16",
+   "current_process": "Requests, POs and bills processed with manual matching; payments released as prepared.",
+   "pain_points": "Bills without POs. Duplicate-payment risk. Frequent ad hoc payment runs.",
+   "proposed": "'No PO, no pay' policy with defined exemptions (utilities, government fees). Mandatory 3-way match (PO – receipt or accomplishment – bill). Two scheduled payment runs a week. BIR 2307 generated and emailed automatically.",
+   "justification": "Fewer exceptions and less rework. Predictable cash outflow. Suppliers get 2307s without asking.",
+   "controls": "Duplicate bill detection. Payment runs approved as a batch per DOA. Tolerance limits on price and quantity variances.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Purchase, Accounting (batch payments), PH localization",
+   "sow_status": "Covered — confirm 2307 outputs (A9)",
+   "kpi": "% of eligible spend on a PO; ad hoc payment runs per month",
+   "target": "≥ 95%; ≤ 2",
+   "why_problem": "Bills without POs and ad hoc payment runs make spending hard to control and cash outflow hard to predict. Manual matching leaves room for duplicate payments.",
+   "how_fixes": "'No PO, no pay' makes the PO the gate for spend. Three-way matching lets the system check quantities and prices. Two scheduled payment runs a week make outflows predictable, and 2307s go out automatically.",
+   "control_effect": "Strengthens control: duplicate bill detection, tolerance limits on variances, batch approval of payment runs per DOA; BIR 2307 issued consistently.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Supplier delivers; bill may arrive without a PO"
+    },
+    {
+     "tag": "Manual",
+     "text": "AP matches bill to documents by hand"
+    },
+    {
+     "tag": "Manual",
+     "text": "Payment prepared when requested"
+    },
+    {
+     "tag": "Manual",
+     "text": "Ad hoc payment runs as needed"
+    },
+    {
+     "tag": "Manual",
+     "text": "2307 prepared on supplier request"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Rule",
+     "text": "PO required for all non-exempt spend"
+    },
+    {
+     "tag": "Same",
+     "text": "Supplier delivers against the PO"
+    },
+    {
+     "tag": "Auto",
+     "text": "Three-way match: PO, receipt or accomplishment, bill"
+    },
+    {
+     "tag": "Rule",
+     "text": "Variances beyond tolerance routed for approval"
+    },
+    {
+     "tag": "New",
+     "text": "Two scheduled payment runs a week, approved as a batch"
+    },
+    {
+     "tag": "Auto",
+     "text": "BIR 2307 generated and emailed with payment"
+    }
+   ],
+   "what_changes": "Manual matching automated. Ad hoc payments replaced by scheduled runs. 2307 automated.",
+   "roles_affected": "Requesters: must raise POs. AP: handles exceptions. Treasury: plans two runs a week. Suppliers: receive 2307s automatically.",
+   "sow_sections": "§3.1 F Supplier & payments",
+   "sow_items": [
+    45,
+    59
+   ],
+   "impact_type": "Design change within existing SOW item",
+   "awb_change": "Enforce PO-required with an exemptions list, three-way match tolerances, scheduled payment batches and automatic 2307 emails.",
+   "appendix_ref": "A9",
+   "effort_low": 1,
+   "effort_high": 2,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "PO required for non-exempt spend; payment runs batched and approved per DOA.",
+   "flex_category": "Requirements Analysis",
+   "risk": "Bills without POs continue; duplicate risk.",
+   "sort": 14
+  },
+  {
+   "id": "RE-16",
+   "title": "Independent vendor master with bank-change verification",
+   "process_refs": "16",
+   "current_process": "Vendor records and bank details may be maintained by the same users who process payments (to be validated).",
+   "pain_points": "Payment-fraud risk from unauthorized bank-detail changes. Duplicate vendors distort spend data.",
+   "proposed": "Central vendor master function. Accreditation through the supplier workflow. Bank-detail changes need a callback verification and a second approval. Duplicate TIN check.",
+   "justification": "Closes a common payment-fraud route and keeps vendor data clean for spend analytics.",
+   "controls": "Separation between vendor master maintenance and payments. Change log reviewed monthly.",
+   "benefits": "Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Contacts, supplier accreditation workflow, access rules",
+   "sow_status": "Covered (§3.1 F accreditation)",
+   "kpi": "Bank-detail changes without verification; duplicate vendors",
+   "target": "Zero",
+   "why_problem": "When the same people can change vendor bank details and process payments, a single person could redirect a payment. Duplicate vendor records also distort spend analysis.",
+   "how_fixes": "Separating vendor master maintenance from payments, and verifying every bank-detail change by callback with a second approval, closes one of the most common payment-fraud routes.",
+   "control_effect": "Strengthens control: segregation of duties between vendor master and payments; monthly review of the change log; duplicate TIN check.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Supplier sends new bank details by email or letter"
+    },
+    {
+     "tag": "Manual",
+     "text": "AP staff updates vendor record"
+    },
+    {
+     "tag": "Same",
+     "text": "Payments processed to the updated account"
+    },
+    {
+     "tag": "Manual",
+     "text": "Duplicate vendors created when names differ"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Supplier submits change through the accreditation workflow"
+    },
+    {
+     "tag": "New",
+     "text": "Vendor master team calls back on a known number to verify"
+    },
+    {
+     "tag": "Rule",
+     "text": "Second approver confirms the change"
+    },
+    {
+     "tag": "Rule",
+     "text": "Duplicate TIN check blocks duplicate vendors"
+    },
+    {
+     "tag": "Auto",
+     "text": "Change log reviewed monthly"
+    }
+   ],
+   "what_changes": "Unverified changes removed. Callback and second approval added. Duplicate check automated.",
+   "roles_affected": "Vendor master team: new owner of vendor data. AP: can no longer edit bank details. Internal Audit: reviews the change log.",
+   "sow_sections": "§3.1 F Supplier accreditation",
+   "sow_items": [],
+   "impact_type": "Design change within existing SOW item",
+   "awb_change": "Add a bank-detail change workflow with callback verification and second approval; block duplicate TINs; remove bank-edit rights from AP users.",
+   "appendix_ref": "—",
+   "effort_low": 1,
+   "effort_high": 2,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Vendor bank-detail changes require verification and a second approval.",
+   "flex_category": "Requirements Analysis",
+   "risk": "Payment-fraud exposure remains.",
+   "sort": 15
+  },
+  {
+   "id": "RE-17",
+   "title": "TORC paid directly, recharged automatically",
+   "process_refs": "14",
+   "current_process": "Taxes and other related charges paid through cash advances, then liquidated; recharge to the buyer handled separately.",
+   "pain_points": "Outstanding cash advances. Missed recharges. Manual computation per title.",
+   "proposed": "Standard TORC computation per lot generated from deed values. Pay agencies directly through AP or e-payment channels where available instead of cash advances. Recharge posted to the buyer ledger automatically.",
+   "justification": "Less cash exposure, no missed recharges, faster liquidation.",
+   "controls": "No new advance while a liquidation is overdue. Aging of unliquidated advances. Computation audit trail.",
+   "benefits": "Efficiency, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Accounting, Approvals, TORC budget",
+   "sow_status": "Confirm — Appendix B1",
+   "kpi": "Unliquidated advances > 30 days; % of TORC recharged",
+   "target": "Zero; 100%",
+   "why_problem": "Taxes and other related charges are paid through cash advances that must be liquidated, and recharges to the buyer are handled separately, so advances age and recharges are missed.",
+   "how_fixes": "Computing TORC per lot from deed values, paying agencies directly where e-payment exists, and posting the recharge to the buyer ledger automatically removes both the cash exposure and the missed recharges.",
+   "control_effect": "Strengthens control: no new advance while a liquidation is overdue; aging of unliquidated advances; computation audit trail.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Titling computes TORC per title"
+    },
+    {
+     "tag": "Manual",
+     "text": "Cash advance requested"
+    },
+    {
+     "tag": "Manual",
+     "text": "Liaison pays agencies in cash or check"
+    },
+    {
+     "tag": "Wait",
+     "text": "Liquidation submitted later"
+    },
+    {
+     "tag": "Manual",
+     "text": "Recharge to buyer posted separately, if remembered"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Auto",
+     "text": "TORC computed per lot from deed values"
+    },
+    {
+     "tag": "New",
+     "text": "Agencies paid directly through AP or e-payment where available"
+    },
+    {
+     "tag": "Rule",
+     "text": "Cash advance only where direct payment is impossible"
+    },
+    {
+     "tag": "Rule",
+     "text": "No new advance while a liquidation is overdue"
+    },
+    {
+     "tag": "Auto",
+     "text": "Recharge posted to the buyer ledger"
+    }
+   ],
+   "what_changes": "Manual computation automated. Most cash advances removed. Recharge automated.",
+   "roles_affected": "Titling: files and tracks rather than handling cash. AP: pays agencies. Credit & collection: sees recharges on the SOA.",
+   "sow_sections": "§3.1 F Project payments (TORC); G TORC budget",
+   "sow_items": [],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "Compute TORC per lot from deed values, pay agencies directly through AP, post recharges to the buyer ledger automatically, and block new advances while a liquidation is overdue.",
+   "appendix_ref": "B1",
+   "effort_low": 3,
+   "effort_high": 5,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "TORC means taxes and other related charges on title transfer, including buyer recharges.",
+   "flex_category": "Change Order",
+   "risk": "Scope mismatch on TORC; advances and missed recharges continue.",
+   "sort": 16
+  },
+  {
+   "id": "RE-18",
+   "title": "One handover pipeline from RFO to title",
+   "process_refs": "15, 19",
+   "current_process": "Turnover and title processing handled by different teams with separate tracking.",
+   "pain_points": "Buyers chase status by phone. Titles are delayed. No end-to-end view.",
+   "proposed": "One pipeline from ready-for-occupancy to title delivery with stage SLAs. Batch title processing per phase (bulk eCAR and RD submissions). Status visible to the buyer in the portal.",
+   "justification": "Fewer status calls. Batching cuts per-title time and cost. Management sees the bottlenecks.",
+   "controls": "Title custody log (who holds each title). Release only to the buyer or lender with signed acknowledgment.",
+   "benefits": "Efficiency, Transparency, Reporting",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "Helpdesk, buyer portal, title tab",
+   "sow_status": "Partial — processing is Appendix A10",
+   "kpi": "Days from full payment to title delivery",
+   "target": "Set after baseline",
+   "why_problem": "Turnover and title processing are tracked by separate teams, so there is no end-to-end view and buyers call to ask about status.",
+   "how_fixes": "One pipeline with stage SLAs from ready-for-occupancy to title delivery gives a single view. Batching title work per phase reduces effort per title. Buyer portal visibility cuts status calls.",
+   "control_effect": "Strengthens control: title custody log shows who holds each title; release only to buyer or lender with signed acknowledgment.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Construction reports unit ready"
+    },
+    {
+     "tag": "Manual",
+     "text": "Customer care schedules turnover"
+    },
+    {
+     "tag": "Manual",
+     "text": "Titling processes titles one at a time"
+    },
+    {
+     "tag": "Manual",
+     "text": "Buyer calls for status"
+    },
+    {
+     "tag": "Paper",
+     "text": "Title released with a logbook entry"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Same",
+     "text": "Unit marked ready for occupancy"
+    },
+    {
+     "tag": "Auto",
+     "text": "Unit enters the handover pipeline with stage SLAs"
+    },
+    {
+     "tag": "Same",
+     "text": "Turnover inspection and acceptance"
+    },
+    {
+     "tag": "New",
+     "text": "Titles processed in batches per phase"
+    },
+    {
+     "tag": "Auto",
+     "text": "Buyer sees status in the portal"
+    },
+    {
+     "tag": "Rule",
+     "text": "Title released only with signed acknowledgment; custody logged"
+    }
+   ],
+   "what_changes": "Separate tracking replaced by one pipeline. Per-title processing batched. Status calls replaced by portal visibility.",
+   "roles_affected": "Customer care and Titling: share one pipeline. Buyers: self-serve status. Management: sees bottlenecks.",
+   "sow_sections": "§3.1 A Title status; turnover and helpdesk",
+   "sow_items": [
+    29,
+    72,
+    79,
+    81,
+    82,
+    83,
+    84,
+    85
+   ],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "One handover pipeline from ready-for-occupancy to title delivery with stage SLAs, batch title processing per phase, and a title custody log — on top of title processing (A10).",
+   "appendix_ref": "A10",
+   "effort_low": 3,
+   "effort_high": 5,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Handover pipeline covers turnover through title delivery with SLAs and custody log.",
+   "flex_category": "Change Order",
+   "risk": "Separate trackers; buyers keep calling for status.",
+   "sort": 17
+  },
+  {
+   "id": "RE-19",
+   "title": "Automated monthly revenue recognition",
+   "process_refs": "Finance",
+   "current_process": "Percentage-of-completion revenue prepared in spreadsheets at period end (to be validated).",
+   "pain_points": "Audit adjustments. Slower close. Method applied inconsistently.",
+   "proposed": "Compute POC revenue monthly from the single verified progress source (RE-07) and the collectability threshold, using a method agreed with the external auditor.",
+   "justification": "Removes a spreadsheet-heavy step from the close and reduces audit adjustments.",
+   "controls": "PFRS 15. Method documented and approved. Review before posting.",
+   "benefits": "Reporting, Efficiency",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "",
+   "odoo_enabler": "Accounting, Project",
+   "sow_status": "Gap — Appendix A3",
+   "kpi": "Audit adjustments on revenue",
+   "target": "No material adjustments",
+   "why_problem": "Revenue under percentage of completion is computed in spreadsheets at period end (to be validated), which slows the close and invites audit adjustments.",
+   "how_fixes": "Using the verified progress from RE-07 and the collectability threshold, the system computes POC revenue every month with a method agreed with the auditor.",
+   "control_effect": "Strengthens compliance: PFRS 15 method documented and approved; computation reproducible; review before posting.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Finance collects % completion from Engineering"
+    },
+    {
+     "tag": "Manual",
+     "text": "Collections % compiled from ledgers"
+    },
+    {
+     "tag": "Manual",
+     "text": "POC revenue computed in a spreadsheet"
+    },
+    {
+     "tag": "Manual",
+     "text": "Journal entry prepared and posted"
+    },
+    {
+     "tag": "Wait",
+     "text": "Auditor adjustments at year-end"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Auto",
+     "text": "Verified % completion pulled from the construction record"
+    },
+    {
+     "tag": "Auto",
+     "text": "Collectability threshold checked per contract"
+    },
+    {
+     "tag": "Auto",
+     "text": "POC revenue computed monthly"
+    },
+    {
+     "tag": "Same",
+     "text": "Finance reviews and approves"
+    },
+    {
+     "tag": "Auto",
+     "text": "Journal posted with supporting detail"
+    }
+   ],
+   "what_changes": "Data gathering and computation automated. Monthly instead of period-end effort.",
+   "roles_affected": "Finance: reviews rather than computes. Engineering: no separate reporting. External auditor: agrees the method once.",
+   "sow_sections": "§3.1 G Project P&L",
+   "sow_items": [],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "Use the verified progress from RE-07 as the input to POC revenue (A3).",
+   "appendix_ref": "A3",
+   "effort_low": 0,
+   "effort_high": 2,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "POC revenue uses verified construction progress as its input.",
+   "flex_category": "Change Order",
+   "risk": "Revenue computed off-system; audit adjustments.",
+   "sort": 18
+  },
+  {
+   "id": "RE-20",
+   "title": "Fast close and one management pack",
+   "process_refs": "X2",
+   "current_process": "Month-end relies on manual consolidation across departments (as described in SOW §2).",
+   "pain_points": "Slow close. Management packs assembled by hand. Numbers differ between reports.",
+   "proposed": "Close calendar and checklist with named owners. Sub-ledgers post automatically. Intercompany transactions matched across Group entities. Standard management pack generated from Odoo. One KPI dictionary for all reports.",
+   "justification": "Faster, consistent numbers and Finance time freed for analysis.",
+   "controls": "Close checklist sign-offs. Reconciliations evidenced. Periods locked after close.",
+   "benefits": "Reporting, Efficiency, Transparency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1 → 2",
+   "odoo_enabler": "Accounting (lock dates, intercompany), Spreadsheet dashboards",
+   "sow_status": "Covered (§3.1 G company performance report)",
+   "kpi": "Working days to close",
+   "target": "≤ 5 at go-live; ≤ 3 after hypercare",
+   "why_problem": "Month-end depends on manual consolidation across departments, so the close is slow and reports disagree depending on who prepared them.",
+   "how_fixes": "A close calendar with owners, automatic sub-ledger postings, intercompany matching and one KPI dictionary produce a single management pack from the system.",
+   "control_effect": "Strengthens control: checklist sign-offs, evidenced reconciliations, periods locked after close.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Departments send data to Finance"
+    },
+    {
+     "tag": "Rekey",
+     "text": "Finance consolidates in spreadsheets"
+    },
+    {
+     "tag": "Manual",
+     "text": "Intercompany balances reconciled by email"
+    },
+    {
+     "tag": "Manual",
+     "text": "Management pack built by hand"
+    },
+    {
+     "tag": "Manual",
+     "text": "Figures questioned across reports"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "Close calendar with named owners and deadlines"
+    },
+    {
+     "tag": "Auto",
+     "text": "Sub-ledgers post to the GL"
+    },
+    {
+     "tag": "Auto",
+     "text": "Intercompany transactions matched across Group entities"
+    },
+    {
+     "tag": "Rule",
+     "text": "Checklist sign-off; period locked"
+    },
+    {
+     "tag": "Auto",
+     "text": "Management pack generated from one KPI dictionary"
+    }
+   ],
+   "what_changes": "Consolidation and pack preparation automated. Intercompany matching automated. Close governed by calendar and checklist.",
+   "roles_affected": "Finance: analyses instead of compiling. Department heads: own close tasks. Group: receives consistent packs across affiliates.",
+   "sow_sections": "§3.1 G Company performance report, Finance BI; §3.4 multi-company",
+   "sow_items": [
+    88
+   ],
+   "impact_type": "Extends SOW scope",
+   "awb_change": "Configure close checklist and lock dates, intercompany matching across Group entities, and a standard management pack built on PHI's KPI dictionary.",
+   "appendix_ref": "—",
+   "effort_low": 3,
+   "effort_high": 6,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "Month-end close checklist, intercompany matching and a standard management pack are delivered.",
+   "flex_category": "Change Order",
+   "risk": "Close remains manual; figures differ across reports.",
+   "sort": 19
+  },
+  {
+   "id": "RE-21",
+   "title": "Rolling 13-week cash forecast",
+   "process_refs": "X1, 02",
+   "current_process": "Cash-flow projections prepared periodically.",
+   "pain_points": "Treasury decisions made on stale information; borrowing timed conservatively.",
+   "proposed": "Weekly 13-week cash forecast built from system schedules: buyer amortizations, takeout pipeline, AP due dates and loan service. Weekly Treasury review.",
+   "justification": "Better timing of borrowing and payments; lower financing cost.",
+   "controls": "Forecast versions retained; variance to actual reviewed weekly.",
+   "benefits": "Reporting, Transparency",
+   "wave": "Wave 1 – Odoo build (2027 rollout)",
+   "continues": "Wave 2",
+   "odoo_enabler": "Spreadsheet, Accounting, Customer and Company Loans",
+   "sow_status": "Partial — Appendix A13",
+   "kpi": "Forecast accuracy at week +4",
+   "target": "Within ±10%",
+   "why_problem": "Cash projections are prepared periodically from separate sources, so Treasury decides on borrowing and payments with stale data.",
+   "how_fixes": "Building the forecast weekly from system schedules — buyer amortizations, takeout pipeline, AP due dates and loan service — gives a current 13-week view.",
+   "control_effect": "Maintains control: forecast versions retained; variance to actual reviewed weekly.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Treasury requests inputs from departments"
+    },
+    {
+     "tag": "Rekey",
+     "text": "Inputs combined in a spreadsheet"
+    },
+    {
+     "tag": "Wait",
+     "text": "Projection updated periodically"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "Auto",
+     "text": "Collections, takeout, AP and loan schedules pulled from Odoo"
+    },
+    {
+     "tag": "Auto",
+     "text": "13-week forecast refreshed weekly"
+    },
+    {
+     "tag": "New",
+     "text": "Weekly Treasury review of forecast vs actual"
+    }
+   ],
+   "what_changes": "Manual input gathering removed. Refresh made weekly. Variance review added.",
+   "roles_affected": "Treasury: reviews and acts. Departments: no manual inputs. ManCom: sees a current forecast.",
+   "sow_sections": "§3.1 G Cash-flow projections; §3.3 Company Loans",
+   "sow_items": [
+    100
+   ],
+   "impact_type": "Depends on Appendix A/B gap item",
+   "awb_change": "Build a weekly 13-week cash forecast from collection, takeout, AP and loan schedules (A13).",
+   "appendix_ref": "A13",
+   "effort_low": 1,
+   "effort_high": 2,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "Phase 3 – Build Wave 2 (wk 9–14)",
+   "sow_wording": "13-week cash forecast refreshed weekly from system schedules.",
+   "flex_category": "Change Order",
+   "risk": "Treasury works from stale projections.",
+   "sort": 20
+  },
+  {
+   "id": "RE-22",
+   "title": "Data ownership and clean-up before migration",
+   "process_refs": "All",
+   "current_process": "Data is owned by whoever enters it; legacy data in In4 Velocity varies in quality.",
+   "pain_points": "Migration quality decides go-live success. Under the SOW 'CSV Rule', dirty data costs flex days.",
+   "proposed": "Named data owners for the Lot, buyer, vendor and cost-code masters. Monthly data-quality scorecard. Start cleansing legacy data now: duplicates, missing TINs, buyer-ledger reconciliation to GL.",
+   "justification": "Cleaner migration, fewer flex days, and trustworthy reports from day one.",
+   "controls": "Master-data changes approved and logged. Reconciled opening balances signed off by Finance.",
+   "benefits": "Reporting, Efficiency",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 1",
+   "odoo_enabler": "Data migration templates",
+   "sow_status": "Client obligation (SOW §7, §8)",
+   "kpi": "Error rate in mock migration loads",
+   "target": "< 2% by the final mock load",
+   "why_problem": "Legacy data varies in quality and has no clear owner. Under the SOW, data that does not fit the vendor's templates is corrected using PHI's limited flex days.",
+   "how_fixes": "Named owners and a monthly quality scorecard give accountability now. Cleaning duplicates, missing TINs and ledger mismatches before migration reduces rework, flex drawdown and go-live risk.",
+   "control_effect": "Strengthens reporting integrity: master-data changes approved and logged; opening balances reconciled and signed off by Finance.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Data entered by whoever handles the transaction"
+    },
+    {
+     "tag": "Wait",
+     "text": "Errors found when reports look wrong"
+    },
+    {
+     "tag": "Manual",
+     "text": "Migration data extracted close to go-live"
+    },
+    {
+     "tag": "Manual",
+     "text": "Errors fixed under time pressure"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "Data owners named for Lot, buyer, vendor and cost-code masters"
+    },
+    {
+     "tag": "New",
+     "text": "Monthly data-quality scorecard"
+    },
+    {
+     "tag": "Earlier",
+     "text": "Cleansing starts now in In4 Velocity"
+    },
+    {
+     "tag": "Auto",
+     "text": "Mock migration loads validated against templates"
+    },
+    {
+     "tag": "Rule",
+     "text": "Opening balances signed off by Finance"
+    }
+   ],
+   "what_changes": "Clean-up moved months earlier. Ownership and measurement added.",
+   "roles_affected": "Data owners: accountable for quality. Finance: signs off balances. IT: runs mock loads.",
+   "sow_sections": "§3.4 Data migration; §7 CSV Rule; §10.3 Data Migration flex",
+   "sow_items": [],
+   "impact_type": "PHI internal — no AWB effort",
+   "awb_change": "No AWB effort. Clean data before migration reduces remediation drawn from the Data Migration flex allocation.",
+   "appendix_ref": "—",
+   "effort_low": 0,
+   "effort_high": 0,
+   "offset_low": 0,
+   "offset_high": 5,
+   "build_phase": "Phase 4 – Migration & SIT (wk 13–16)",
+   "sow_wording": "—",
+   "flex_category": "Data Migration",
+   "risk": "Remediation drawn from flex at PHP 12,000 per man-day; go-live risk.",
+   "sort": 21
+  },
+  {
+   "id": "RE-23",
+   "title": "Named process owners with KPIs",
+   "process_refs": "All",
+   "current_process": "Processes are run by departments; performance is not measured per end-to-end process.",
+   "pain_points": "Improvements fade after go-live; no one owns cross-department hand-offs.",
+   "proposed": "Every blueprint process has a named owner and 2–3 KPIs. Monthly process performance review. Improvement backlog kept in the blueprint web app.",
+   "justification": "Sustains the gains beyond go-live and makes hand-off problems visible.",
+   "controls": "KPI definitions controlled in the KPI dictionary; review minutes retained.",
+   "benefits": "Transparency, Reporting",
+   "wave": "Wave 0 – Now (before BRD)",
+   "continues": "Wave 2",
+   "odoo_enabler": "Blueprint web app, Odoo dashboards",
+   "sow_status": "Policy — no SOW impact",
+   "kpi": "% of processes with an owner and a KPI baseline",
+   "target": "100% before BRD",
+   "why_problem": "Processes are run by departments, so no one owns end-to-end performance or the hand-offs between departments, and improvements fade after go-live.",
+   "how_fixes": "A named owner with two or three KPIs per process, a monthly review and a backlog in the blueprint app keep improvements going after the vendor leaves.",
+   "control_effect": "Strengthens governance: KPI definitions controlled; review decisions minuted.",
+   "before_steps": [
+    {
+     "tag": "Manual",
+     "text": "Each department reports its own metrics"
+    },
+    {
+     "tag": "Wait",
+     "text": "Cross-department problems raised only when they escalate"
+    }
+   ],
+   "after_steps": [
+    {
+     "tag": "New",
+     "text": "Named owner and KPIs per blueprint process"
+    },
+    {
+     "tag": "New",
+     "text": "Monthly process performance review"
+    },
+    {
+     "tag": "Auto",
+     "text": "KPI dashboards from Odoo"
+    },
+    {
+     "tag": "New",
+     "text": "Improvement backlog tracked in the blueprint app"
+    }
+   ],
+   "what_changes": "Process ownership and a regular review cycle added.",
+   "roles_affected": "Process owners: accountable end to end. ManCom: reviews monthly. Group CIO: tracks progress across affiliates.",
+   "sow_sections": "None",
+   "sow_items": [],
+   "impact_type": "PHI internal — no AWB effort",
+   "awb_change": "No AWB effort. Process owners and KPI reviews are PHI governance.",
+   "appendix_ref": "—",
+   "effort_low": 0,
+   "effort_high": 0,
+   "offset_low": 0,
+   "offset_high": 0,
+   "build_phase": "No AWB build",
+   "sow_wording": "—",
+   "flex_category": "—",
+   "risk": "Improvements fade after go-live.",
+   "sort": 22
+  }
+ ],
+ "sow_gaps": [
+  {
+   "ref": "01",
+   "kind": "process",
+   "process_id": "01",
+   "title": null,
+   "requirement": "Corporate + life-of-project budgets by phase and cost code; budget cycle (prepare → consolidate → ManCom approval → lock); budget check on PR/PO/bill; realignment",
+   "sow_coverage": "§3.1 G Finance Core (corporate & department budget, burn-rate; TORC budget rule builder; project P&L; budget vs actual)",
+   "rating": "Partial",
+   "gaps": "No budget preparation / consolidation / approval workflow or versioning; no multi-year project budget or re-baseline; budget check at PR/PO stage not stated (only TORC dispensing).",
+   "action": "Clarify in BRD: budget cycle workflow, versions, PR/PO budget check. Price as CR if not in base.",
+   "priority": "High",
+   "steps_affected": "01.1, 01.2, 01.3",
+   "status": "Open",
+   "sort": 0
+  },
+  {
+   "ref": "02",
+   "kind": "process",
+   "process_id": "02",
+   "title": null,
+   "requirement": "Loan drawdown, allocation to projects, interest accrual and capitalization, debt service",
+   "sow_coverage": "§3.3 #99–100 Company Loans (payment processing, schedule view, cash-flow forecast link)",
+   "rating": "Partial",
+   "gaps": "Debt service covered. Drawdown allocation per project, interest capitalization to project cost (and stop at completion), covenant tracking not mentioned.",
+   "action": "Add allocation + capitalized-interest rules to BRD; confirm with Finance.",
+   "priority": "Medium",
+   "steps_affected": "02.1",
+   "status": "Open",
+   "sort": 1
+  },
+  {
+   "ref": "03",
+   "kind": "process",
+   "process_id": "03",
+   "title": null,
+   "requirement": "Request → budget check → PO/contract → receipt → bill → AP for corporate spend",
+   "sow_coverage": "§3.1 F Non-project payments (same approval & posting pipeline); §3.2 Purchase, Accounting",
+   "rating": "Covered",
+   "gaps": "Petty cash / reimbursements (Odoo Expenses) not mentioned.",
+   "action": "Confirm Expenses app is in scope or handled manually.",
+   "priority": "Low",
+   "steps_affected": "03.1",
+   "status": "Open",
+   "sort": 2
+  },
+  {
+   "ref": "04",
+   "kind": "process",
+   "process_id": "04",
+   "title": null,
+   "requirement": "Due diligence, agreements, milestone payments, taxes and title transfer, land bank",
+   "sow_coverage": "§3.1 C Land Acquisition; D Land banking register & carrying costs; §3.3 #1–4, 12, 16–26, 29–30, 56–63, 86–87",
+   "rating": "Covered",
+   "gaps": "Strong coverage (multi-owner, DOAS, BIR/LGU filing tracker, land bank). JV with landowner paid in units (non-cash allocation) not mentioned; CARP/heirs flags depend on DD checklist content.",
+   "action": "Confirm JV / land-for-units treatment in Discovery.",
+   "priority": "Medium",
+   "steps_affected": "04.1, 04.2, 04.3",
+   "status": "Open",
+   "sort": 3
+  },
+  {
+   "ref": "05",
+   "kind": "process",
+   "process_id": "05",
+   "title": null,
+   "requirement": "Project master, phases/WBS, analytic account, permits (DP, ECC, BP, CR/LTS); block selling without LTS",
+   "sow_coverage": "§3.1 C Project Setup Wizard, launch readiness gate; D Land bank → project conversion; §3.3 #6–15, 37, 62, 70",
+   "rating": "Partial",
+   "gaps": "No explicit permit / License to Sell tracker; 5-criteria launch gate is land-oriented (title, payments, construction) — LTS not listed as a criterion. Wizard Step 1 (Info) is in §3.1 but not itemized in §3.3.",
+   "action": "Add LTS / DHSUD permits as a launch-gate criterion and permit register. Ask why Step 1 is unpriced.",
+   "priority": "High",
+   "steps_affected": "05.1",
+   "status": "Open",
+   "sort": 4
+  },
+  {
+   "ref": "06",
+   "kind": "process",
+   "process_id": "06",
+   "title": null,
+   "requirement": "Contract award, progress billing with retention and DP recoupment, variation orders, % completion, POC link",
+   "sow_coverage": "§3.1 B Subcontractor billing workflow; F Contracts & deliverables (milestones, retention); D construction schedule, cost ledger; §3.3 #66–69",
+   "rating": "Partial",
+   "gaps": "Retention and milestone release covered. DP recoupment, variation orders, liquidated damages, back-charges not mentioned. BOQ listed in §3.2 but no build item. % completion does not feed revenue recognition (see C1).",
+   "action": "Walk vendor through 06.1 exceptions; get written coverage or CR price.",
+   "priority": "High",
+   "steps_affected": "06.1",
+   "status": "Open",
+   "sort": 5
+  },
+  {
+   "ref": "07",
+   "kind": "process",
+   "process_id": "07",
+   "title": null,
+   "requirement": "Lot as unit master, pricing and escalation, construction + sales status, financing schemes and payment terms",
+   "sow_coverage": "§3.1 D Inventory (Lot master, pricing floor, governed status workflow); H pricing rules engine; §3.3 #5, 16, 27–28, 69, 73",
+   "rating": "Covered",
+   "gaps": "Lot model (lam.lot) is built around block/lot land parcels. Condo units (tower-floor-unit), parking slots and house-and-lot packages not addressed. Pag-IBIG not listed among pricing schemes in H (only in Customer Loans).",
+   "action": "Confirm the Lot model handles vertical projects before sign-off.",
+   "priority": "High",
+   "steps_affected": "07.1, 07.2",
+   "status": "Open",
+   "sort": 6
+  },
+  {
+   "ref": "08",
+   "kind": "process",
+   "process_id": "08",
+   "title": null,
+   "requirement": "Broker/agent accreditation, PRC/DHSUD/TIN docs, validity, commission scheme",
+   "sow_coverage": "§3.1 E Partner & accreditation; §3.3 #40, 48–49, 55, 64",
+   "rating": "Covered",
+   "gaps": "Expiry alerts included. Agent moving firms mid-deal not explicit.",
+   "action": "Confirm in BRD.",
+   "priority": "Low",
+   "steps_affected": "08.1",
+   "status": "Open",
+   "sort": 7
+  },
+  {
+   "ref": "09",
+   "kind": "process",
+   "process_id": "09",
+   "title": null,
+   "requirement": "Sales computation, reservation, document & credit check, CTS generation and notarization, payment schedule, revenue recognition",
+   "sow_coverage": "§3.1 H Reservation; E Sales; A buyer docs (OCR); §3.3 #31–39, 50–52, 54",
+   "rating": "Partial",
+   "gaps": "Reservation → SO flow is strong. No Contract to Sell (CTS) document template, signing and notarization tracking — the SO stands in for the contract. No credit-evaluation step. Discount approval implied, not explicit.",
+   "action": "Add CTS generation (template, e-sign/notarization status) and credit check to scope.",
+   "priority": "High",
+   "steps_affected": "09.1, 09.2, 09.3",
+   "status": "Open",
+   "sort": 8
+  },
+  {
+   "ref": "10",
+   "kind": "process",
+   "process_id": "10",
+   "title": null,
+   "requirement": "Lease term sheet, contract, recurring rent/CUSA billing, deposits, renewals",
+   "sow_coverage": "None",
+   "rating": "Not covered",
+   "gaps": "Leasing is absent from the SOW.",
+   "action": "Deferred to a later phase by PHI decision; no pricing requested.",
+   "priority": "Medium",
+   "steps_affected": "10.1",
+   "status": "Deferred (next phase)",
+   "sort": 9
+  },
+  {
+   "ref": "11",
+   "kind": "process",
+   "process_id": "11",
+   "title": null,
+   "requirement": "Buyer documents, BIR-compliant receipting, collection posting and allocation, SOA, penalties, aging, demand letters",
+   "sow_coverage": "§3.1 I Customer Loans (allocation, statements, aging); J Customer Servicing (SOA); §3.3 #34, 39, 74–77, 95, 97–98",
+   "rating": "Partial",
+   "gaps": "Allocation (penalty → interest → principal), SOA, grace period and aging covered. PDC warehousing and bounced checks, demand-letter generation and BIR-registered invoice/receipt series not mentioned.",
+   "action": "Add PDC management and demand letters; confirm BIR invoice series (see C2).",
+   "priority": "High",
+   "steps_affected": "11.1, 11.2, 11.3",
+   "status": "Open",
+   "sort": 10
+  },
+  {
+   "ref": "12",
+   "kind": "process",
+   "process_id": "12",
+   "title": null,
+   "requirement": "Maceda-compliant cancellation: grace, notarial notice, cash surrender value, refund/forfeiture, reversals, return to inventory",
+   "sow_coverage": "§3.3 #36 (SO cancel releases lot), #43 (commission clawback), H reservation cancel/release",
+   "rating": "Partial",
+   "gaps": "Only the inventory release and commission clawback are covered. No RA 6552 cash-surrender-value computation, notice tracking, refund processing, forfeiture income or AR/revenue reversal.",
+   "action": "Add a cancellation workflow with Maceda calculator as base scope, not CR — it is a statutory requirement.",
+   "priority": "High",
+   "steps_affected": "12.1",
+   "status": "Open",
+   "sort": 11
+  },
+  {
+   "ref": "13",
+   "kind": "process",
+   "process_id": "13",
+   "title": null,
+   "requirement": "Bank/Pag-IBIG takeout tracking (requirements, LOG/NOA, release, proceeds) and in-house financing",
+   "sow_coverage": "§3.1 I Customer Loans & Financing; B turnover aging uses takeout status; §3.3 #39, 96–98",
+   "rating": "Partial",
+   "gaps": "IHF is well covered (amortization, restructuring, compounding). Takeout workflow — requirements checklist, submission, LOG/NOA, title annotation, proceeds release, Pag-IBIG buyback — is only implied via a takeout status.",
+   "action": "Specify takeout tracker fields and stages in BRD.",
+   "priority": "High",
+   "steps_affected": "13.1, 13.2",
+   "status": "Open",
+   "sort": 12
+  },
+  {
+   "ref": "14",
+   "kind": "process",
+   "process_id": "14",
+   "title": null,
+   "requirement": "TORC = taxes and other related charges on title transfer: compute, fund, pay agencies, liquidate, recharge to buyer",
+   "sow_coverage": "§3.1 F Project payments (TORC): budget vs actual per project/lot; G TORC budget rule builder & dispensing engine",
+   "rating": "Partial",
+   "gaps": "The SOW treats TORC as a project budget-dispensing mechanism. Buyer-side taxes and charges, recharge to buyer ledger and liquidation of cash advances are not described. Definitions may not match.",
+   "action": "Align the TORC definition with the vendor in writing before BRD.",
+   "priority": "High",
+   "steps_affected": "14.1",
+   "status": "Open",
+   "sort": 13
+  },
+  {
+   "ref": "15",
+   "kind": "process",
+   "process_id": "15",
+   "title": null,
+   "requirement": "Buyer turnover eligibility, joint inspection, punch list, acceptance, keys, warranty",
+   "sow_coverage": "§3.1 B turnover aging; §3.3 #72, 79, 85 (turnover & dual signatures, portal move-in status, defect tickets)",
+   "rating": "Covered",
+   "gaps": "Warranty period tracking not mentioned. Note: 'Turnover' in §3.3 #70–73 means the internal land → sales hand-off, not buyer turnover.",
+   "action": "Keep the two meanings of 'turnover' separate in the BRD glossary.",
+   "priority": "Medium",
+   "steps_affected": "15.1",
+   "status": "Open",
+   "sort": 14
+  },
+  {
+   "ref": "16",
+   "kind": "process",
+   "process_id": "16",
+   "title": null,
+   "requirement": "Invoice capture, 3-way match, approval (DOA), EWT, payment, BIR 2307",
+   "sow_coverage": "§3.1 F Supplier & payments (approval matrix, roll-up, retention, T-7 alerts); §3.3 #45, 59–60",
+   "rating": "Covered",
+   "gaps": "EWT named in objectives; BIR 2307 / SAWT / QAP / alphalist outputs not listed explicitly.",
+   "action": "Confirm PH localization outputs (see C2).",
+   "priority": "Medium",
+   "steps_affected": "16.1, 16.2",
+   "status": "Open",
+   "sort": 15
+  },
+  {
+   "ref": "17",
+   "kind": "process",
+   "process_id": "17",
+   "title": null,
+   "requirement": "Commission accrual, tranche release, splits, EWT, clawback, non-cash incentives",
+   "sow_coverage": "§3.1 A, E compensation engine & payout; §3.3 #41–47, 53, 91",
+   "rating": "Covered",
+   "gaps": "Well covered, including vesting, clawback and disputes.",
+   "action": "None.",
+   "priority": "Low",
+   "steps_affected": "17.1",
+   "status": "Open",
+   "sort": 16
+  },
+  {
+   "ref": "18",
+   "kind": "process",
+   "process_id": "18",
+   "title": null,
+   "requirement": "Homeowner onboarding, dues billing and collection, servicing, PM expenses, HOA turnover",
+   "sow_coverage": "§3.3 #81–84 Helpdesk (servicing only)",
+   "rating": "Partial",
+   "gaps": "Only servicing tickets are covered. Association dues billing/collection, HOA fund accounting and HOA turnover are absent.",
+   "action": "Deferred to a later phase by PHI decision; no pricing requested.",
+   "priority": "Medium",
+   "steps_affected": "18.1, 18.2, 18.3",
+   "status": "Deferred (next phase)",
+   "sort": 17
+  },
+  {
+   "ref": "19",
+   "kind": "process",
+   "process_id": "19",
+   "title": null,
+   "requirement": "Buyer title transfer: DOAS, taxes/fees, eCAR, new TCT/CCT, release to buyer or bank",
+   "sow_coverage": "§3.1 A title status integration (Pre-BIR → Title Release); §3.3 #29 Title tab, #78 portal documents",
+   "rating": "Partial",
+   "gaps": "Status visibility is covered. The processing workflow (documents, fee payment, eCAR, RD transfer, release to lender) is not itemized — the BIR/LGU filing tracker (#26) is for land acquisition.",
+   "action": "Extend #26 filing tracker to buyer title transfer.",
+   "priority": "Medium",
+   "steps_affected": "19.1",
+   "status": "Open",
+   "sort": 18
+  },
+  {
+   "ref": "X1",
+   "kind": "process",
+   "process_id": "X1",
+   "title": null,
+   "requirement": "Rolling sales, collection, cost-to-complete and cash forecasts",
+   "sow_coverage": "§3.1 G company performance report (cash-flow projections); §3.3 #100 cash-flow forecast link",
+   "rating": "Partial",
+   "gaps": "Cash-flow projection mentioned. Sales and collection forecasts and cost-to-complete not described.",
+   "action": "Define forecast outputs in BRD.",
+   "priority": "Low",
+   "steps_affected": "X1.1",
+   "status": "Open",
+   "sort": 19
+  },
+  {
+   "ref": "X2",
+   "kind": "process",
+   "process_id": "X2",
+   "title": null,
+   "requirement": "Budget vs actual and KPI reporting across processes",
+   "sow_coverage": "§3.1 G Finance BI; many dashboards (§3.3 #1–6, 86–91)",
+   "rating": "Covered",
+   "gaps": "Well covered.",
+   "action": "None.",
+   "priority": "Low",
+   "steps_affected": "X2.1",
+   "status": "Open",
+   "sort": 20
+  },
+  {
+   "ref": "C1",
+   "kind": "cross",
+   "process_id": null,
+   "title": "Revenue recognition (PFRS 15, over-time / % of completion)",
+   "requirement": "",
+   "sow_coverage": "Not in SOW",
+   "rating": "Not covered",
+   "gaps": "No mention of revenue recognition, POC journals or significant financing component — central to a developer's financials.",
+   "action": "Add to Finance Core; agree method with external auditor first.",
+   "priority": "High",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 100
+  },
+  {
+   "ref": "C2",
+   "kind": "cross",
+   "process_id": null,
+   "title": "BIR compliance detail",
+   "requirement": "",
+   "sow_coverage": "Objectives mention EWT and BIR; §9 excludes non-PH filings",
+   "rating": "Partial",
+   "gaps": "CAS permit / registered invoice series, EOPT invoicing rules, e-invoicing (EIS), 2307, SAWT, QAP, alphalist and VAT on real property thresholds are not itemized.",
+   "action": "Get a written list of PH statutory outputs delivered.",
+   "priority": "High",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 101
+  },
+  {
+   "ref": "C3",
+   "kind": "cross",
+   "process_id": null,
+   "title": "Data migration from In4 Velocity",
+   "requirement": "",
+   "sow_coverage": "§3.4 data migration; §7 CSV Rule; §9 excludes history beyond cut-off",
+   "rating": "Partial",
+   "gaps": "Only templated master data and opening balances. Maceda computations need full payment history (years paid); commission and takeout status also need history.",
+   "action": "Agree cut-off and which buyer-ledger history migrates; size it now, not as flex.",
+   "priority": "High",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 102
+  },
+  {
+   "ref": "C4",
+   "kind": "cross",
+   "process_id": null,
+   "title": "Vertical / condo projects in the Lot model",
+   "requirement": "",
+   "sow_coverage": "§3.1 D, §8 (existing Lot model 'stable and documented')",
+   "rating": "Partial",
+   "gaps": "Lot model is land-lot based (block/lot, TCT). CCT titles, tower-floor-unit, parking not addressed.",
+   "action": "Confirm project mix and model design.",
+   "priority": "High",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 103
+  },
+  {
+   "ref": "C5",
+   "kind": "cross",
+   "process_id": null,
+   "title": "Existing internal systems",
+   "requirement": "",
+   "sow_coverage": "§9 limits integrations to CSV/MT940 imports",
+   "rating": "Not covered",
+   "gaps": "No data feed to PHI's existing internal systems (e.g., BI dashboards, SharePoint document stores).",
+   "action": "List systems that must read Odoo data; decide API vs export.",
+   "priority": "Medium",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 104
+  },
+  {
+   "ref": "C6",
+   "kind": "cross",
+   "process_id": null,
+   "title": "Mockups referenced but not attached",
+   "requirement": "",
+   "sow_coverage": "§3.3 'based on the Mockups'",
+   "rating": "Partial",
+   "gaps": "Scope items are defined by mockups that are not part of the SOW; items #62–64 have no description at all.",
+   "action": "Attach mockups as an SOW annex; describe #62–64.",
+   "priority": "Medium",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 105
+  },
+  {
+   "ref": "S1",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Buyer self-service portal (SOA, payments, documents, concerns, turnover status)",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 11, 15, 19",
+   "action": "Add portal as a channel in SIPOC for 11 and 15",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 201
+  },
+  {
+   "ref": "S2",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Broker / agent portal (listings, lead registration, reservation requests, commission view)",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 08, 09, 17",
+   "action": "Add as a channel in 08 and 09",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 202
+  },
+  {
+   "ref": "S3",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Supplier accreditation workflow and performance rating",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 03, 06, 16",
+   "action": "Add supplier accreditation as a step in procure-to-pay",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 203
+  },
+  {
+   "ref": "S4",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Land banking register, carrying cost ledger and conversion to project",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 04, 05",
+   "action": "Add land bank to 04 outputs and 05 inputs",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 204
+  },
+  {
+   "ref": "S5",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "5-criteria launch readiness gate and internal land → sales turnover",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 05, 07",
+   "action": "Add gate to diagram B before lot creation",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 205
+  },
+  {
+   "ref": "S6",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Helpdesk with SLA, CSAT and construction punch-list",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 15, 18",
+   "action": "Add CSAT and SLA to 15 / 18 outputs",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 206
+  },
+  {
+   "ref": "S7",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Company loan payment processing",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 02",
+   "action": "Already in 02 — confirm scope depth",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 207
+  },
+  {
+   "ref": "S8",
+   "kind": "sow_only",
+   "process_id": null,
+   "title": "Document OCR for buyer IDs and proof of income",
+   "requirement": "",
+   "sow_coverage": "In SOW",
+   "rating": "Covered",
+   "gaps": "Blueprint processes: 09, 11",
+   "action": "Add to 11.1 hand-off",
+   "priority": "Low",
+   "steps_affected": "",
+   "status": "Open",
+   "sort": 208
+  }
+ ],
+ "sow_items": [
+  {
+   "no": 1,
+   "section": "Dashboard",
+   "feature": "Acquisition KPI Cards",
+   "dev_days": 4.32,
+   "process_refs": "04"
+  },
+  {
+   "no": 2,
+   "section": "Dashboard",
+   "feature": "Attention Required List",
+   "dev_days": 5.76,
+   "process_refs": "04"
+  },
+  {
+   "no": 3,
+   "section": "Dashboard",
+   "feature": "Project Progress Bars",
+   "dev_days": 2.88,
+   "process_refs": "04"
+  },
+  {
+   "no": 4,
+   "section": "Dashboard",
+   "feature": "Quick Navigation",
+   "dev_days": 2.88,
+   "process_refs": "04"
+  },
+  {
+   "no": 5,
+   "section": "Dashboard",
+   "feature": "Lot Inventory",
+   "dev_days": 5.76,
+   "process_refs": "07"
+  },
+  {
+   "no": 6,
+   "section": "Dashboard",
+   "feature": "Project",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 7,
+   "section": "Projects & Pipeline",
+   "feature": "Project Consolidated View",
+   "dev_days": 5.76,
+   "process_refs": "04, 05"
+  },
+  {
+   "no": 8,
+   "section": "Projects & Pipeline",
+   "feature": "Project Search & Filters",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 9,
+   "section": "Project Setup Wizard",
+   "feature": "Step 2 - Site Details",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 10,
+   "section": "Project Setup Wizard",
+   "feature": "Step 3 - Targets",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 11,
+   "section": "Project Setup Wizard",
+   "feature": "Step 4 - Team Assignment",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 12,
+   "section": "Project Setup Wizard",
+   "feature": "Step 5 - Milestone Template",
+   "dev_days": 5.76,
+   "process_refs": "04"
+  },
+  {
+   "no": 13,
+   "section": "Project Setup Wizard",
+   "feature": "Step 6 - Documents",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 14,
+   "section": "Project Setup Wizard",
+   "feature": "Step 7 - Review & Launch",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 15,
+   "section": "Project Setup Wizard",
+   "feature": "Sample Form Previews",
+   "dev_days": 4.32,
+   "process_refs": "05"
+  },
+  {
+   "no": 16,
+   "section": "Lot Onboarding Form",
+   "feature": "Lot Master Data",
+   "dev_days": 5.76,
+   "process_refs": "04, 07"
+  },
+  {
+   "no": 17,
+   "section": "Lot Onboarding Form",
+   "feature": "Pricing & Source",
+   "dev_days": 4.32,
+   "process_refs": "04"
+  },
+  {
+   "no": 18,
+   "section": "Lot Onboarding Form",
+   "feature": "Seller/Owner Details",
+   "dev_days": 4.32,
+   "process_refs": "04"
+  },
+  {
+   "no": 19,
+   "section": "Lot Onboarding Form",
+   "feature": "Attachments Checklist",
+   "dev_days": 4.32,
+   "process_refs": "04"
+  },
+  {
+   "no": 20,
+   "section": "Lot Onboarding Form",
+   "feature": "Auto Due-Diligence Checklist",
+   "dev_days": 7.2,
+   "process_refs": "04"
+  },
+  {
+   "no": 21,
+   "section": "Lot Onboarding Form",
+   "feature": "Approval Route",
+   "dev_days": 5.76,
+   "process_refs": "04"
+  },
+  {
+   "no": 22,
+   "section": "Lot Onboarding Form",
+   "feature": "Bulk Lot Onboarding Wizard",
+   "dev_days": 7.2,
+   "process_refs": "04"
+  },
+  {
+   "no": 23,
+   "section": "Acquisition & Payments (Multi-Owner)",
+   "feature": "Multi-Owner Land Sources",
+   "dev_days": 8.64,
+   "process_refs": "04"
+  },
+  {
+   "no": 24,
+   "section": "Acquisition & Payments (Multi-Owner)",
+   "feature": "Per-Owner Milestone Schedule",
+   "dev_days": 8.64,
+   "process_refs": "04"
+  },
+  {
+   "no": 25,
+   "section": "Acquisition & Payments (Multi-Owner)",
+   "feature": "Auto-Drafted Deed of Absolute Sale",
+   "dev_days": 8.64,
+   "process_refs": "04"
+  },
+  {
+   "no": 26,
+   "section": "Acquisition & Payments (Multi-Owner)",
+   "feature": "BIR / LGU Filing Tracker",
+   "dev_days": 7.2,
+   "process_refs": "04"
+  },
+  {
+   "no": 27,
+   "section": "Lot Detail & Lifecycle",
+   "feature": "Lot Lock / Reusable Pill",
+   "dev_days": 4.32,
+   "process_refs": "07, 09"
+  },
+  {
+   "no": 28,
+   "section": "Lot Detail & Lifecycle",
+   "feature": "Locked Ribbon & Kanban Lock Icons",
+   "dev_days": 4.32,
+   "process_refs": "07"
+  },
+  {
+   "no": 29,
+   "section": "Lot Detail & Lifecycle",
+   "feature": "Title Tab",
+   "dev_days": 5.76,
+   "process_refs": "04, 19"
+  },
+  {
+   "no": 30,
+   "section": "Lot Detail & Lifecycle",
+   "feature": "DD / Milestones / Construction Tabs",
+   "dev_days": 7.2,
+   "process_refs": "04, 06"
+  },
+  {
+   "no": 31,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Lot Interest & Availability Browser",
+   "dev_days": 7.2,
+   "process_refs": "09"
+  },
+  {
+   "no": 32,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Reserve Lot from Opportunity",
+   "dev_days": 7.2,
+   "process_refs": "09"
+  },
+  {
+   "no": 33,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Soft-Hold with Expiry (Reservation)",
+   "dev_days": 7.2,
+   "process_refs": "09"
+  },
+  {
+   "no": 34,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Reservation Fee Payment & Receipt",
+   "dev_days": 7.2,
+   "process_refs": "09, 11"
+  },
+  {
+   "no": 35,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Opportunity Won → Auto-Create Sales Order",
+   "dev_days": 7.2,
+   "process_refs": "09"
+  },
+  {
+   "no": 36,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "SO Confirm / Lot Lock Flow",
+   "dev_days": 7.2,
+   "process_refs": "09, 12"
+  },
+  {
+   "no": 37,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Launch-Readiness Gate on SO Confirm",
+   "dev_days": 5.76,
+   "process_refs": "05, 09"
+  },
+  {
+   "no": 38,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Double-Sell / Double-Reserve Constraint",
+   "dev_days": 5.76,
+   "process_refs": "09"
+  },
+  {
+   "no": 39,
+   "section": "CRM → Reservation → Sales Order",
+   "feature": "Customer Payment Schedule Generator",
+   "dev_days": 8.64,
+   "process_refs": "09, 11, 13"
+  },
+  {
+   "no": 40,
+   "section": "Broker Commission",
+   "feature": "Broker / Agent Master Record",
+   "dev_days": 4.32,
+   "process_refs": "08"
+  },
+  {
+   "no": 41,
+   "section": "Broker Commission",
+   "feature": "Commission Plan Setup",
+   "dev_days": 8.64,
+   "process_refs": "17"
+  },
+  {
+   "no": 42,
+   "section": "Broker Commission",
+   "feature": "Commission Tagging on Reservation / SO",
+   "dev_days": 4.32,
+   "process_refs": "17"
+  },
+  {
+   "no": 43,
+   "section": "Broker Commission",
+   "feature": "Commission Computation Engine",
+   "dev_days": 11.52,
+   "process_refs": "17"
+  },
+  {
+   "no": 44,
+   "section": "Broker Commission",
+   "feature": "Commission Release / Vesting Rules",
+   "dev_days": 7.2,
+   "process_refs": "17"
+  },
+  {
+   "no": 45,
+   "section": "Broker Commission",
+   "feature": "Commission Voucher & Payout",
+   "dev_days": 7.2,
+   "process_refs": "16, 17"
+  },
+  {
+   "no": 46,
+   "section": "Broker Commission",
+   "feature": "Broker Commission Statement",
+   "dev_days": 5.76,
+   "process_refs": "17"
+  },
+  {
+   "no": 47,
+   "section": "Broker Commission",
+   "feature": "Commission Audit & Disputes",
+   "dev_days": 5.76,
+   "process_refs": "17"
+  },
+  {
+   "no": 48,
+   "section": "Broker Portal",
+   "feature": "Broker Portal Login & Access",
+   "dev_days": 4.32,
+   "process_refs": "08"
+  },
+  {
+   "no": 49,
+   "section": "Broker Portal",
+   "feature": "My Listings & Lot Availability",
+   "dev_days": 5.76,
+   "process_refs": "07, 08"
+  },
+  {
+   "no": 50,
+   "section": "Broker Portal",
+   "feature": "Register Lead / Buyer Referral",
+   "dev_days": 5.76,
+   "process_refs": "09"
+  },
+  {
+   "no": 51,
+   "section": "Broker Portal",
+   "feature": "Reservation Request via Portal",
+   "dev_days": 7.2,
+   "process_refs": "09"
+  },
+  {
+   "no": 52,
+   "section": "Broker Portal",
+   "feature": "Deal Status Tracker",
+   "dev_days": 4.32,
+   "process_refs": "09"
+  },
+  {
+   "no": 53,
+   "section": "Broker Portal",
+   "feature": "Commission Visibility",
+   "dev_days": 5.76,
+   "process_refs": "17"
+  },
+  {
+   "no": 54,
+   "section": "Broker Portal",
+   "feature": "Document Upload",
+   "dev_days": 4.32,
+   "process_refs": "09, 11"
+  },
+  {
+   "no": 55,
+   "section": "Broker Portal",
+   "feature": "Portal Notifications",
+   "dev_days": 4.32,
+   "process_refs": "08"
+  },
+  {
+   "no": 56,
+   "section": "Payment Milestones & Reminders",
+   "feature": "Milestone Templates",
+   "dev_days": 4.32,
+   "process_refs": "04"
+  },
+  {
+   "no": 57,
+   "section": "Payment Milestones & Reminders",
+   "feature": "Lot Milestones",
+   "dev_days": 5.76,
+   "process_refs": "04"
+  },
+  {
+   "no": 58,
+   "section": "Payment Milestones & Reminders",
+   "feature": "Automated Payment Reminders",
+   "dev_days": 7.2,
+   "process_refs": "04, 11"
+  },
+  {
+   "no": 59,
+   "section": "Payment Milestones & Reminders",
+   "feature": "Invoice Generation from Milestones",
+   "dev_days": 5.76,
+   "process_refs": "04, 16"
+  },
+  {
+   "no": 60,
+   "section": "Approvals & Documents",
+   "feature": "Milestone Release Approvals",
+   "dev_days": 5.76,
+   "process_refs": "04, 16"
+  },
+  {
+   "no": 61,
+   "section": "Approvals & Documents",
+   "feature": "Central Document Repository",
+   "dev_days": 5.76,
+   "process_refs": "04, 05"
+  },
+  {
+   "no": 62,
+   "section": "Approvals & Documents",
+   "feature": "Project Approval Workflow",
+   "dev_days": 5.76,
+   "process_refs": "05"
+  },
+  {
+   "no": 63,
+   "section": "Approvals & Documents",
+   "feature": "Lot Approval Workflow",
+   "dev_days": 5.76,
+   "process_refs": "04"
+  },
+  {
+   "no": 64,
+   "section": "Approvals & Documents",
+   "feature": "Broker Approval Workflow",
+   "dev_days": 5.76,
+   "process_refs": "08"
+  },
+  {
+   "no": 65,
+   "section": "Approvals & Documents",
+   "feature": "Audit Logs",
+   "dev_days": 4.32,
+   "process_refs": "X2"
+  },
+  {
+   "no": 66,
+   "section": "Construction Monitoring",
+   "feature": "Progress Photo Gallery",
+   "dev_days": 5.76,
+   "process_refs": "06"
+  },
+  {
+   "no": 67,
+   "section": "Construction Monitoring",
+   "feature": "Cluster Health Board",
+   "dev_days": 7.2,
+   "process_refs": "06"
+  },
+  {
+   "no": 68,
+   "section": "Construction Monitoring",
+   "feature": "Cluster Alert Cron",
+   "dev_days": 4.32,
+   "process_refs": "06"
+  },
+  {
+   "no": 69,
+   "section": "Construction Monitoring",
+   "feature": "Construction % to Stage",
+   "dev_days": 4.32,
+   "process_refs": "06, 07"
+  },
+  {
+   "no": 70,
+   "section": "Launch Readiness & Turnover",
+   "feature": "5-Criteria Launch Readiness Gate",
+   "dev_days": 7.2,
+   "process_refs": "05"
+  },
+  {
+   "no": 71,
+   "section": "Launch Readiness & Turnover",
+   "feature": "Pre-Turnover Inspection Checklist",
+   "dev_days": 5.76,
+   "process_refs": "04, 05"
+  },
+  {
+   "no": 72,
+   "section": "Launch Readiness & Turnover",
+   "feature": "Turnover Inspection & Dual Signatures",
+   "dev_days": 7.2,
+   "process_refs": "05, 15"
+  },
+  {
+   "no": 73,
+   "section": "Launch Readiness & Turnover",
+   "feature": "CRM / Saleable Unit Hand-off",
+   "dev_days": 5.76,
+   "process_refs": "07"
+  },
+  {
+   "no": 74,
+   "section": "Customer Portal",
+   "feature": "My Lots & Purchase Summary",
+   "dev_days": 5.76,
+   "process_refs": "11"
+  },
+  {
+   "no": 75,
+   "section": "Customer Portal",
+   "feature": "Payment Schedule & Balance",
+   "dev_days": 5.76,
+   "process_refs": "11"
+  },
+  {
+   "no": 76,
+   "section": "Customer Portal",
+   "feature": "Online Payment / Payment Submission",
+   "dev_days": 8.64,
+   "process_refs": "11"
+  },
+  {
+   "no": 77,
+   "section": "Customer Portal",
+   "feature": "Payment Reminders & Receipts",
+   "dev_days": 5.76,
+   "process_refs": "11"
+  },
+  {
+   "no": 78,
+   "section": "Customer Portal",
+   "feature": "Document Access",
+   "dev_days": 4.32,
+   "process_refs": "11, 19"
+  },
+  {
+   "no": 79,
+   "section": "Customer Portal",
+   "feature": "Turnover & Move-In Status",
+   "dev_days": 4.32,
+   "process_refs": "15"
+  },
+  {
+   "no": 80,
+   "section": "Customer Portal",
+   "feature": "Profile & Contact Management",
+   "dev_days": 4.32,
+   "process_refs": "11"
+  },
+  {
+   "no": 81,
+   "section": "Helpdesk",
+   "feature": "Ticket Intake Channels",
+   "dev_days": 5.76,
+   "process_refs": "15, 18"
+  },
+  {
+   "no": 82,
+   "section": "Helpdesk",
+   "feature": "Ticket Categories & SLA",
+   "dev_days": 5.76,
+   "process_refs": "15, 18"
+  },
+  {
+   "no": 83,
+   "section": "Helpdesk",
+   "feature": "Ticket Assignment & Routing",
+   "dev_days": 5.76,
+   "process_refs": "15, 18"
+  },
+  {
+   "no": 84,
+   "section": "Helpdesk",
+   "feature": "Ticket Workbench",
+   "dev_days": 7.2,
+   "process_refs": "15, 18"
+  },
+  {
+   "no": 85,
+   "section": "Helpdesk",
+   "feature": "Defect / Punch-List Tickets",
+   "dev_days": 5.76,
+   "process_refs": "15"
+  },
+  {
+   "no": 86,
+   "section": "Reporting & BI",
+   "feature": "Cost vs Paid Analysis",
+   "dev_days": 5.76,
+   "process_refs": "04, X2"
+  },
+  {
+   "no": 87,
+   "section": "Reporting & BI",
+   "feature": "Milestone Aging Report",
+   "dev_days": 4.32,
+   "process_refs": "04, X2"
+  },
+  {
+   "no": 88,
+   "section": "Reporting & BI",
+   "feature": "Summary Reports (PDF/XLSX)",
+   "dev_days": 7.2,
+   "process_refs": "X2"
+  },
+  {
+   "no": 89,
+   "section": "Reporting & BI",
+   "feature": "Audit / Status Reports",
+   "dev_days": 5.76,
+   "process_refs": "X2"
+  },
+  {
+   "no": 90,
+   "section": "Reporting & BI",
+   "feature": "Customer (BI and Report)",
+   "dev_days": 5.76,
+   "process_refs": "11, X2"
+  },
+  {
+   "no": 91,
+   "section": "Reporting & BI",
+   "feature": "Broker (BI and Report)",
+   "dev_days": 5.76,
+   "process_refs": "17, X2"
+  },
+  {
+   "no": 92,
+   "section": "Configuration & Settings",
+   "feature": "Reminder Offsets",
+   "dev_days": 2.88,
+   "process_refs": "04, 11"
+  },
+  {
+   "no": 93,
+   "section": "Configuration & Settings",
+   "feature": "Cluster Thresholds",
+   "dev_days": 2.88,
+   "process_refs": "06"
+  },
+  {
+   "no": 94,
+   "section": "Configuration & Settings",
+   "feature": "SO Gating Toggle",
+   "dev_days": 2.88,
+   "process_refs": "09"
+  },
+  {
+   "no": 95,
+   "section": "Configuration & Settings",
+   "feature": "Grace Period",
+   "dev_days": 2.88,
+   "process_refs": "11"
+  },
+  {
+   "no": 96,
+   "section": "Customer Loans",
+   "feature": "Customer Loan Configuration",
+   "dev_days": 7.2,
+   "process_refs": "13"
+  },
+  {
+   "no": 97,
+   "section": "Customer Loans",
+   "feature": "Automated Customer Loan Payment Processing",
+   "dev_days": 8.64,
+   "process_refs": "11, 13"
+  },
+  {
+   "no": 98,
+   "section": "Customer Loans",
+   "feature": "Customer Payment Schedule List View",
+   "dev_days": 4.32,
+   "process_refs": "11, 13"
+  },
+  {
+   "no": 99,
+   "section": "Company Loans",
+   "feature": "Automated Company Loan Payment Processing",
+   "dev_days": 8.64,
+   "process_refs": "02, 16"
+  },
+  {
+   "no": 100,
+   "section": "Company Loans",
+   "feature": "Company Loan Schedule List View",
+   "dev_days": 4.32,
+   "process_refs": "02, X1"
+  }
+ ],
+ "sow_observations": [
+  {
+   "code": "O1",
+   "title": "Development effort versus itemized customizations",
+   "reference": "§3.1, §3.3, §5.1",
+   "finding": "The 100 itemized customizations total 573.12 dev-days. The two development columns in §5.1 (Dev Lead + Developer) total only 386 person-days, and §3.1 adds features not in §3.3 (land banking, supplier module, TORC budget, project P&L).",
+   "impact": "Scope looks under-resourced by roughly a third; risk of rushed build or later change orders.",
+   "internal_ask": "Ask the vendor to reconcile, and confirm in writing that every §3.1 and §3.3 item is inside the Fixed Base Fee.",
+   "letter_observation": "The 100 customizations itemized in §3.3 total 573.12 development man-days. §5.1 allocates 386 person-days to development (Dev Lead 285 + Developer 101), which is 187.12 person-days fewer. §3.1 also describes features that have no line in §3.3, including the land banking register and carrying cost ledger, supplier accreditation and performance rating, the TORC budget rule builder and the project P&L.",
+   "letter_request": "Please reconcile §3.3 with §5.1, and confirm in writing that every feature described in §3.1 and §3.3 is delivered within the Fixed Base Implementation Fee, without drawing on any Flex Allocation.",
+   "status": "Raised with vendor",
+   "sort": 1
+  },
+  {
+   "code": "O2",
+   "title": "Role columns in the effort table",
+   "reference": "§5.1",
+   "finding": "As printed, Dev Lead carries 285 days and Developer 101 — the reverse of what a normal team shape would be.",
+   "impact": "Unclear team composition.",
+   "internal_ask": "Ask for the corrected table and named roles.",
+   "letter_observation": "As printed, the Dev Lead column carries 285 person-days and the Developer column 101. This appears to be the reverse of the intended team shape.",
+   "letter_request": "Please confirm whether the columns are transposed and share the proposed team composition, with named roles and allocation per workstream.",
+   "status": "Raised with vendor",
+   "sort": 2
+  },
+  {
+   "code": "O3",
+   "title": "Customer Loans & Financing row total",
+   "reference": "§5.1",
+   "finding": "7 + 12 + 37 + 10 + 7 = 73, but the row total says 72. The grand total of 739 uses 72.",
+   "impact": "Minor, but signals the table wasn't checked.",
+   "internal_ask": "Ask for a corrected table.",
+   "letter_observation": "The Customer Loans & Financing row adds to 73 person-days (7 + 12 + 37 + 10 + 7), while the row total and the grand total of 739 use 72.",
+   "letter_request": "Please issue a corrected table and confirm the total effort on which the fee is based.",
+   "status": "Raised with vendor",
+   "sort": 3
+  },
+  {
+   "code": "O4",
+   "title": "Payment gateway: in scope and out of scope",
+   "reference": "§3.3 #76, §9",
+   "finding": "Item #76 (8.64 dev-days) builds online payment via gateway, while §9 lists payment gateway integration as out of scope.",
+   "impact": "PHI may pay for #76 and again for a CR.",
+   "internal_ask": "Resolve: either remove #76's gateway part from the fee or remove it from §9.",
+   "letter_observation": "Item #76 (8.64 man-days) includes paying online via a payment gateway, while §9 lists payment gateway integration and online payment collection as out of scope.",
+   "letter_request": "Please clarify which applies. If gateway integration is excluded, please state what item #76 delivers (for example, proof-of-payment upload and verification) and adjust its man-days accordingly.",
+   "status": "Raised with vendor",
+   "sort": 4
+  },
+  {
+   "code": "O5",
+   "title": "Man-day rates",
+   "reference": "Cover page, §10.2",
+   "finding": "Base effort priced at PHP 10,000/day (739 × 10,000 = 7.39M); flex, overages and replenishments at PHP 12,000/day.",
+   "impact": "Gaps found in this analysis would be priced at the higher rate.",
+   "internal_ask": "Negotiate the gap items into base scope before signing, or lock CRs at 10,000.",
+   "letter_observation": "The base scope is priced at PHP 10,000 per person-day (discounted), while Flex Allocations, scope overages and replenishments are billed at PHP 12,000 per person-day.",
+   "letter_request": "We request that the PHP 10,000 rate apply to Flex Allocations and Change Requests throughout implementation and the 90-day hypercare period.",
+   "status": "Raised with vendor",
+   "sort": 5
+  },
+  {
+   "code": "O6",
+   "title": "Payment milestone weighting",
+   "reference": "§11",
+   "finding": "50% (PHP 3.695M) is billed by BRD sign-off, before any build; 80% before go-live.",
+   "impact": "Reduced leverage if build quality slips.",
+   "internal_ask": "Consider moving part of milestone 1 to SIT completion.",
+   "letter_observation": "Fifty percent of the fee (PHP 3,695,000) is billed at Project Kickoff and BRD Sign-Off, before any build, and 80% before go-live. The SOW also does not state how the PHP 300,000 additional discount is applied across milestones.",
+   "letter_request": "We propose linking more of the fee to tested functionality, for example: Kickoff 15%, BRD sign-off 20%, SIT completion 25%, UAT sign-off 20% and Go-Live 20%. Please also confirm how the additional discount is applied to each milestone invoice.",
+   "status": "Raised with vendor",
+   "sort": 6
+  },
+  {
+   "code": "O7",
+   "title": "Deemed acceptance",
+   "reference": "§11, §12 (and MSA §2.2)",
+   "finding": "Deliverables are accepted after 5 working days without written objection, and joining a later phase accepts the earlier one.",
+   "impact": "Short review window across 10 workstreams.",
+   "internal_ask": "Extend to 10 working days, or name reviewers per deliverable in the RACI.",
+   "letter_observation": "Deliverables are deemed accepted five working days after submission if no written objection is received, and participation in a subsequent phase constitutes acceptance of the prior phase.",
+   "letter_request": "We request a 10-working-day review period, and that milestone deliverables (BRD, UAT and go-live) be accepted only by written sign-off from the Client SPOC. Participation in a subsequent phase should not count as acceptance while written objections remain open.",
+   "status": "Raised with vendor",
+   "sort": 7
+  },
+  {
+   "code": "O8",
+   "title": "Size of the Flex Allocation",
+   "reference": "§10.3",
+   "finding": "35 person-days total; only 10 for change orders (PHP 120,000 at 12,000).",
+   "impact": "The High-priority gaps here will exceed it quickly.",
+   "internal_ask": "Size the gaps now and add them to base scope.",
+   "letter_observation": "The pre-approved Flex Allocation totals 35 person-days, of which 10 are for Change Orders. Our review of the SOW against PHI's process blueprint has identified functional scope items that are not yet covered. These are listed in Appendix A.",
+   "letter_request": "Please price the items in Appendix A, Part 1 as part of the base scope before signature, rather than through Flex drawdowns, and confirm the items in Part 2.",
+   "status": "Raised with vendor",
+   "sort": 8
+  },
+  {
+   "code": "O9",
+   "title": "Ownership of the Lot model and custom modules",
+   "reference": "§2, §3.4, §8",
+   "finding": "Assumes 'the existing custom Lot model' is stable and documented — suggests a vendor-owned pre-built module (lam.lot).",
+   "impact": "IP, source access, licensing and upgrade path to future Odoo versions unclear.",
+   "internal_ask": "Get source-code ownership / licence terms and upgrade commitments in the MSA.",
+   "letter_observation": "Section 8 refers to \"the existing custom Lot model\", which suggests a pre-existing module (lam.lot) rather than one built for PHI.",
+   "letter_request": "Please confirm: (a) whether the Lot model is a pre-existing Achieve Without Borders module and under what licence PHI may use it; (b) ownership of the custom modules developed under this SOW; (c) source-code delivery and repository access for PHI; and (d) your commitment and approach for compatibility with future Odoo versions.",
+   "status": "Raised with vendor",
+   "sort": 9
+  },
+  {
+   "code": "O10",
+   "title": "Unfilled placeholders",
+   "reference": "Cover page, §1, §10.1, §10.5",
+   "finding": "MSA date, SOW effective date, fixed fee amount in §10.1 and per diem are still '[Insert …]', while §11 states 7.39M / 7.09M.",
+   "impact": "Ambiguity on the binding amount.",
+   "internal_ask": "Fill all placeholders before signing.",
+   "letter_observation": "The MSA date, SOW Effective Date, the fee amount in §10.1 and the per diem amount in §10.5 still read \"[Insert …]\". Section 11 states PHP 7,390,000, or PHP 7,090,000 after the additional discount.",
+   "letter_request": "Please issue a completed SOW and confirm that the binding Fixed Base Implementation Fee is PHP 7,090,000, exclusive of VAT.",
+   "status": "Raised with vendor",
+   "sort": 10
+  },
+  {
+   "code": "O11",
+   "title": "Onsite meetings and travel",
+   "reference": "§8, §10.5",
+   "finding": "3 onsite meetings are included, but travel outside Metro Manila is billed at cost + 10%. PHI is in Cebu.",
+   "impact": "Every onsite visit may be billable.",
+   "internal_ask": "Confirm the 3 onsite meetings include travel to Cebu.",
+   "letter_observation": "Three onsite meetings (Kickoff, UAT Briefing and Go-Live) are included, while travel outside Metro Manila is billed at cost plus a 10% handling fee. PHI's offices are in Cebu.",
+   "letter_request": "Please confirm that the three included onsite meetings take place in Cebu, with travel, accommodation and per diem included in the fee, and provide an estimate for any additional onsite sessions.",
+   "status": "Raised with vendor",
+   "sort": 11
+  },
+  {
+   "code": "O12",
+   "title": "Training coverage",
+   "reference": "§8",
+   "finding": "Four remote train-the-trainer sessions of up to 3 hours each, for 10 workstreams.",
+   "impact": "Thin for go-live readiness.",
+   "internal_ask": "Ask for per-workstream sessions or price extra now.",
+   "letter_observation": "The SOW includes four remote train-the-trainer sessions of up to three hours each, across ten workstreams.",
+   "letter_request": "Please provide a training plan per workstream, the price of additional sessions, and options for onsite training during UAT and go-live.",
+   "status": "Raised with vendor",
+   "sort": 12
+  },
+  {
+   "code": "O13",
+   "title": "Contracting and in-scope entities",
+   "reference": "Cover page, §1, §3.4",
+   "finding": "Client is Primary Group of Builders Inc.; the system is for Primary Homes Incorporated; multi-company setup is a deliverable.",
+   "impact": "Licence, data ownership and billing entity must be clear.",
+   "internal_ask": "Confirm which entities are in scope of the multi-company structure.",
+   "letter_observation": "The SOW is between Achieve Without Borders Inc. and Primary Group of Builders Inc. for the implementation at Primary Homes Incorporated, and a multi-company structure is a deliverable.",
+   "letter_request": "Please confirm the entities included in the multi-company configuration and the billing entity for each invoice.",
+   "status": "Raised with vendor",
+   "sort": 13
+  },
+  {
+   "code": "O14",
+   "title": "Defect response and resolution targets",
+   "reference": "§6, §12",
+   "finding": "Severity-based triage is mentioned, but no response/resolution times, including for the 90-day hypercare.",
+   "impact": "Hypercare quality not measurable.",
+   "internal_ask": "Add Sev 1–4 response and resolution targets.",
+   "letter_observation": "The SOW refers to severity-based triage but does not define response or resolution times, including for the 90-day hypercare period.",
+   "letter_request": "Please propose severity definitions (Severity 1 to 4) with response and resolution targets for SIT, UAT and hypercare, together with hypercare coverage hours and support channels.",
+   "status": "Raised with vendor",
+   "sort": 14
+  }
+ ],
+ "appendix": [
+  {
+   "code": "A1",
+   "part": "A",
+   "title": "Cancellation under the Maceda Law (RA 6552)",
+   "process_ref": "12",
+   "scope": "Grace-period tracking, notarial notice, cash surrender value computation, refund or forfeiture processing, and reversal of receivables and revenue. The SOW covers only lot release (#36) and commission clawback (#43).",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 1
+  },
+  {
+   "code": "A2",
+   "part": "A",
+   "title": "Contract to Sell (CTS)",
+   "process_ref": "09",
+   "scope": "CTS template, signing and notarization tracking, and a credit check before the CTS is issued. The SOW uses the sales order as the contract.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 2
+  },
+  {
+   "code": "A3",
+   "part": "A",
+   "title": "Revenue recognition (PFRS 15)",
+   "process_ref": "Finance",
+   "scope": "Percentage-of-completion revenue journals driven by construction progress and collections.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 3
+  },
+  {
+   "code": "A4",
+   "part": "A",
+   "title": "Bank and Pag-IBIG loan takeout workflow",
+   "process_ref": "13",
+   "scope": "Requirements checklist, submission, letter of guaranty / notice of approval, mortgage annotation on title, release of proceeds and Pag-IBIG buyback guarantee.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 4
+  },
+  {
+   "code": "A5",
+   "part": "A",
+   "title": "Collections controls",
+   "process_ref": "11",
+   "scope": "Post-dated check management including bounced checks, demand-letter generation, and a BIR-registered invoice and receipt series.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 5
+  },
+  {
+   "code": "A6",
+   "part": "A",
+   "title": "Construction contract billing",
+   "process_ref": "06",
+   "scope": "Contractor downpayment recoupment, variation orders, liquidated damages and back-charges.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 6
+  },
+  {
+   "code": "A7",
+   "part": "A",
+   "title": "License to Sell and permits",
+   "process_ref": "05",
+   "scope": "Permit register (DP, ECC, BP, CR/LTS), with the License to Sell as a launch-readiness criterion so units cannot be sold without it.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 7
+  },
+  {
+   "code": "A8",
+   "part": "A",
+   "title": "Budget cycle",
+   "process_ref": "01",
+   "scope": "Budget preparation, consolidation, versioning and approval workflow; multi-year project budgets; budget check at purchase request and PO stage.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 8
+  },
+  {
+   "code": "A9",
+   "part": "A",
+   "title": "BIR statutory outputs",
+   "process_ref": "Finance",
+   "scope": "BIR Form 2307, SAWT, QAP and alphalist; EOPT invoicing rules and e-invoicing (EIS) readiness.",
+   "priority": "High",
+   "status": "Raised with vendor",
+   "sort": 9
+  },
+  {
+   "code": "A10",
+   "part": "A",
+   "title": "Buyer title transfer processing",
+   "process_ref": "19",
+   "scope": "Deed of absolute sale, fee payment, eCAR, Registry of Deeds transfer and release of title to buyer or lender. The filing tracker (#26) covers land acquisition only.",
+   "priority": "Medium",
+   "status": "Raised with vendor",
+   "sort": 10
+  },
+  {
+   "code": "A11",
+   "part": "A",
+   "title": "Corporate and project financing",
+   "process_ref": "02",
+   "scope": "Allocation of loan drawdowns to projects and capitalization of interest into project cost.",
+   "priority": "Medium",
+   "status": "Raised with vendor",
+   "sort": 11
+  },
+  {
+   "code": "A12",
+   "part": "A",
+   "title": "Integration with existing PHI systems",
+   "process_ref": "Cross-cutting",
+   "scope": "Data feeds from Odoo to PHI's existing internal systems; the SOW covers CSV and MT940 imports only.",
+   "priority": "Medium",
+   "status": "Raised with vendor",
+   "sort": 12
+  },
+  {
+   "code": "A13",
+   "part": "A",
+   "title": "Rolling forecasts",
+   "process_ref": "X1",
+   "scope": "Sales, collection and cost-to-complete forecasts, in addition to the cash-flow projections already in scope.",
+   "priority": "Low",
+   "status": "Raised with vendor",
+   "sort": 13
+  },
+  {
+   "code": "A14",
+   "part": "A",
+   "title": "Warranty tracking",
+   "process_ref": "15",
+   "scope": "Warranty start and end dates per unit after turnover, linked to helpdesk tickets.",
+   "priority": "Low",
+   "status": "Raised with vendor",
+   "sort": 14
+  },
+  {
+   "code": "B1",
+   "part": "B",
+   "title": "TORC definition",
+   "process_ref": "14",
+   "scope": "PHI defines TORC as taxes and other related charges on title transfer, including amounts recharged to the buyer. The SOW describes TORC as project budget dispensing. Please confirm the SOW covers PHI's definition; if not, please price it.",
+   "priority": "",
+   "status": "Raised with vendor",
+   "sort": 101
+  },
+  {
+   "code": "B2",
+   "part": "B",
+   "title": "Condominium units in the Lot model",
+   "process_ref": "07",
+   "scope": "Please confirm the Lot model supports condominium units (tower-floor-unit, CCT titles), parking slots and house-and-lot packages.",
+   "priority": "",
+   "status": "Raised with vendor",
+   "sort": 102
+  },
+  {
+   "code": "B3",
+   "part": "B",
+   "title": "Joint-venture land acquisitions",
+   "process_ref": "04",
+   "scope": "Please confirm support for landowners compensated in units rather than cash.",
+   "priority": "",
+   "status": "Raised with vendor",
+   "sort": 103
+  },
+  {
+   "code": "B4",
+   "part": "B",
+   "title": "Data migration scope",
+   "process_ref": "Migration",
+   "scope": "Please confirm which buyer payment history migrates from the current system; full history is needed for Maceda Law computations and commission status.",
+   "priority": "",
+   "status": "Raised with vendor",
+   "sort": 104
+  },
+  {
+   "code": "B5",
+   "part": "B",
+   "title": "Petty cash and reimbursements",
+   "process_ref": "03",
+   "scope": "Please confirm whether the Odoo Expenses app is in scope.",
+   "priority": "",
+   "status": "Raised with vendor",
+   "sort": 105
+  },
+  {
+   "code": "B6",
+   "part": "B",
+   "title": "Mockups and undefined items",
+   "process_ref": "§3.3",
+   "scope": "Please attach the mockups referenced in §3.3 as an annex to the SOW, and describe items #62–64, which have no description.",
+   "priority": "",
+   "status": "Raised with vendor",
+   "sort": 106
+  }
+ ],
+ "sow_effort": [
+  {
+   "workstream": "CRM, Buyer & Agent Portal",
+   "lead": 10,
+   "ba": 7,
+   "dev_lead": 29,
+   "dev": 10,
+   "qa": null,
+   "infra": null,
+   "stated_total": 56,
+   "sort": 0
+  },
+  {
+   "workstream": "Construction Monitoring",
+   "lead": 6,
+   "ba": 5,
+   "dev_lead": 19,
+   "dev": 6,
+   "qa": null,
+   "infra": null,
+   "stated_total": 36,
+   "sort": 1
+  },
+  {
+   "workstream": "Land Acquisition",
+   "lead": 10,
+   "ba": 7,
+   "dev_lead": 31,
+   "dev": 10,
+   "qa": null,
+   "infra": null,
+   "stated_total": 58,
+   "sort": 2
+  },
+  {
+   "workstream": "Inventory Management",
+   "lead": 10,
+   "ba": 7,
+   "dev_lead": 31,
+   "dev": 10,
+   "qa": null,
+   "infra": null,
+   "stated_total": 58,
+   "sort": 3
+  },
+  {
+   "workstream": "Sales Management & Commissions",
+   "lead": 10,
+   "ba": 7,
+   "dev_lead": 29,
+   "dev": 10,
+   "qa": null,
+   "infra": null,
+   "stated_total": 56,
+   "sort": 4
+  },
+  {
+   "workstream": "Supplier & Payments",
+   "lead": 8,
+   "ba": 6,
+   "dev_lead": 27,
+   "dev": 8,
+   "qa": null,
+   "infra": null,
+   "stated_total": 49,
+   "sort": 5
+  },
+  {
+   "workstream": "Finance Core & TORC Budget",
+   "lead": 10,
+   "ba": 7,
+   "dev_lead": 26,
+   "dev": 10,
+   "qa": null,
+   "infra": null,
+   "stated_total": 53,
+   "sort": 6
+  },
+  {
+   "workstream": "Reservation Management",
+   "lead": 7,
+   "ba": 6,
+   "dev_lead": 22,
+   "dev": 7,
+   "qa": null,
+   "infra": null,
+   "stated_total": 42,
+   "sort": 7
+  },
+  {
+   "workstream": "Customer Loans & Financing",
+   "lead": 7,
+   "ba": 12,
+   "dev_lead": 37,
+   "dev": 10,
+   "qa": 7,
+   "infra": null,
+   "stated_total": 72,
+   "sort": 8
+  },
+  {
+   "workstream": "Customer Servicing Portal",
+   "lead": 6,
+   "ba": 5,
+   "dev_lead": 17,
+   "dev": 6,
+   "qa": null,
+   "infra": null,
+   "stated_total": 34,
+   "sort": 9
+  },
+  {
+   "workstream": "Data Migration, UAT & Training",
+   "lead": 12,
+   "ba": 5,
+   "dev_lead": 14,
+   "dev": 14,
+   "qa": 10,
+   "infra": null,
+   "stated_total": 55,
+   "sort": 10
+  },
+  {
+   "workstream": "Infrastructure, Environments & Cutover",
+   "lead": null,
+   "ba": null,
+   "dev_lead": 3,
+   "dev": null,
+   "qa": null,
+   "infra": 29,
+   "stated_total": 32,
+   "sort": 11
+  },
+  {
+   "workstream": "Project Management & Governance",
+   "lead": 48,
+   "ba": null,
+   "dev_lead": null,
+   "dev": null,
+   "qa": null,
+   "infra": null,
+   "stated_total": 48,
+   "sort": 12
+  },
+  {
+   "workstream": "Hypercare (90 days post go-live)",
+   "lead": null,
+   "ba": null,
+   "dev_lead": null,
+   "dev": null,
+   "qa": null,
+   "infra": null,
+   "stated_total": 90,
+   "sort": 13
+  }
+ ],
+ "sow_meta": {
+  "sow_no": "S343096",
+  "vendor": "Achieve Without Borders Inc.",
+  "client": "Primary Group of Builders Inc. / Primary Homes Incorporated",
+  "platform": "Odoo v19 Enterprise",
+  "vendor_signed": "2026-09-24",
+  "duration": "20 weeks + 90 days hypercare",
+  "total_effort_md": "739",
+  "base_rate": "10000",
+  "flex_rate": "12000",
+  "fixed_fee": "7390000",
+  "discount": "300000",
+  "fee_after_discount": "7090000",
+  "flex_total_md": "35",
+  "section_subtotals": {
+   "Dashboard": 25.92,
+   "Projects & Pipeline": 10.08,
+   "Project Setup Wizard": 31.68,
+   "Lot Onboarding Form": 38.88,
+   "Acquisition & Payments (Multi-Owner)": 33.12,
+   "Lot Detail & Lifecycle": 21.6,
+   "CRM → Reservation → Sales Order": 63.36,
+   "Broker Commission": 54.72,
+   "Broker Portal": 41.76,
+   "Payment Milestones & Reminders": 23.04,
+   "Approvals & Documents": 33.12,
+   "Construction Monitoring": 21.6,
+   "Launch Readiness & Turnover": 25.92,
+   "Customer Portal": 38.88,
+   "Helpdesk": 30.24,
+   "Reporting & BI": 34.56,
+   "Configuration & Settings": 11.52,
+   "Customer Loans": 20.16,
+   "Company Loans": 12.96
+  },
+  "milestones": [
+   [
+    "Project Kickoff & Mobilization",
+    30,
+    2217000
+   ],
+   [
+    "Discovery & BRD Sign-Off",
+    20,
+    1478000
+   ],
+   [
+    "User Acceptance Testing Commencement",
+    30,
+    2217000
+   ],
+   [
+    "System Go-Live / Beneficial Use",
+    20,
+    1478000
+   ]
+  ],
+  "phases": [
+   [
+    "Phase 1",
+    "Mobilisation & Discovery",
+    "Weeks 1–4"
+   ],
+   [
+    "Phase 2",
+    "Design & Build – Wave 1",
+    "Weeks 5–10"
+   ],
+   [
+    "Phase 3",
+    "Design & Build – Wave 2",
+    "Weeks 9–14"
+   ],
+   [
+    "Phase 4",
+    "Data Migration & SIT",
+    "Weeks 13–16"
+   ],
+   [
+    "Phase 5",
+    "UAT & Training",
+    "Weeks 16–18"
+   ],
+   [
+    "Phase 6",
+    "Cutover, Go-Live & Hypercare",
+    "Weeks 19–20 + 90 days"
+   ]
+  ]
+ }
+}

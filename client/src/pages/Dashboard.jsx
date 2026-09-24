@@ -39,6 +39,12 @@ export default function Dashboard() {
           <div className="stat"><b>{d.openItems.open + d.openItems.in_progress}</b><span>Open items not yet closed</span></div>
           <div className="stat"><b>{d.diagrams.revisions}</b><span>Diagram revisions since baseline</span></div>
         </div>
+        <div className="stats">
+          <div className="stat"><b>{d.reengineering.accepted}/{d.reengineering.total}</b><span><Link to="/reengineering">Re-engineering opportunities accepted</Link> · {d.reengineering.undecided} undecided</span></div>
+          <div className="stat"><b>{d.sowGaps.covered}/{d.sowGaps.processes}</b><span><Link to="/sow?tab=gaps">Processes fully covered by AWB SOW</Link></span></div>
+          <div className="stat"><b>{d.sowGaps.open_high}</b><span>High-priority SOW gaps still open</span></div>
+          <div className="stat"><b>{d.observations.open}/{d.observations.total}</b><span><Link to="/sow?tab=observations">Commercial observations unresolved</Link> · <Link to="/documents">{d.documents} documents</Link></span></div>
+        </div>
         <div className="map">
           <div className="map-fc">Forecasts (X1)</div>
           <div className="map-body">

@@ -4,7 +4,7 @@ import { q } from '../db/pool.js';
 import { parse, notFound } from '../lib/util.js';
 
 const r = Router();
-const Type = z.enum(['process', 'step', 'diagram', 'open_item']);
+const Type = z.enum(['process', 'step', 'diagram', 'open_item', 'reengineering', 'gap', 'observation', 'appendix', 'document']);
 
 r.get('/', async (req, res) => {
   const { type, id } = parse(z.object({ type: Type, id: z.string().min(1) }), req.query);

@@ -31,7 +31,11 @@ r.get('/:id', async (req, res) => {
     `SELECT m.*, u.name AS validated_by_name FROM matrix_steps m LEFT JOIN users u ON u.id=m.validated_by
       WHERE m.process_id=$1 ORDER BY m.sort, m.ref`, [req.params.id]);
   const diagrams = await q(`SELECT id, title FROM diagrams WHERE covers ~ ('(^|[^0-9A-Z])' || $1 || '([^0-9]|$)') ORDER BY sort`, [req.params.id]);
-  res.json({ ...rows[0], matrix: steps.rows, diagrams: diagrams.rows });
+  const reeng = await q(
+    `SELECT id, title, wave, impact_type, phi_decision FROM reengineering
+      WHERE $1 = ANY(string_to_array(replace(process_refs,' ',''), ',')) OR process_refs='All' ORDER BY sort`, [req.params.id]);
+  const gap = await q('SELECT id, rating, gaps, action, priority, status FROM sow_gaps WHERE process_id=$1', [req.params.id]);
+  res.json({ ...rows[0], matrix: steps.rows, diagrams: diagrams.rows, reengineering: reeng.rows, sow_gap: gap.rows[0] || null });
 });
 
 const list = z.array(z.string().trim().min(1).max(500)).max(40);

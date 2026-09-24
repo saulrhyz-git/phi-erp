@@ -14,6 +14,10 @@ import OpenItems from './pages/OpenItems.jsx';
 import Activity from './pages/Activity.jsx';
 import Users from './pages/Users.jsx';
 import Account from './pages/Account.jsx';
+import ReEngineering from './pages/ReEngineering.jsx';
+import ReEngineeringDetail from './pages/ReEngineeringDetail.jsx';
+import Sow from './pages/Sow.jsx';
+import Documents from './pages/Documents.jsx';
 
 function Protected({ children }) {
   const { user } = useAuth();
@@ -38,6 +42,10 @@ export default function App() {
         <Route path="diagrams/:id" element={<DiagramView />} />
         <Route path="master-data" element={<MasterData />} />
         <Route path="open-items" element={<OpenItems />} />
+        <Route path="reengineering" element={<ReEngineering />} />
+        <Route path="reengineering/:id" element={<ReEngineeringDetail />} />
+        <Route path="sow" element={<Sow />} />
+        <Route path="documents" element={<Documents />} />
         <Route path="activity" element={<Activity />} />
         <Route path="account" element={<Account />} />
         {isAdmin && <Route path="users" element={<Users />} />}

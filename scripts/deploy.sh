@@ -19,6 +19,7 @@ npm run build
 echo "==> Backing up and migrating the database"
 ./scripts/backup-db.sh
 npm run migrate
+npm run seed   # idempotent: only fills modules that are still empty
 
 mkdir -p logs
 if pm2 describe phi-blueprint >/dev/null 2>&1; then

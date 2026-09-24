@@ -8,7 +8,19 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **S-3 Data & interconnection matrix** — for each hand-off step: trigger, data fields, system hand-off, exceptions and fit. Process owners approve each step, approve it with changes, or send it back for rework.
 - **S-4 Master data & Lot** — shared records, plus the vendor-proposed Lot master model and which fields each process needs on it.
 - **S-5 Open items** — decisions to close before BRD sign-off, with owner, target date and status.
-- **Discussion threads** on processes, diagrams and open items, and a full **activity log**.
+- **S-6 Re-engineering** — 23 opportunities, each with:
+  - the current and proposed process side by side, and the justification (problem, fix, control effect, expected outcome);
+  - the before and after steps, tagged Manual, Paper, Rekey or Wait before, and Auto, Rule, Parallel, Earlier, New or Same after;
+  - the effect on the AWB SOW, plus PHI's decision, KPI baseline and negotiation status.
+- **S-7 SOW & vendor** — AWB SOW S343096 reviewed against the blueprint in six tabs:
+  - overview (key facts, milestones, headline risks);
+  - gap analysis by process, cross-cutting and SOW-only items;
+  - Appendix A/B items raised with AWB, with their responses and estimates;
+  - the 14 commercial observations, each shown with the request as worded to AWB;
+  - the 100-item scope map;
+  - the effort-table check.
+- **S-8 Documents** — versioned library for the SOW, letters, workbooks and diagrams. Files up to 25 MB are stored in PostgreSQL, so they're included in database backups. Documents can be marked confidential to hide them from viewers.
+- **Discussion threads** on processes, diagrams, open items, re-engineering opportunities, SOW gaps, observations and documents, and a full **activity log**.
 - **Exports** — the Excel workbook (current state, including validation status) and all `.bpmn` files as a zip.
 
 **Roles**
@@ -142,6 +154,32 @@ The script:
 5. Runs `pm2 reload`. This is zero-downtime in cluster mode.
 6. Checks `/api/health`.
 
+## Upgrading an existing server to this version
+
+This release adds migration `002_project_workspace.sql`, new seed data (`server/seed/project.json`) and a larger Nginx upload limit.
+
+```bash
+cd /var/www/phi-blueprint
+./scripts/deploy.sh                      # pulls, builds, migrates, seeds the new modules, reloads PM2
+sudo nano /etc/nginx/sites-available/phi-blueprint   # set client_max_body_size 30m;
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+`npm run seed` only fills modules that are still empty, so existing processes, validations, comments and diagram versions are untouched.
+
+## Loading project documents
+
+Upload files one by one on the Documents page, or bulk-import a folder on the server:
+
+```bash
+scp -r ./phi-documents user@vps:/tmp/phi-documents        # from your machine
+npm run import-docs -- /tmp/phi-documents                  # on the VPS, in the project folder
+npm run import-docs -- /tmp/phi-documents --category "Correspondence"   # force one category
+rm -rf /tmp/phi-documents
+```
+
+The import guesses a category from each file name and skips files already in the library. Vendor documents such as the SOW are confidential, so keep them out of git and load them this way.
+
 ## Everyday operations
 
 | Task | Command |
@@ -152,7 +190,7 @@ The script:
 | Daily backup (cron) | `0 2 * * * cd /var/www/phi-blueprint && ./scripts/backup-db.sh >> logs/backup.log 2>&1` |
 | Restore a backup | `gunzip -c backups/<file>.sql.gz \| psql "$DATABASE_URL"` (into an empty DB) |
 | Locked out / new admin | `npm run create-admin -- you@primaryhomes.com.ph "Your Name" 'TempPass12345'` |
-| Reset blueprint content to baseline | `npm run seed:force` — **deletes all edits, validations, comments and diagram versions**; users stay |
+| Reset blueprint content to baseline | `npm run seed:force` — **deletes all edits, validations, comments, diagram versions, re-engineering decisions and SOW responses**; users and documents stay |
 
 ## Schema changes
 
