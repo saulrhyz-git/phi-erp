@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PHI Enterprise Process Blueprint – Odoo 19</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#EEF2F8; --sheet:#FFFFFF; --ink:#0F1D4A; --ink-2:#44507A; --ink-3:#6B769B;
+  --rule:#C7D0E4; --rule-2:#E1E6F1; --lane:#F4F6FB; --lane-2:#FFFFFF; --ext:#E3E8F3; --task:#FFFFFF;
+  --plan:#243C8F; --land:#C0561A; --proj:#1D6B38; --sales:#B42A35; --acct:#1B6E93; --dlv:#8A6410; --ap:#5A2C86; --x:#3A4670;
+  --fit-std:#1D6B38; --fit-cfg:#1B6E93; --fit-ext:#B42A35;
+  --grid:rgba(15,29,74,.045);
+  --display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --body:"Barlow","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A1030; --sheet:#111A3E; --ink:#E6EAF7; --ink-2:#AEB7D6; --ink-3:#8590B6;
+    --rule:#2B3668; --rule-2:#1E2853; --lane:#15204A; --lane-2:#111A3E; --ext:#1C2754; --task:#18234E;
+    --plan:#8FA4F2; --land:#EE9055; --proj:#62C184; --sales:#F07079; --acct:#62B8DE; --dlv:#DDB859; --ap:#B792E6; --x:#AEB7D6;
+    --fit-std:#62C184; --fit-cfg:#62B8DE; --fit-ext:#F07079;
+    --grid:rgba(230,234,247,.04);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A1030; --sheet:#111A3E; --ink:#E6EAF7; --ink-2:#AEB7D6; --ink-3:#8590B6;
+  --rule:#2B3668; --rule-2:#1E2853; --lane:#15204A; --lane-2:#111A3E; --ext:#1C2754; --task:#18234E;
+  --plan:#8FA4F2; --land:#EE9055; --proj:#62C184; --sales:#F07079; --acct:#62B8DE; --dlv:#DDB859; --ap:#B792E6; --x:#AEB7D6;
+  --fit-std:#62C184; --fit-cfg:#62B8DE; --fit-ext:#F07079;
+  --grid:rgba(230,234,247,.04);
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px); -webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:16px; line-height:1.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--acct); outline-offset:2px}
+.wrap{max-width:1320px; margin:0 auto; padding:24px 20px 64px}
+
+/* Title block */
+.titleblock{background:var(--sheet); border:2px solid var(--ink); display:grid; grid-template-columns:1fr minmax(280px,420px)}
+.tb-main{padding:28px 28px 24px; border-right:2px solid var(--ink)}
+.tb-main h1{font-family:var(--display); font-weight:700; font-size:clamp(2.2rem,5vw,3.6rem); line-height:.95; margin:0 0 12px; letter-spacing:-.01em}
+.tb-main p{margin:0; max-width:62ch; color:var(--ink-2)}
+.tb-meta{display:grid; grid-template-columns:1fr 1fr; font-size:.85rem}
+.tb-meta div{padding:10px 14px; border-bottom:1px solid var(--rule); border-left:1px solid var(--rule)}
+.tb-meta div:nth-child(odd){border-left:none}
+.tb-meta dt{color:var(--ink-3); font-size:.75rem}
+.tb-meta dd{margin:0; font-weight:600}
+.tb-meta .wide{grid-column:1/-1; border-left:none}
+@media (max-width:860px){.titleblock{grid-template-columns:1fr}.tb-main{border-right:none;border-bottom:2px solid var(--ink)}}
+
+/* Sheet index */
+.index{position:sticky; top:env(safe-area-inset-top,0px); z-index:10; background:var(--ink); color:var(--sheet); display:flex; overflow-x:auto; margin:16px 0 0; border:2px solid var(--ink)}
+.index a{text-decoration:none; padding:10px 16px; white-space:nowrap; font-family:var(--display); font-weight:600; font-size:1.02rem; border-right:1px solid rgba(255,255,255,.18)}
+.index a span{opacity:.6; margin-right:8px; font-weight:500}
+.index a:hover{background:rgba(255,255,255,.1)}
+
+/* Sheets */
+.sheet{background:var(--sheet); border:2px solid var(--ink); border-top:none; padding:28px}
+.sheet + .sheet{margin-top:0}
+.sheet-head{display:flex; gap:16px; align-items:stretch; margin:0 0 20px}
+.sheet-code{font-family:var(--display); font-weight:700; font-size:1.4rem; border:2px solid var(--ink); padding:4px 10px; display:flex; align-items:center}
+.sheet-head h2{font-family:var(--display); font-weight:700; font-size:clamp(1.6rem,3vw,2.2rem); margin:0; line-height:1.05}
+.sheet-head p{margin:4px 0 0; color:var(--ink-2); max-width:78ch}
+h3{font-family:var(--display); font-weight:600; font-size:1.35rem; margin:28px 0 8px}
+.lede{color:var(--ink-2); max-width:78ch; margin:0 0 16px}
+.note{font-size:.88rem; color:var(--ink-3); max-width:90ch}
+
+/* L0 world map */
+.map{display:grid; grid-template-columns:44px 1fr; gap:0; margin-top:8px}
+.map-fc{writing-mode:vertical-rl; transform:rotate(180deg); background:var(--ink); color:var(--sheet); font-family:var(--display); font-weight:600; text-align:center; padding:8px 0; font-size:1.05rem}
+.map-body{border:1px solid var(--ink); border-left:none}
+.stages{display:grid; grid-template-columns:repeat(6,minmax(150px,1fr)); overflow-x:auto}
+.stage{border-right:1px solid var(--rule); padding:12px 10px 14px; position:relative}
+.stage:last-child{border-right:none}
+.stage h4{margin:0 0 10px; font-family:var(--display); font-weight:600; font-size:1.05rem; display:flex; gap:8px; align-items:baseline}
+.stage h4 b{font-weight:700; color:var(--ink-3)}
+.stage:not(:last-child)::after{content:""; position:absolute; right:-7px; top:16px; width:12px; height:12px; background:var(--sheet); border-top:1px solid var(--rule); border-right:1px solid var(--rule); transform:rotate(45deg); z-index:1}
+.chip{display:block; width:100%; text-align:left; font:inherit; font-size:.9rem; line-height:1.25; background:var(--sheet); color:var(--ink); border:1px solid var(--rule); border-left:5px solid var(--c); padding:7px 9px; margin:0 0 6px; cursor:pointer; text-decoration:none}
+.chip:hover{background:var(--lane)}
+.chip small{display:block; color:var(--ink-3); font-size:.74rem}
+.chip .num{font-family:var(--display); font-weight:700; margin-right:6px}
+.crossbar{display:flex; flex-wrap:wrap; gap:6px; padding:10px; border-top:1px solid var(--ink); background:var(--lane)}
+.crossbar .chip{width:auto; flex:1 1 220px; margin:0}
+.map-kpi{grid-column:1/-1; background:var(--ink); color:var(--sheet); text-align:center; font-family:var(--display); font-weight:600; padding:8px; font-size:1.05rem}
+
+/* Legend */
+.legend{display:flex; flex-wrap:wrap; gap:14px 22px; font-size:.85rem; color:var(--ink-2); margin:10px 0 0}
+.legend span{display:inline-flex; align-items:center; gap:6px}
+.sw{width:14px; height:14px; border-left:5px solid var(--c); border:1px solid var(--rule); border-left-width:5px; border-left-color:var(--c)}
+.fit{display:inline-block; font-size:.74rem; font-weight:600; padding:1px 7px; border:1px solid currentColor; white-space:nowrap}
+.fit.Standard{color:var(--fit-std)} .fit.Configure{color:var(--fit-cfg)} .fit.Extend{color:var(--fit-ext)}
+
+/* SIPOC */
+.sipoc0{display:grid; grid-template-columns:repeat(5,1fr); border:1px solid var(--ink)}
+.sipoc0 > div{padding:12px; border-right:1px solid var(--rule)}
+.sipoc0 > div:last-child{border-right:none}
+.sipoc0 h4, .sgrid h5{font-family:var(--display); font-weight:700; margin:0 0 6px; font-size:1.1rem}
+.sipoc0 h4 em, .sgrid h5 em{font-style:normal; color:var(--ink-3); font-weight:600; margin-right:4px}
+.sipoc0 ul, .sgrid ul, .sgrid ol{margin:0; padding-left:18px; font-size:.9rem}
+.sipoc0 li, .sgrid li{margin:0 0 3px}
+@media (max-width:900px){.sipoc0{grid-template-columns:1fr}.sipoc0>div{border-right:none;border-bottom:1px solid var(--rule)}}
+.toolbar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:12px 0}
+.toolbar button, .toolbar input, .toolbar select{font:inherit; font-size:.88rem; color:var(--ink); background:var(--sheet); border:1px solid var(--rule); padding:6px 10px}
+.toolbar button[aria-pressed="true"]{background:var(--ink); color:var(--sheet); border-color:var(--ink)}
+.toolbar input{min-width:240px; flex:1 1 240px}
+details.sp{border:1px solid var(--rule); border-left:6px solid var(--c); margin:0 0 8px; background:var(--sheet)}
+details.sp > summary{cursor:pointer; padding:10px 14px; display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; list-style:none}
+details.sp > summary::-webkit-details-marker{display:none}
+details.sp > summary::before{content:"+"; font-family:var(--display); font-weight:700; width:14px; color:var(--ink-3)}
+details.sp[open] > summary::before{content:"–"}
+details.sp summary .pn{font-family:var(--display); font-weight:700; font-size:1.2rem}
+details.sp summary .pt{font-family:var(--display); font-weight:600; font-size:1.2rem}
+details.sp summary .own{color:var(--ink-3); font-size:.85rem; margin-left:auto}
+.sgrid{display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--rule)}
+.sgrid > div{padding:12px 14px; border-right:1px solid var(--rule-2)}
+.sgrid > div:last-child{border-right:none}
+.sfoot{border-top:1px solid var(--rule-2); padding:8px 14px; font-size:.85rem; color:var(--ink-2); display:flex; gap:16px; flex-wrap:wrap; align-items:center}
+.sfoot b{color:var(--ink)}
+@media (max-width:900px){.sgrid{grid-template-columns:1fr}.sgrid>div{border-right:none;border-bottom:1px solid var(--rule-2)}}
+
+/* Diagrams */
+.dnav{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 16px}
+.dnav a{text-decoration:none; border:1px solid var(--rule); padding:5px 10px; font-size:.88rem}
+.dnav a:hover{border-color:var(--ink)}
+.diagram{margin:0 0 34px}
+.diagram h3{margin-bottom:2px}
+.diagram .meta{font-size:.85rem; color:var(--ink-3); margin:0 0 8px}
+.diagram .desc{max-width:90ch; color:var(--ink-2); margin:0 0 10px; font-size:.95rem}
+.scroller{overflow-x:auto; border:1px solid var(--rule); background:var(--sheet)}
+.scroller svg{display:block}
+.bpmn text{font-family:var(--body); fill:var(--ink); font-size:11px}
+.bpmn .halo{paint-order:stroke; stroke:var(--sheet); stroke-width:4px; stroke-linejoin:round}
+.bpmn .lane-a{fill:var(--lane)} .bpmn .lane-b{fill:var(--lane-2)}
+.bpmn .lanerule{stroke:var(--rule); stroke-width:1}
+.bpmn .pool{fill:none; stroke:var(--ink); stroke-width:1.5}
+.bpmn .poolhead{fill:var(--ink)}
+.bpmn .poolhead-t{fill:var(--sheet); font-family:var(--display); font-weight:600; font-size:13px}
+.bpmn .lanehead-t{font-weight:600; font-size:11.5px}
+.bpmn .ext{fill:var(--ext); stroke:var(--ink); stroke-width:1.5}
+.bpmn .ext-t{font-family:var(--display); font-weight:600; font-size:13px}
+.bpmn .task{fill:var(--task); stroke:var(--ink); stroke-width:1.4}
+.bpmn .ev{fill:var(--task); stroke:var(--ink); stroke-width:1.6}
+.bpmn .ev-end{fill:var(--task); stroke:var(--ink); stroke-width:4}
+.bpmn .gw{fill:var(--task); stroke:var(--ink); stroke-width:1.5}
+.bpmn .mark{fill:none; stroke:var(--ink); stroke-width:1.6}
+.bpmn .markf{fill:var(--ink)}
+.bpmn .seq{fill:none; stroke:var(--ink); stroke-width:1.4}
+.bpmn .msg{fill:none; stroke:var(--ink-2); stroke-width:1.3; stroke-dasharray:6 4}
+.bpmn .elabel{font-size:10.5px; font-weight:600}
+.bpmn .mlabel{font-size:10px; fill:var(--ink-2); font-style:italic}
+.bpmn .evlabel{font-size:10.5px}
+.bpmn .accent{fill:var(--c)}
+
+/* Matrix */
+.mx-wrap{overflow-x:auto; border:1px solid var(--ink)}
+table.mx{border-collapse:collapse; min-width:1180px; width:100%; font-size:.86rem}
+table.mx th{position:sticky; top:0; background:var(--ink); color:var(--sheet); text-align:left; font-family:var(--display); font-weight:600; font-size:1rem; padding:8px 10px; vertical-align:bottom}
+table.mx td{border-top:1px solid var(--rule); padding:9px 10px; vertical-align:top}
+table.mx tr.grp td{background:var(--lane); font-family:var(--display); font-weight:700; font-size:1.05rem; border-top:2px solid var(--ink); border-left:6px solid var(--c)}
+table.mx td.ref{font-family:var(--display); font-weight:700; white-space:nowrap}
+table.mx td.step{font-weight:600; min-width:150px}
+table.mx td.trig{min-width:160px}
+table.mx td.data{min-width:250px}
+table.mx td.hand{min-width:230px}
+table.mx td.exc{min-width:230px}
+table.mx .hk{display:block; color:var(--ink-3); font-size:.78rem; margin-top:4px}
+.empty{padding:20px; color:var(--ink-3)}
+
+/* Master data & open items */
+table.md{border-collapse:collapse; width:100%; font-size:.88rem; min-width:860px}
+table.md th{text-align:left; border-bottom:2px solid var(--ink); padding:6px 8px; font-family:var(--display); font-weight:600; font-size:1rem}
+table.md td{border-bottom:1px solid var(--rule); padding:7px 8px; vertical-align:top}
+table.md code{font-size:.82rem; background:var(--lane); padding:0 4px}
+.oq{counter-reset:q; list-style:none; padding:0; margin:0; max-width:95ch}
+.oq li{counter-increment:q; padding:10px 0 10px 44px; position:relative; border-bottom:1px solid var(--rule-2)}
+.oq li::before{content:"Q" counter(q); position:absolute; left:0; top:10px; font-family:var(--display); font-weight:700; color:var(--ink-3)}
+.oq b{font-weight:600}
+.footer{margin-top:18px; font-size:.82rem; color:var(--ink-3)}
+@media print{.index,.toolbar,.dnav{display:none}.sheet{break-inside:auto}body{background:#fff}}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="titleblock">
+  <div class="tb-main">
+    <h1>PHI Enterprise Process Blueprint</h1>
+    <p>The end-to-end "world map" of how Primary Homes plans, acquires land, develops, sells, collects, delivers and manages property — structured as SIPOC, BPMN 2.0 swimlanes and a data and interconnection matrix to anchor the Odoo 19 BRD sessions.</p>
+  </div>
+  <dl class="tb-meta">
+    <div class="wide"><dt>Project</dt><dd>Odoo 19 ERP implementation (replacing In4 Velocity Suite)</dd></div>
+    <div><dt>Drawing</dt><dd>Master process blueprint</dd></div>
+    <div><dt>Notation</dt><dd>BPMN 2.0</dd></div>
+    <div><dt>Basis</dt><dd>Enterprise ERP business reference flow</dd></div>
+    <div><dt>Status</dt><dd>Draft for process-owner validation</dd></div>
+    <div><dt>Prepared by</dt><dd>Project Development Dept.</dd></div>
+    <div><dt>Date</dt><dd>24 Sep 2026 · Rev. B</dd></div>
+  </dl>
+</header>
+
+<nav class="index" aria-label="Sheet index">
+  <a href="#s0"><span>S-0</span>World map</a>
+  <a href="#s1"><span>S-1</span>SIPOC architecture</a>
+  <a href="#s2"><span>S-2</span>Cross-departmental swimlanes</a>
+  <a href="#s3"><span>S-3</span>Data &amp; interconnection matrix</a>
+  <a href="#s4"><span>S-4</span>Master data &amp; open items</a>
+</nav>
+
+<!-- S-0 -->
+<section class="sheet" id="s0">
+  <div class="sheet-head"><div class="sheet-code">S-0</div><div><h2>Level 0 world map</h2><p>Nineteen business processes in value-chain order, bracketed by forecasts and KPI/variance reporting as in the reference flow. Select any process to open its SIPOC.</p></div></div>
+  <div class="map">
+    <div class="map-fc">Forecasts (X1) — sales, collections, cost-to-complete, cash</div>
+    <div class="map-body">
+      <div class="stages" id="stages"></div>
+      <div class="crossbar" id="crossbar"></div>
+    </div>
+    <div class="map-kpi">KPIs and variance reports (X2) — budget vs actual across every process</div>
+  </div>
+  <div class="legend" id="legend0"></div>
+  <p class="note">Process numbers 04, 14, 15, 16, 18 and 19 come straight from the reference flow. The remaining numbers are proposed to fill the gaps — confirm them with process owners so the BRD, this blueprint and the vendor's workplan share one numbering.</p>
+</section>
+
+<!-- S-1 -->
+<section class="sheet" id="s1">
+  <div class="sheet-head"><div class="sheet-code">S-1</div><div><h2>SIPOC high-level architecture</h2><p>One enterprise-level SIPOC, then a SIPOC per Level 1 process with its accountable owner and the indicative Odoo 19 home and fit.</p></div></div>
+
+  <h3>Enterprise SIPOC</h3>
+  <div class="sipoc0">
+    <div><h4><em>S</em>Suppliers</h4><ul><li>Landowners, land brokers, JV partners</li><li>Banks, Pag-IBIG (HDMF), shareholders</li><li>Contractors, suppliers, consultants</li><li>Accredited realty firms and agents</li><li>BIR, Registry of Deeds, LGUs, DHSUD, DENR</li></ul></div>
+    <div><h4><em>I</em>Inputs</h4><ul><li>Land and titles</li><li>Capital, loans, project funding</li><li>Materials, labor, designs, permits</li><li>Market demand, buyers' payments</li><li>Policies, tax and housing regulations</li></ul></div>
+    <div><h4><em>P</em>Process</h4><ul><li>Plan &amp; fund (budget, financing)</li><li>Acquire land</li><li>Develop (project setup, construction)</li><li>Stock &amp; sell (inventory, channels, sales, leasing)</li><li>Collect &amp; finance (monitoring, takeout, IHF, cancellations)</li><li>Deliver &amp; manage (turnover, title, property management)</li><li>Pay &amp; measure (AP, forecasts, KPIs)</li></ul></div>
+    <div><h4><em>O</em>Outputs</h4><ul><li>Completed houses, lots and condo units</li><li>Titles (TCT/CCT) in buyers' names</li><li>Managed communities, HOA turnover</li><li>Cash collections, revenue, returns</li><li>Statutory reports and BIR filings</li></ul></div>
+    <div><h4><em>C</em>Customers</h4><ul><li>Homebuyers and co-borrowers</li><li>Tenants</li><li>Homeowners' associations</li><li>Shareholders and ManCom</li><li>Lenders, regulators, auditors</li></ul></div>
+  </div>
+
+  <h3>Level 1 SIPOC by process</h3>
+  <div class="toolbar" id="sipocTools">
+    <button type="button" data-act="open">Expand all</button>
+    <button type="button" data-act="close">Collapse all</button>
+  </div>
+  <div id="sipocList"></div>
+  <div class="legend"><span><span class="fit Standard">Standard</span> works out of the box</span><span><span class="fit Configure">Configure</span> setup, Studio fields, rules</span><span><span class="fit Extend">Extend</span> likely custom module — scope with the vendor</span></div>
+  <p class="note">Odoo app placement and fit ratings are indicative starting positions for the BRD, not a vendor commitment. Validate each against Odoo 19 Enterprise and the Philippine localization during fit-gap sessions.</p>
+</section>
+
+<!-- S-2 -->
+<section class="sheet" id="s2">
+  <div class="sheet-head"><div class="sheet-code">S-2</div><div><h2>Cross-departmental process maps</h2><p>Seven end-to-end BPMN 2.0 collaboration diagrams. PHI is one pool with a lane per department; buyers, lenders, suppliers and government agencies are collapsed (black-box) pools that interact only through message flows.</p></div></div>
+  <h3>Notation used</h3>
+  <div class="scroller" id="bpmnLegend"></div>
+  <div class="dnav" id="dnav"></div>
+  <div id="diagrams"></div>
+  <p class="note">Leasing (10) and corporate financing (02) follow the procure-to-pay and contract-to-cash patterns above and are covered in the SIPOC and matrix; draw them at Level 2 if the BRD needs lane detail.</p>
+</section>
+
+<!-- S-3 -->
+<section class="sheet" id="s3">
+  <div class="sheet-head"><div class="sheet-code">S-3</div><div><h2>Data &amp; interconnection matrix</h2><p>For every hand-off step: what triggers it, which data fields must exist, where the record moves inside Odoo (or to an outside party), and the exceptions the design must survive.</p></div></div>
+  <div class="toolbar" id="mxTools">
+    <input type="search" id="mxSearch" placeholder="Search steps, fields, exceptions…" aria-label="Search the matrix">
+    <select id="mxGroup" aria-label="Filter by process group"></select>
+    <select id="mxFit" aria-label="Filter by fit">
+      <option value="">Any fit</option><option>Standard</option><option>Configure</option><option>Extend</option>
+    </select>
+  </div>
+  <div class="mx-wrap"><table class="mx" id="mx"><thead><tr><th>Ref</th><th>Step</th><th>a. Trigger event</th><th>b. Inputs &amp; data fields</th><th>c. System hand-off</th><th>d. Exceptions / edge cases</th><th>Fit</th></tr></thead><tbody></tbody></table></div>
+  <p class="note">Statutory references (RA 6552 Maceda Law, PD 957, EOPT Act invoicing rules, PFRS 15) are included so the design accounts for them; confirm current rules and PHI's policies with Legal, Tax and the external auditor.</p>
+</section>
+
+<!-- S-4 -->
+<section class="sheet" id="s4">
+  <div class="sheet-head"><div class="sheet-code">S-4</div><div><h2>Master data &amp; open items</h2><p>The shared records every process reads or writes, and the decisions process owners need to close before BRD sign-off.</p></div></div>
+  <h3>Master data objects</h3>
+  <div class="scroller" style="border:none"><table class="md" id="md"><thead><tr><th>Object</th><th>Owning process</th><th>Key fields</th><th>Indicative Odoo home</th><th>Used by</th></tr></thead><tbody></tbody></table></div>
+  <h3>Lot as the master record</h3>
+  <p class="lede">The vendor proposes the Lot as the master model. In this blueprint that means one Lot record per sellable unit, and every process after 07 reads from or writes to it.</p>
+  <table class="md" style="min-width:0;margin-bottom:8px"><thead><tr><th>Process</th><th>What it does to the Lot</th></tr></thead><tbody>
+  <tr><td>04 Land acquisition · 05 Project setup</td><td>Mother title and project / phase / block give the Lot its parent references</td></tr>
+  <tr><td>06 Construction</td><td>Updates construction status and % completion</td></tr>
+  <tr><td>07 Inventory</td><td>Creates the Lot, prices it, sets sales status to available</td></tr>
+  <tr><td>09 Sales · 12 Cancellations</td><td>Reserved → sold; cancelled → available again (return inventory)</td></tr>
+  <tr><td>11 Accounts monitoring · 13 Takeout</td><td>Buyer ledger, schedule and loan status hang off the Lot's active CTS</td></tr>
+  <tr><td>15 Turnover · 18 Property management</td><td>Turned-over flag, warranty dates, homeowner and dues</td></tr>
+  <tr><td>19 Title delivery</td><td>Derivative title number, custody and release</td></tr>
+  </tbody></table>
+  <h3>Open items for process owners</h3>
+  <ol class="oq" id="oq"></ol>
+  <p class="footer">Source: Enterprise ERP Business Reference Flow (Budget Setup). This blueprint is a working draft — update the revision letter in the title block whenever process owners sign off a change.</p>
+</section>
+
+</div>
+
+<script>
+/* ---------- Process catalogue ---------- */
+const G = {
+  plan:{name:"Plan & fund", c:"--plan"}, land:{name:"Land", c:"--land"}, proj:{name:"Project & inventory", c:"--proj"},
+  sales:{name:"Sales & leasing", c:"--sales"}, acct:{name:"Accounts monitoring & financing", c:"--acct"},
+  dlv:{name:"Delivery & property management", c:"--dlv"}, ap:{name:"Accounts payable", c:"--ap"}, x:{name:"Forecasts & KPIs", c:"--x"}
+};
+const P = [
+ {id:"01",g:"plan",n:"Budget setup (corporate & project)",own:"Finance – budget & FP&A",odoo:"Accounting › Budgets, Analytic plans; Approvals; Spreadsheet",fit:"Configure",
+  s:["ManCom / Executive","Department heads","Project Development","Finance – FP&A","Treasury"],
+  i:["Strategic plan and targets","Prior-year actuals","Project feasibility studies","Sales, collection and cash forecasts","Chart of accounts and analytic structure"],
+  p:["Define budget structure (accounts × analytic plans: company, project, phase, cost center)","Annual corporate budget planning","Project (life-of-project) budget by phase and cost code","Consolidate and review","Approve and lock baseline; switch on budget checks"],
+  o:["Approved corporate budget","Approved project budget baselines","Budget-control rules","Forecast baseline"],
+  c:["All spending departments","Accounting and Procurement","ManCom / Board","Lenders"]},
+ {id:"02",g:"plan",n:"Corporate & project financing",own:"Treasury",odoo:"Accounting (bank, loans, journals); Documents",fit:"Configure",
+  s:["Banks and lenders","Shareholders","Treasury","ManCom"],
+  i:["Cash-flow forecast","Approved budgets","Term sheets and loan agreements","Collateral documents"],
+  p:["Identify funding need","Negotiate facility; Board approval","Drawdown and allocate to company / project","Accrue and capitalize interest where allowed","Schedule debt service"],
+  o:["Loan records and amortization schedules","Funds availability per project","Interest accruals (expensed or capitalized)"],
+  c:["Projects","Accounts payable (loan payments)","Accounting","Lenders"]},
+ {id:"03",g:"plan",n:"Corporate expenses",own:"Administration / requesting departments",odoo:"Purchase; Approvals; Expenses; Accounting",fit:"Standard",
+  s:["Departments (admin, branding, executive, HR)","Suppliers and service providers"],
+  i:["Approved department budget","Purchase requests","Quotations and contracts"],
+  p:["Raise request","Budget check","Approve","Issue PO or contract","Receive and accept","Send bill to AP"],
+  o:["POs and committed cost","Vendor bills","Expense by cost center"],
+  c:["Accounts payable","Accounting","Department heads"]},
+ {id:"04",g:"land",n:"Land acquisition",ref:true,own:"Land acquisition / business development",odoo:"Documents; Sign; Approvals; Purchase / Accounting (milestones); custom land register",fit:"Extend",
+  s:["Landowners, heirs, land brokers","Appraisers and surveyors","Legal","BIR, Registry of Deeds, LGU assessor"],
+  i:["Land offers","Title, tax declaration, survey, zoning","Appraisal","Acquisition budget and ManCom approval"],
+  p:["Source and log opportunity","Due diligence","Negotiate and execute agreement (deed, CTS or JV)","Pay per milestones","Pay CGT/DST/transfer tax and transfer title","Book land to project or land bank"],
+  o:["Executed agreements","Milestone payments","Title in PHI's name","Capitalized land cost; land bank record"],
+  c:["Project Development","Accounting","Treasury","Legal"]},
+ {id:"05",g:"proj",n:"Project setup & project financing",own:"Project Development",odoo:"Project; Accounting (analytic accounts); Documents; custom permit tracker",fit:"Configure",
+  s:["Project Development","Architects and engineers","Finance and Treasury","LGU, DENR, DHSUD"],
+  i:["Approved project budget","Master plan and phasing","Land title","Permits: DP, ECC, BP, CR/LTS"],
+  p:["Create project master and analytic account","Define phases, blocks/towers and WBS","Set milestones","Secure project financing","Track permits and License to Sell"],
+  o:["Project master data","WBS and milestones","Project funding lines","License-to-sell status"],
+  c:["Construction","Sales","Accounting","Inventory"]},
+ {id:"06",g:"proj",n:"Project expenses & construction (milestone-based)",own:"Construction / cost control",odoo:"Purchase; Project; Accounting; progress-billing extension",fit:"Extend",
+  s:["Contractors and subcontractors","Suppliers","Engineering and QS","Planning, permits, titling, marketing, sales, loan-interest cost owners"],
+  i:["Project budget and WBS","Contracts and BOQ","Accomplishment reports","Variation orders"],
+  p:["Award contract / issue PO","Verify accomplishment by milestone","Process progress billing with retention and recoupment","Send to AP","Update % completion"],
+  o:["Committed vs actual cost","% completion per unit/phase","Retention payable","Construction-in-progress cost"],
+  c:["Accounts payable","Accounting (POC revenue)","Inventory (unit status)","ManCom"]},
+ {id:"07",g:"proj",n:"Inventory & financing options setup",own:"Sales admin / Project Development",odoo:"Lot master model (vendor-proposed) linked to Sales products, pricelists and payment terms; Studio",fit:"Extend",
+  s:["Project Development","Construction","Finance","Sales admin"],
+  i:["Approved subdivision / condo plans","Unit list, areas, models","Price list and escalation rules","Financing schemes"],
+  p:["Create lots as the unit master (project-phase-block-lot; tower-floor-unit for condos)","Set price lists","Track construction status: pre-construction → construction → ready","Track sales status: available → reserved → sold / hold / cancelled","Configure financing options and payment-term templates"],
+  o:["Sellable inventory","Price lists","Payment-term templates","Availability board"],
+  c:["Sales channels","Accounts monitoring","Finance"]},
+ {id:"08",g:"sales",n:"Sales channel accreditation",own:"Sales admin",odoo:"Contacts; Documents; Sign; Approvals; Sales commission plans",fit:"Configure",
+  s:["Realty firms","Sales agents","Legal"],
+  i:["Accreditation application","PRC license, DHSUD registration","BIR COR (Form 2303), TIN","Accreditation agreement"],
+  p:["Receive application","Verify documents","Approve","Create partner record and assign commission scheme","Renew before expiry"],
+  o:["Accredited broker/agent master","Commission schemes","Validity dates"],
+  c:["Sales","Accounts payable (commissions)","Marketing"]},
+ {id:"09",g:"sales",n:"Sales (reservation to contract to sell)",own:"Sales / sales admin",odoo:"CRM; Sales; Sign; Documents; Accounting; custom sales computation",fit:"Extend",
+  s:["Buyers and co-borrowers","Brokers and agents","Marketing","Credit & collection"],
+  i:["Available unit","Price list, promos, discounts","Financing scheme","Buyer KYC documents","Reservation fee"],
+  p:["Prepare sales computation","Reserve unit and receive reservation fee","Collect documents; credit check","Generate CTS and payment schedule","Sign and notarize CTS; tag unit sold"],
+  o:["Reservation agreement","CTS (contract to sell)","Payment schedule","Buyer master","Commission accrual"],
+  c:["Buyer","Accounts monitoring","Accounting","Brokers"]},
+ {id:"10",g:"sales",n:"Leasing",own:"Leasing / sales",odoo:"Rental or Subscriptions; Sign; Accounting",fit:"Configure",
+  s:["Tenants","Leasing team","Legal"],
+  i:["Lease-available unit","Lease rate and term sheet","Security deposit, advance rent"],
+  p:["Issue term sheet","Approve","Sign lease contract","Bill rent, CUSA and utilities","Renew or terminate"],
+  o:["Lease contracts","Recurring invoices","Deposit liability"],
+  c:["Tenants","Accounting","Property management"]},
+ {id:"11",g:"acct",n:"Accounts monitoring (documentation, receipting, collection)",own:"Credit & collection",odoo:"Accounting (invoicing, payments, follow-up); Documents; PH localization; custom amortization & penalty engine",fit:"Extend",
+  s:["Buyers","Cashier","Sales admin","Banks (PDCs, transfers)"],
+  i:["Signed CTS and payment schedule","Payments: cash, check, PDC, bank transfer, online","Buyer documents"],
+  p:["Manage contracts and documents","Issue BIR-compliant invoice / receipt","Post and allocate collections","Issue SOA","Compute delinquency and penalties","Produce aging"],
+  o:["Posted collections","Invoices / receipts","SOA","Penalties and aging","Delinquency list"],
+  c:["Buyers","Accounting","Treasury","ManCom"]},
+ {id:"12",g:"acct",n:"Cancellations & return to inventory",own:"Credit & collection / Legal",odoo:"Accounting; Approvals; custom Maceda calculator",fit:"Extend",
+  s:["Buyer (voluntary)","Credit & collection (default)","Legal"],
+  i:["Cancellation request or default status","Payment history","Years of installments paid"],
+  p:["Observe grace period","Serve notarial notice","Compute cash surrender value or forfeiture","Approve","Reverse receivable, revenue and commission","Refund via AP; return unit"],
+  o:["Cancellation record","Refund payable or forfeiture income","Unit back to available"],
+  c:["Buyer","Accounts payable","Accounting","Sales / inventory"]},
+ {id:"13",g:"acct",n:"Bank / Pag-IBIG takeout & in-house financing",own:"Loans & financing",odoo:"Accounting; Documents; custom takeout tracker and IHF amortization",fit:"Extend",
+  s:["Buyer","Banks and Pag-IBIG","Titling"],
+  i:["Equity fully paid","Loan requirements","Letter of guaranty / notice of approval","Title and DOAS"],
+  p:["Takeout: collect requirements, submit, receive decision, release documents, collect proceeds","IHF: approve, set amortization with interest, collect monthly"],
+  o:["Loan proceeds applied","Closed buyer balance or IHF receivable","Interest income"],
+  c:["Accounts monitoring","Treasury","Accounting","Titling"]},
+ {id:"14",g:"dlv",n:"TORC – taxes and other related charges",ref:true,own:"Titling",odoo:"Accounting; Approvals; Expenses (cash advance / liquidation)",fit:"Configure",
+  s:["Titling","BIR, LGU, Registry of Deeds"],
+  i:["Deed of absolute sale","Computation of taxes (DST, transfer tax) and other related charges (registration, notarial, processing fees)","TORC budget"],
+  p:["Compute","Approve against budget","Fund cash advance or bill","Pay agencies","Liquidate","Charge to buyer or project"],
+  o:["Paid TORC","Liquidation","Recoverable charges on buyer ledger"],
+  c:["Accounts payable","Title delivery","Accounting"]},
+ {id:"15",g:"dlv",n:"Unit preparation & delivery",ref:true,own:"Customer care / turnover",odoo:"Field Service or Project; Sign; Helpdesk",fit:"Configure",
+  s:["Construction and QA","Credit & collection","Buyer"],
+  i:["Ready-for-occupancy unit","Turnover eligibility (payment status)","Punch list"],
+  p:["Check eligibility","Schedule joint inspection","Rectify defects","Sign acceptance; hand over keys","Start warranty"],
+  o:["Certificate of acceptance","Warranty period","Unit status: turned over"],
+  c:["Buyer","Property management","Accounting"]},
+ {id:"16",g:"ap",n:"Accounts payable processing",ref:true,own:"Accounting – AP",odoo:"Accounting (bills, payments, batch payments); Purchase; Approvals; PH localization (2307)",fit:"Standard",
+  s:["Corporate, land, project, sales, TORC and property-management expense owners","Loan servicing","Suppliers, contractors, brokers"],
+  i:["Vendor bills","PO and receipts / accomplishment","Withholding tax codes"],
+  p:["Capture invoice","Match and validate","Budget check","Approve per DOA","Compute EWT; schedule payment","Disburse; issue BIR 2307"],
+  o:["Payments","BIR 2307 certificates","AP aging","Actuals against budget"],
+  c:["Suppliers","Treasury","Accounting","BIR"]},
+ {id:"17",g:"sales",n:"Commissions & sales incentives",own:"Sales admin",odoo:"Sales commission plans; Purchase / Accounting (broker bills)",fit:"Extend",
+  s:["Sales","Brokers and agents","Accounts monitoring"],
+  i:["Signed CTS","Collection % per account","Commission scheme and release tranches","Non-cash incentive programs"],
+  p:["Accrue on sale","Release by tranche when collection thresholds are hit","Compute splits and EWT","Approve","Pay via AP"],
+  o:["Commission payable","Released commissions","Non-cash incentives issued"],
+  c:["Brokers and agents","Accounts payable","Accounting"]},
+ {id:"18",g:"dlv",n:"Property management",ref:true,own:"Property management",odoo:"Subscriptions / Invoicing; Helpdesk; Field Service; Purchase",fit:"Configure",
+  s:["Turnover","Homeowners","HOA","Utilities and service vendors"],
+  i:["Turned-over units","Dues rates","Service requests","Vendor bills"],
+  p:["Onboard homeowner","Bill and collect dues","Service requests and maintenance","Process bills and expenses","Turn over to HOA"],
+  o:["Dues invoices","Service tickets","PM expenses","HOA turnover package"],
+  c:["Homeowners","HOA","Accounts payable","Accounting"]},
+ {id:"19",g:"dlv",n:"Title delivery",ref:true,own:"Titling",odoo:"Documents; Project (checklist); custom title tracker",fit:"Extend",
+  s:["Titling","Legal","BIR, Registry of Deeds, assessor","Bank / Pag-IBIG"],
+  i:["Full payment or takeout","DOAS","Mother title / condo title","TORC paid"],
+  p:["Prepare documents","Pay fees and taxes","Process eCAR and transfer","Update tax declaration","Release to buyer or lender"],
+  o:["TCT/CCT in buyer's name","Tax declaration","Delivery acknowledgment"],
+  c:["Buyer","Bank / Pag-IBIG","Accounts monitoring"]},
+ {id:"X1",g:"x",n:"Forecasts",own:"Finance – FP&A",odoo:"Spreadsheet; Dashboards; Accounting reports",fit:"Configure",
+  s:["Sales","Credit & collection","Construction","Treasury"],
+  i:["Pipeline and reservations","Collection schedules","Cost-to-complete","Loan schedules"],
+  p:["Refresh monthly","Roll forward","Compare to budget","Publish"],
+  o:["Sales, collection, cost and cash forecasts"],
+  c:["ManCom","Treasury","Lenders"]},
+ {id:"X2",g:"x",n:"KPIs & variance reports",own:"Finance – FP&A",odoo:"Accounting budget reports; Spreadsheet dashboards; BI",fit:"Configure",
+  s:["All processes"],
+  i:["Budgets and actuals by analytic account","Sales and collection data","Construction progress"],
+  p:["Close period","Compute KPIs","Explain variances","Review with owners"],
+  o:["Budget vs actual","Absorption and sales velocity","Collection efficiency and aging","Cost variance"],
+  c:["ManCom","Board","Process owners"]}
+];
+const PX = Object.fromEntries(P.map(p=>[p.id,p]));
+const STAGES = [
+  {n:"Plan & fund",ids:["01","02","03"]},
+  {n:"Acquire land",ids:["04"]},
+  {n:"Develop",ids:["05","06","07"]},
+  {n:"Stock & sell",ids:["08","09","10","17"]},
+  {n:"Collect & finance",ids:["11","12","13"]},
+  {n:"Deliver & manage",ids:["14","15","19","18"]}
+];
+const CROSS = ["16","X1","X2"];
+
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const col = g => `var(${G[g].c})`;
+
+/* ---------- S-0 map ---------- */
+function chip(id){
+  const p = PX[id];
+  return `<a class="chip" href="#sp-${id}" data-open="${id}" style="--c:${col(p.g)}"><span class="num">${id}</span>${esc(p.n)}<small>${esc(p.own)}${p.ref?" · numbered in reference flow":""}</small></a>`;
+}
+document.getElementById("stages").innerHTML = STAGES.map((s,i)=>`<div class="stage"><h4><b>${i+1}</b>${esc(s.n)}</h4>${s.ids.map(chip).join("")}</div>`).join("");
+document.getElementById("crossbar").innerHTML = CROSS.map(chip).join("");
+document.getElementById("legend0").innerHTML = Object.values(G).map(g=>`<span><span class="sw" style="--c:var(${g.c})"></span>${esc(g.name)}</span>`).join("");
+
+/* ---------- S-1 SIPOC ---------- */
+const li = a => a.map(x=>`<li>${esc(x)}</li>`).join("");
+document.getElementById("sipocList").innerHTML = P.map((p,i)=>`
+<details class="sp" id="sp-${p.id}" style="--c:${col(p.g)}"${i===0?" open":""}>
+  <summary><span class="pn">${p.id}</span><span class="pt">${esc(p.n)}</span><span class="own">Owner: ${esc(p.own)}</span></summary>
+  <div class="sgrid">
+    <div><h5><em>S</em>Suppliers</h5><ul>${li(p.s)}</ul></div>
+    <div><h5><em>I</em>Inputs</h5><ul>${li(p.i)}</ul></div>
+    <div><h5><em>P</em>Process</h5><ol>${li(p.p)}</ol></div>
+    <div><h5><em>O</em>Outputs</h5><ul>${li(p.o)}</ul></div>
+    <div><h5><em>C</em>Customers</h5><ul>${li(p.c)}</ul></div>
+  </div>
+  <div class="sfoot"><span><b>Odoo 19 home:</b> ${esc(p.odoo)}</span><span class="fit ${p.fit}">${p.fit}</span></div>
+</details>`).join("");
+document.querySelectorAll("[data-open]").forEach(a=>a.addEventListener("click",()=>{const d=document.getElementById("sp-"+a.dataset.open); if(d) d.open=true;}));
+document.getElementById("sipocTools").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; document.querySelectorAll("details.sp").forEach(d=>d.open=(b.dataset.act==="open"));});
+
+/* ---------- BPMN renderer ---------- */
+const CW=146, HW=132, LHI=108, LHE=60, GAP=18, PADY=10;
+function wrap(s,max){const w=String(s).split(/\s+/); const out=[]; let cur=""; w.forEach(x=>{ if(!cur) cur=x; else if((cur+" "+x).length<=max) cur+=" "+x; else {out.push(cur); cur=x;} }); if(cur) out.push(cur); return out;}
+function tspans(lines,x,y,lh){return lines.map((l,i)=>`<tspan x="${x}" y="${y+i*lh}">${esc(l)}</tspan>`).join("");}
+const isGw = t => ["xor","and","evgw"].includes(t);
+const isEv = t => ["start","timerStart","msgStart","condStart","end","msgCatch","timerCatch"].includes(t);
+const hw = n => n.t==="task"?62 : isGw(n.t)?21 : n.t==="anchor"?0 : 17;
+const hh = n => n.t==="task"?30 : isGw(n.t)?21 : n.t==="anchor"?0 : 17;
+
+function envelope(cx,cy,filled){return `<rect x="${cx-7}" y="${cy-5}" width="14" height="10" class="${filled?"markf":"mark"}" style="stroke-width:1.2"/><path d="M${cx-7} ${cy-5} L${cx} ${cy+1} L${cx+7} ${cy-5}" class="mark" style="stroke-width:1.2"/>`;}
+function clock(cx,cy){return `<circle cx="${cx}" cy="${cy}" r="9" class="mark" style="stroke-width:1.2"/><path d="M${cx} ${cy-6} L${cx} ${cy} L${cx+5} ${cy+2}" class="mark" style="stroke-width:1.2"/>`;}
+function drawNode(n){
+  const {cx,cy,t}=n; let s="";
+  if(t==="task"){
+    let lines=wrap(n.l,19), fs=11, lh=13;
+    if(lines.length>4){lines=wrap(n.l,23); fs=9.5; lh=11.5;}
+    s+=`<rect x="${cx-62}" y="${cy-30}" width="124" height="60" rx="8" class="task"/>`;
+    const y0=cy-((lines.length-1)*lh)/2+4;
+    s+=`<text text-anchor="middle" style="font-size:${fs}px">${tspans(lines,cx,y0,lh)}</text>`;
+    return s;
+  }
+  if(isEv(t)){
+    const r=17;
+    if(t==="end") s+=`<circle cx="${cx}" cy="${cy}" r="${r-1}" class="ev-end"/>`;
+    else s+=`<circle cx="${cx}" cy="${cy}" r="${r}" class="ev"/>`;
+    if(t==="msgCatch"||t==="timerCatch") s+=`<circle cx="${cx}" cy="${cy}" r="${r-3.5}" class="mark" style="stroke-width:1.2"/>`;
+    if(t==="timerStart"||t==="timerCatch") s+=clock(cx,cy);
+    if(t==="msgStart"||t==="msgCatch") s+=envelope(cx,cy,false);
+    if(t==="condStart") s+=`<rect x="${cx-6}" y="${cy-8}" width="12" height="16" class="mark" style="stroke-width:1.2"/><path d="M${cx-3} ${cy-4}h6M${cx-3} ${cy}h6M${cx-3} ${cy+4}h6" class="mark" style="stroke-width:1.1"/>`;
+    if(n.l){const lines=wrap(n.l,20).slice(0,3); s+=`<text text-anchor="middle" class="evlabel halo">${tspans(lines,cx,cy+r+12,12)}</text>`;}
+    return s;
+  }
+  if(isGw(t)){
+    const d=21;
+    s+=`<path d="M${cx} ${cy-d} L${cx+d} ${cy} L${cx} ${cy+d} L${cx-d} ${cy} Z" class="gw"/>`;
+    if(t==="xor") s+=`<path d="M${cx-6} ${cy-6} L${cx+6} ${cy+6} M${cx+6} ${cy-6} L${cx-6} ${cy+6}" class="mark" style="stroke-width:2.6"/>`;
+    if(t==="and") s+=`<path d="M${cx} ${cy-9} V${cy+9} M${cx-9} ${cy} H${cx+9}" class="mark" style="stroke-width:2.6"/>`;
+    if(t==="evgw") s+=`<circle cx="${cx}" cy="${cy}" r="10" class="mark" style="stroke-width:1"/><circle cx="${cx}" cy="${cy}" r="7.5" class="mark" style="stroke-width:1"/><path d="M${cx} ${cy-4.5} L${cx+4.3} ${cy-1.4} L${cx+2.7} ${cy+3.6} L${cx-2.7} ${cy+3.6} L${cx-4.3} ${cy-1.4} Z" class="mark" style="stroke-width:1"/>`;
+    if(n.l){const lines=wrap(n.l,20).slice(0,3); s+=`<text text-anchor="middle" class="evlabel halo" style="font-weight:600">${tspans(lines,cx,cy-d-6-(lines.length-1)*12,12)}</text>`;}
+    return s;
+  }
+  return s;
+}
+function route(s,t){
+  if(t.col>s.col){
+    const p0=[s.cx+hw(s),s.cy];
+    if(Math.abs(s.cy-t.cy)<1) return [p0,[t.cx-hw(t),t.cy]];
+    const x=p0[0]+14; return [p0,[x,s.cy],[x,t.cy],[t.cx-hw(t),t.cy]];
+  }
+  if(t.col===s.col){const down=t.cy>s.cy; return [[s.cx,s.cy+(down?hh(s):-hh(s))],[t.cx,t.cy+(down?-hh(t):hh(t))]];}
+  if(Math.abs(s.cy-t.cy)<1){const yb=s.cy+46; return [[s.cx,s.cy+hh(s)],[s.cx,yb],[t.cx,yb],[t.cx,t.cy+hh(t)]];}
+  if(t.cy<s.cy){const ym=t.cy+hh(t)+16; return [[s.cx,s.cy-hh(s)],[s.cx,ym],[t.cx,ym],[t.cx,t.cy+hh(t)]];}
+  const ym=t.cy-hh(t)-16; return [[s.cx,s.cy+hh(s)],[s.cx,ym],[t.cx,ym],[t.cx,t.cy-hh(t)]];
+}
+const pathD = pts => "M"+pts.map(p=>p.join(" ")).join(" L");
+let uid=0;
+function diagramSVG(d){
+  uid++;
+  const L={}; let y=PADY, prev=null;
+  d.lanes.forEach((ln,i)=>{ if(prev&&(prev.ext||ln.ext)) y+=GAP; const h=ln.ext?LHE:LHI; L[ln.id]={...ln,y,h,i}; y+=h; prev=ln; });
+  const H=y+PADY;
+  const ints=d.lanes.filter(l=>!l.ext); const pTop=L[ints[0].id].y, lastI=L[ints[ints.length-1].id], pBot=lastI.y+lastI.h;
+  const maxCol=Math.max(...d.nodes.map(n=>n.col))+1; const W=HW+maxCol*CW+16;
+  const N={}; d.nodes.forEach(n=>{const ln=L[n.lane]; N[n.id]={...n,cx:HW+n.col*CW+CW/2,cy:ln.y+ln.h/2};});
+  const ref = r => { if(r.startsWith("@")){const [lane,c]=r.slice(1).split(":"); const ln=L[lane]; const above=ln.y<pTop; return {t:"anchor",col:+c,cx:HW+(+c)*CW+CW/2,cy:above?ln.y+ln.h:ln.y};} return N[r]; };
+  let s=`<svg class="bpmn" xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(d.title)} BPMN collaboration diagram">`;
+  s+=`<defs><marker id="ah${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" class="markf"/></marker>
+  <marker id="mh${uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--sheet);stroke:var(--ink-2);stroke-width:1.2"/></marker>
+  <marker id="mt${uid}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3.5" style="fill:var(--sheet);stroke:var(--ink-2);stroke-width:1.2"/></marker></defs>`;
+  // lanes
+  let k=0;
+  d.lanes.forEach(ln=>{const l=L[ln.id];
+    if(ln.ext){
+      s+=`<rect x="1" y="${l.y}" width="${W-2}" height="${l.h}" class="ext"/>`;
+      s+=`<text x="${HW/2}" text-anchor="middle" class="ext-t">${tspans(wrap(ln.name,16),HW/2,l.y+l.h/2-(wrap(ln.name,16).length-1)*7+4,14)}</text>`;
+      s+=`<line x1="${HW}" y1="${l.y}" x2="${HW}" y2="${l.y+l.h}" class="lanerule"/>`;
+      s+=`<text x="${HW+10}" y="${l.y+l.h/2+4}" style="font-size:10px;fill:var(--ink-3)">Collapsed pool (black box) — interacts via message flows only</text>`;
+    } else {
+      s+=`<rect x="28" y="${l.y}" width="${W-29}" height="${l.h}" class="${k%2?"lane-b":"lane-a"}"/>`; k++;
+      s+=`<line x1="28" y1="${l.y}" x2="${W-1}" y2="${l.y}" class="lanerule"/>`;
+      const lines=wrap(ln.name,15); s+=`<text class="lanehead-t">${tspans(lines,36,l.y+l.h/2-(lines.length-1)*6.5+4,13)}</text>`;
+    }
+  });
+  s+=`<rect x="1" y="${pTop}" width="27" height="${pBot-pTop}" class="poolhead"/>`;
+  s+=`<text class="poolhead-t" text-anchor="middle" transform="translate(18 ${(pTop+pBot)/2}) rotate(-90)">Primary Homes, Inc.</text>`;
+  s+=`<line x1="${HW}" y1="${pTop}" x2="${HW}" y2="${pBot}" class="lanerule"/>`;
+  s+=`<rect x="1" y="${pTop}" width="${W-2}" height="${pBot-pTop}" class="pool"/>`;
+  // sequence flows
+  let labels="";
+  d.seq.forEach(e=>{const a=N[e[0]], b=N[e[1]]; const pts=route(a,b);
+    s+=`<path d="${pathD(pts)}" class="seq" marker-end="url(#ah${uid})"/>`;
+    if(e[2]){let lx,ly;
+      if(pts.length===2){lx=pts[0][0]+6; ly=pts[0][1]-6;}
+      else if(pts[0][1]===pts[1][1]){lx=pts[2][0]+6; ly=pts[2][1]-6;}
+      else {lx=pts[0][0]+6; ly=pts[0][1]+(pts[1][1]>pts[0][1]?14:-6);}
+      labels+=`<text x="${lx}" y="${ly}" class="elabel halo">${esc(e[2])}</text>`;}
+  });
+  // message flows
+  (d.msg||[]).forEach(e=>{const a=ref(e[0]), b=ref(e[1]); const dx=e[3]||0;
+    const x1=a.cx+dx, x2=b.cx+dx; const down=b.cy>a.cy;
+    const y1=a.t==="anchor"?a.cy:a.cy+(down?hh(a):-hh(a))*(dx&&a.t!=="task"?1:1);
+    const y2=b.t==="anchor"?b.cy:b.cy+(down?-hh(b):hh(b));
+    const pts= x1===x2?[[x1,y1],[x2,y2]]:[[x1,y1],[x1,(y1+y2)/2],[x2,(y1+y2)/2],[x2,y2]];
+    s+=`<path d="${pathD(pts)}" class="msg" marker-start="url(#mt${uid})" marker-end="url(#mh${uid})"/>`;
+    if(e[2]){const my=(y1+y2)/2; labels+=`<text x="${x1+7}" y="${my+4}" class="mlabel halo">${esc(e[2])}</text>`;}
+  });
+  Object.values(N).forEach(n=>{s+=drawNode(n);});
+  s+=labels+`</svg>`;
+  return s;
+}
+
+/* ---------- Diagram definitions ---------- */
+const D = [
+ {id:"A",title:"Plan-to-budget",covers:"01 Budget setup · X1 Forecasts",
+  desc:"Annual cycle that produces both the corporate budget and life-of-project budgets, and hands a locked baseline to Accounting so every PR, PO and bill is checked against it.",
+  lanes:[{id:"mc",name:"ManCom / Executive"},{id:"fin",name:"Finance – budget & FP&A"},{id:"dept",name:"Department heads"},{id:"pdd",name:"Project Development"},{id:"acc",name:"Accounting"}],
+  nodes:[
+   {id:"a1",lane:"fin",col:0,t:"timerStart",l:"Annual budget cycle opens"},
+   {id:"a2",lane:"fin",col:1,t:"task",l:"Issue budget calendar, templates and analytic structure"},
+   {id:"a3",lane:"fin",col:2,t:"and"},
+   {id:"a4",lane:"dept",col:3,t:"task",l:"Prepare corporate and departmental budgets"},
+   {id:"a5",lane:"pdd",col:3,t:"task",l:"Prepare project budgets by phase and cost code"},
+   {id:"a6",lane:"fin",col:4,t:"and"},
+   {id:"a7",lane:"fin",col:5,t:"task",l:"Consolidate; test against sales, collection and cash forecasts"},
+   {id:"a8",lane:"mc",col:6,t:"task",l:"Review budget and funding plan"},
+   {id:"a9",lane:"mc",col:7,t:"xor",l:"Approved?"},
+   {id:"a10",lane:"acc",col:8,t:"task",l:"Load approved version; switch on budget checks"},
+   {id:"a11",lane:"acc",col:9,t:"end",l:"Budget baseline locked"}],
+  seq:[["a1","a2"],["a2","a3"],["a3","a4"],["a3","a5"],["a4","a6"],["a5","a6"],["a6","a7"],["a7","a8"],["a8","a9"],["a9","a10","Yes"],["a9","a7","No – revise"],["a10","a11"]]},
+ {id:"B",title:"Land-to-inventory",covers:"04 Land acquisition · 05 Project setup · 07 Inventory setup",
+  desc:"From a land opportunity to sellable lots: due diligence, agreement, milestone payments, title transfer, project creation, permits and License to Sell, then lot master and price-list creation.",
+  lanes:[{id:"lo",name:"Landowner / seller",ext:1},{id:"bd",name:"Land acquisition / BD"},{id:"mc",name:"ManCom"},{id:"legal",name:"Legal & titling"},{id:"tre",name:"Treasury & AP"},{id:"pdd",name:"Project Development"},{id:"sadm",name:"Sales admin"},{id:"gov",name:"BIR, RD, LGU, DHSUD",ext:1}],
+  nodes:[
+   {id:"b1",lane:"bd",col:0,t:"start",l:"Land opportunity logged"},
+   {id:"b2",lane:"bd",col:1,t:"task",l:"Due diligence: title, survey, zoning, appraisal"},
+   {id:"b3",lane:"mc",col:2,t:"task",l:"Evaluate acquisition and feasibility"},
+   {id:"b4",lane:"mc",col:3,t:"xor",l:"Approve?"},
+   {id:"b4n",lane:"mc",col:4,t:"end",l:"Declined"},
+   {id:"b5",lane:"legal",col:4,t:"task",l:"Negotiate and execute agreement (deed or JV)"},
+   {id:"b6",lane:"tre",col:5,t:"task",l:"Release milestone payments"},
+   {id:"b7",lane:"legal",col:6,t:"task",l:"Pay CGT, DST and transfer tax; file for transfer"},
+   {id:"b8",lane:"legal",col:7,t:"msgCatch",l:"New title issued"},
+   {id:"b9",lane:"pdd",col:8,t:"task",l:"Create project, phases, WBS and analytic account"},
+   {id:"b10",lane:"pdd",col:9,t:"task",l:"Secure permits and License to Sell"},
+   {id:"b11",lane:"sadm",col:10,t:"task",l:"Create lots (unit master), price list and financing options"},
+   {id:"b12",lane:"sadm",col:11,t:"end",l:"Units open for sale"}],
+  seq:[["b1","b2"],["b2","b3"],["b3","b4"],["b4","b4n","No"],["b4","b5","Yes"],["b5","b6"],["b6","b7"],["b7","b8"],["b8","b9"],["b9","b10"],["b10","b11"],["b11","b12"]],
+  msg:[["b5","@lo:4","Signed agreement",40],["b6","@lo:5","Milestone payment"],["b7","@gov:6","Taxes and transfer documents"],["@gov:7","b8","eCAR, new TCT"],["b10","@gov:9","Permit and LTS applications"]]},
+ {id:"C",title:"Reserve-to-contract",covers:"08 Channel accreditation · 09 Sales · 17 Commissions",
+  desc:"A buyer picks a unit through an in-house or accredited broker; the reservation is receipted, documents and credit are checked, then the CTS and payment schedule are issued and the unit is tagged sold.",
+  lanes:[{id:"buyer",name:"Buyer",ext:1},{id:"sc",name:"Sales channel (in-house / broker)"},{id:"sadm",name:"Sales admin"},{id:"cash",name:"Cashier & accounting"},{id:"cc",name:"Credit & collection"},{id:"docs",name:"Contracts & documentation"}],
+  nodes:[
+   {id:"c1",lane:"sc",col:0,t:"msgStart",l:"Buyer selects unit and scheme"},
+   {id:"c2",lane:"sc",col:1,t:"task",l:"Prepare sales computation (TCP, discounts, charges, terms)"},
+   {id:"c3",lane:"sc",col:2,t:"xor",l:"Discount within authority?"},
+   {id:"c3n",lane:"sadm",col:3,t:"task",l:"Approve special discount"},
+   {id:"c4",lane:"cash",col:4,t:"msgCatch",l:"Reservation fee received"},
+   {id:"c5",lane:"cash",col:5,t:"task",l:"Issue invoice / receipt; post reservation fee"},
+   {id:"c6",lane:"sadm",col:6,t:"task",l:"Tag unit reserved; create buyer and co-borrower records"},
+   {id:"c7",lane:"cc",col:7,t:"task",l:"Check documents and credit per financing scheme"},
+   {id:"c8",lane:"cc",col:8,t:"xor",l:"Complete and qualified?"},
+   {id:"c8n",lane:"sadm",col:9,t:"task",l:"Follow up deficiencies before reservation expires"},
+   {id:"c9",lane:"docs",col:10,t:"task",l:"Generate CTS and payment schedule"},
+   {id:"c10",lane:"docs",col:11,t:"task",l:"Countersign and notarize CTS"},
+   {id:"c11",lane:"sadm",col:12,t:"task",l:"Tag unit sold; accrue broker commission"},
+   {id:"c12",lane:"sadm",col:13,t:"end",l:"Account handed to accounts monitoring"}],
+  seq:[["c1","c2"],["c2","c3"],["c3","c4","Yes"],["c3","c3n","No"],["c3n","c4"],["c4","c5"],["c5","c6"],["c6","c7"],["c7","c8"],["c8","c9","Yes"],["c8","c8n","No"],["c8n","c7"],["c9","c10"],["c10","c11"],["c11","c12"]],
+  msg:[["@buyer:0","c1","Reservation request"],["c2","@buyer:1","Sales computation"],["@buyer:4","c4","Reservation fee"],["c5","@buyer:5","Invoice / receipt"],["@buyer:7","c7","KYC and financing documents"],["c9","@buyer:10","CTS for signature"],["@buyer:11","c10","Signed CTS"]]},
+ {id:"D1",title:"Collect-to-cancel",covers:"11 Accounts monitoring · 12 Cancellations",
+  desc:"Monthly billing and collection with an event-based gateway: either payment arrives, or the due date plus grace lapses and delinquency handling begins, ending in reinstatement or a Maceda-compliant cancellation that returns the unit to inventory.",
+  lanes:[{id:"cc",name:"Credit & collection"},{id:"acc",name:"Cashier & accounting"},{id:"legal",name:"Legal"},{id:"mc",name:"Approvers (DOA)"},{id:"sadm",name:"Sales admin / inventory"},{id:"buyer",name:"Buyer",ext:1}],
+  nodes:[
+   {id:"d1",lane:"cc",col:0,t:"timerStart",l:"Installment due per schedule"},
+   {id:"d2",lane:"cc",col:1,t:"task",l:"Generate and send SOA"},
+   {id:"d3",lane:"cc",col:2,t:"evgw"},
+   {id:"d4",lane:"acc",col:3,t:"msgCatch",l:"Payment received"},
+   {id:"d5",lane:"acc",col:4,t:"task",l:"Issue invoice / receipt; allocate to principal, interest, penalties"},
+   {id:"d6",lane:"acc",col:5,t:"end",l:"Account current"},
+   {id:"d7",lane:"cc",col:3,t:"timerCatch",l:"Due date + grace lapsed"},
+   {id:"d8",lane:"cc",col:4,t:"task",l:"Compute penalties; send demand letter"},
+   {id:"d9",lane:"cc",col:5,t:"xor",l:"Paid within grace period?"},
+   {id:"d10",lane:"legal",col:6,t:"task",l:"Compute cash surrender value; serve notarial notice"},
+   {id:"d11",lane:"mc",col:7,t:"task",l:"Approve cancellation and refund / forfeiture"},
+   {id:"d12",lane:"acc",col:8,t:"task",l:"Reverse AR and revenue; claw back commission; refund via AP"},
+   {id:"d13",lane:"sadm",col:9,t:"task",l:"Return unit to inventory as available"},
+   {id:"d14",lane:"sadm",col:10,t:"end",l:"Unit re-listed"}],
+  seq:[["d1","d2"],["d2","d3"],["d3","d4"],["d3","d7"],["d4","d5"],["d5","d6"],["d7","d8"],["d8","d9"],["d9","d5","Yes"],["d9","d10","No"],["d10","d11"],["d11","d12"],["d12","d13"],["d13","d14"]],
+  msg:[["d2","@buyer:1","SOA"],["@buyer:3","d4","Payment"],["d10","@buyer:6","Notice of cancellation"],["d12","@buyer:8","Refund (if any)"]]},
+ {id:"D2",title:"Equity-to-takeout",covers:"13 Bank / Pag-IBIG takeout & IHF",
+  desc:"Once equity is fully paid the account splits by financing scheme: external loan takeout with lender approval, title annotation and release of proceeds, or in-house financing with an interest-bearing amortization schedule.",
+  lanes:[{id:"buyer",name:"Buyer",ext:1},{id:"cc",name:"Credit & collection"},{id:"loans",name:"Loans & financing"},{id:"acc",name:"Cashier & accounting"},{id:"tit",name:"Titling"},{id:"bank",name:"Bank / Pag-IBIG",ext:1}],
+  nodes:[
+   {id:"e1",lane:"cc",col:0,t:"condStart",l:"Equity fully paid"},
+   {id:"e2",lane:"loans",col:1,t:"xor",l:"Financing scheme?"},
+   {id:"e3",lane:"loans",col:2,t:"task",l:"Collect and check loan requirements"},
+   {id:"e4",lane:"loans",col:3,t:"task",l:"Submit loan application"},
+   {id:"e5",lane:"loans",col:4,t:"msgCatch",l:"Lender decision received"},
+   {id:"e6",lane:"loans",col:5,t:"xor",l:"Approved in full?"},
+   {id:"e6n",lane:"cc",col:6,t:"task",l:"Buyer covers shortfall or re-routes to IHF, cash or cancellation"},
+   {id:"e6e",lane:"cc",col:7,t:"end",l:"Re-routed per policy"},
+   {id:"e7",lane:"tit",col:6,t:"task",l:"Execute DOAS; annotate mortgage on title"},
+   {id:"e8",lane:"acc",col:7,t:"msgCatch",l:"Loan proceeds received"},
+   {id:"e9",lane:"acc",col:8,t:"task",l:"Apply proceeds; close buyer balance"},
+   {id:"e10",lane:"acc",col:9,t:"end",l:"Fully paid – ready for title"},
+   {id:"e11",lane:"cc",col:2,t:"task",l:"Evaluate and approve IHF"},
+   {id:"e12",lane:"cc",col:3,t:"task",l:"Set up IHF amortization with interest"},
+   {id:"e13",lane:"cc",col:4,t:"end",l:"Handed to monthly collection"}],
+  seq:[["e1","e2"],["e2","e3","Bank / Pag-IBIG"],["e2","e11","IHF"],["e3","e4"],["e4","e5"],["e5","e6"],["e6","e7","Yes"],["e6","e6n","No"],["e6n","e6e"],["e7","e8"],["e8","e9"],["e9","e10"],["e11","e12"],["e12","e13"]],
+  msg:[["e4","@bank:3","Loan application"],["@bank:4","e5","LOG / NOA or disapproval"],["e7","@bank:6","Title and release documents"],["@bank:7","e8","Loan proceeds"],["e6n","@buyer:6","Shortfall notice"]]},
+ {id:"E",title:"Procure-to-pay",covers:"03 Corporate expenses · 06 Project expenses · 14 TORC (taxes and other related charges) · 16 AP · 17 Commissions",
+  desc:"One pattern for every spend stream in the reference flow — corporate, land, project, sales, TORC, property management and loan payments — so budget checks, approvals, withholding tax and 2307s behave the same everywhere.",
+  lanes:[{id:"sup",name:"Supplier / contractor / broker",ext:1},{id:"req",name:"Requesting dept / project team"},{id:"dao",name:"Finance & approvers (DOA)"},{id:"proc",name:"Procurement"},{id:"qs",name:"Cost control / QS"},{id:"ap",name:"Accounting – AP"},{id:"tre",name:"Treasury"}],
+  nodes:[
+   {id:"f1",lane:"req",col:0,t:"start",l:"Spend need arises"},
+   {id:"f2",lane:"req",col:1,t:"task",l:"Raise purchase or payment request with budget line"},
+   {id:"f3",lane:"dao",col:2,t:"xor",l:"Budget available?"},
+   {id:"f3n",lane:"dao",col:3,t:"task",l:"Realign budget or get exception approval"},
+   {id:"f4",lane:"proc",col:4,t:"task",l:"Source and issue PO or contract"},
+   {id:"f5",lane:"req",col:5,t:"msgCatch",l:"Delivered or accomplished"},
+   {id:"f6",lane:"qs",col:6,t:"task",l:"Verify receipt or % accomplishment; update progress"},
+   {id:"f7",lane:"ap",col:7,t:"msgCatch",l:"Vendor bill received"},
+   {id:"f8",lane:"ap",col:8,t:"task",l:"3-way match; compute VAT, EWT, retention"},
+   {id:"f9",lane:"dao",col:9,t:"task",l:"Approve per DOA matrix"},
+   {id:"f10",lane:"tre",col:10,t:"task",l:"Release payment; issue BIR 2307"},
+   {id:"f11",lane:"tre",col:11,t:"end",l:"Paid; actuals vs budget updated"}],
+  seq:[["f1","f2"],["f2","f3"],["f3","f4","Yes"],["f3","f3n","No"],["f3n","f4"],["f4","f5"],["f5","f6"],["f6","f7"],["f7","f8"],["f8","f9"],["f9","f10"],["f10","f11"]],
+  msg:[["f4","@sup:4","PO / contract"],["@sup:5","f5","Goods, services, accomplishment"],["@sup:7","f7","Invoice / billing"],["f10","@sup:10","Payment and 2307"]]},
+ {id:"F",title:"Turnover-to-title & community",covers:"15 Unit preparation & delivery · 14 TORC · 19 Title delivery · 18 Property management",
+  desc:"A completed unit is inspected and turned over when the account is eligible; a parallel split then starts homeowner onboarding and the title-transfer track, which ends with the title delivered to the buyer or lender.",
+  lanes:[{id:"buyer",name:"Buyer",ext:1},{id:"con",name:"Construction & QA"},{id:"cc",name:"Credit & collection"},{id:"cx",name:"Customer care / turnover"},{id:"pm",name:"Property management"},{id:"tit",name:"Titling"},{id:"gov",name:"BIR, RD, assessor",ext:1}],
+  nodes:[
+   {id:"g1",lane:"con",col:0,t:"start",l:"Unit ready for occupancy"},
+   {id:"g2",lane:"con",col:1,t:"task",l:"Internal QA and punch list"},
+   {id:"g3",lane:"cc",col:2,t:"xor",l:"Turnover-eligible?"},
+   {id:"g3n",lane:"cc",col:3,t:"end",l:"Hold until eligible"},
+   {id:"g4",lane:"cx",col:3,t:"task",l:"Schedule turnover and joint inspection"},
+   {id:"g5",lane:"cx",col:4,t:"xor",l:"Buyer accepts unit?"},
+   {id:"g5n",lane:"con",col:5,t:"task",l:"Rectify defects"},
+   {id:"g6",lane:"cx",col:5,t:"task",l:"Sign acceptance; hand over keys; start warranty"},
+   {id:"g7",lane:"cx",col:6,t:"and"},
+   {id:"g8",lane:"pm",col:7,t:"task",l:"Onboard homeowner; start dues billing"},
+   {id:"g14",lane:"pm",col:8,t:"task",l:"Service requests, dues collection, PM expenses"},
+   {id:"g15",lane:"pm",col:9,t:"task",l:"Turn over to HOA when criteria are met"},
+   {id:"g16",lane:"pm",col:10,t:"end",l:"HOA turned over"},
+   {id:"g9",lane:"tit",col:7,t:"task",l:"Prepare DOAS; compute and fund TORC (taxes and other related charges)"},
+   {id:"g10",lane:"tit",col:8,t:"task",l:"Pay taxes and fees; process eCAR and transfer"},
+   {id:"g11",lane:"tit",col:9,t:"msgCatch",l:"New TCT / CCT issued"},
+   {id:"g12",lane:"tit",col:10,t:"task",l:"Deliver title to buyer or lender"},
+   {id:"g13",lane:"tit",col:11,t:"end",l:"Title delivered"}],
+  seq:[["g1","g2"],["g2","g3"],["g3","g4","Yes"],["g3","g3n","No"],["g4","g5"],["g5","g6","Yes"],["g5","g5n","No"],["g5n","g4"],["g6","g7"],["g7","g8"],["g7","g9"],["g8","g14"],["g14","g15"],["g15","g16"],["g9","g10"],["g10","g11"],["g11","g12"],["g12","g13"]],
+  msg:[["g4","@buyer:3","Turnover schedule",40],["g10","@gov:8","Taxes, fees, filings"],["@gov:9","g11","New title, tax declaration"],["g12","@buyer:10","Title (or to lender)",40]]}
+];
+
+/* Legend diagram */
+(function(){
+  const items=[["start","Start"],["timerStart","Timer start"],["msgStart","Message start"],["condStart","Conditional start"],["msgCatch","Message catch"],["timerCatch","Timer catch"],["end","End"],["task","Task"],["xor","Exclusive gateway"],["and","Parallel gateway"],["evgw","Event-based gateway"]];
+  let x=20, s="";
+  const W=items.length*108+300;
+  s=`<svg class="bpmn" xmlns="http://www.w3.org/2000/svg" width="${W}" height="110" viewBox="0 0 ${W} 110" role="img" aria-label="BPMN notation legend">`;
+  items.forEach(([t,l])=>{const w=t==="task"?140:96; const cx=x+w/2; s+=drawNode({t,cx,cy:42,l:t==="task"?"Activity":""}); s+=`<text x="${cx}" y="94" text-anchor="middle" class="evlabel">${esc(l)}</text>`; x+=w+12;});
+  s+=`<defs><marker id="lg1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 Z" class="markf"/></marker><marker id="lg2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--sheet);stroke:var(--ink-2);stroke-width:1.2"/></marker><marker id="lg3" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7"><circle cx="5" cy="5" r="3.5" style="fill:var(--sheet);stroke:var(--ink-2);stroke-width:1.2"/></marker></defs>`;
+  s+=`<path d="M${x} 30 H${x+110}" class="seq" marker-end="url(#lg1)"/><text x="${x+55}" y="50" text-anchor="middle" class="evlabel">Sequence flow</text>`;
+  s+=`<path d="M${x} 72 H${x+110}" class="msg" marker-start="url(#lg3)" marker-end="url(#lg2)"/><text x="${x+55}" y="94" text-anchor="middle" class="evlabel">Message flow</text>`;
+  s+=`</svg>`;
+  document.getElementById("bpmnLegend").innerHTML=s;
+})();
+
+document.getElementById("dnav").innerHTML = D.map(d=>`<a href="#dg-${d.id}">${d.id} · ${esc(d.title)}</a>`).join("");
+document.getElementById("diagrams").innerHTML = D.map(d=>`
+<article class="diagram" id="dg-${d.id}">
+  <h3>${d.id}. ${esc(d.title)}</h3>
+  <p class="meta">Covers ${esc(d.covers)}</p>
+  <p class="desc">${esc(d.desc)}</p>
+  <div class="scroller">${diagramSVG(d)}</div>
+</article>`).join("");
+
+/* ---------- S-3 Matrix ---------- */
+const M = [
+ ["01.1","01","Define budget structure","Budget cycle opens (timer, prior-year Q3)","Fiscal year; company; account; analytic plans (business unit, project, phase, cost center, expense type); budget version; currency","Accounting › Analytic plans → Budgets; templates out to Spreadsheet","New project mid-year needs lines; COA changes after load; intercompany charges across PHI entities","Configure"],
+ ["01.2","01","Corporate budget approval","Templates issued to departments","Department; account; monthly amounts; justification; prior-year actual; version; approver; approval date","Spreadsheet import → Budget (draft) → Approvals → Budget (confirmed) → budget check on PR/PO/bill","Realignment between lines; supplemental budget; rejected versions kept for audit; approved over-budget override","Configure"],
+ ["01.3","01","Project (life-of-project) budget","Project approved on feasibility, or new phase launched","Project; phase; cost code; categories (land, planning, permits, titling, construction by milestone, marketing, sales, loan interest); contingency %; revenue forecast (units × price)","Project Development → Budget on project analytic → Project WBS; baseline snapshot kept for variance","Budgets spanning several fiscal years; re-baseline after scope change; price escalation; overrun beyond contingency","Configure"],
+ ["02.1","02","Loan drawdown & allocation","Loan agreement signed; approved funding requirement","Lender; facility; principal; fixed/floating rate; tenor; drawdown date; amortization schedule; collateral; project allocation; capitalize-interest flag","Treasury → Accounting (loan liability, interest accrual) → project analytic (capitalized interest) → AP (debt-service schedule)","Repricing; prepayment penalties; stop capitalizing interest at completion; covenant breach","Configure"],
+ ["03.1","03","Corporate expense request","Department need arises","Requester; cost center; category (branding, admin, departmental, executive); amount; budget line; vendor; attachments","Purchase request / Approvals → budget check → PO → vendor bill (16)","Unbudgeted urgent spend; recurring contracts (utilities, subscriptions); petty cash and reimbursements via Expenses","Standard"],
+ ["04.1","04","Land due diligence","Land opportunity logged","Owner(s); location; OCT/TCT no.; lot area; tax declaration no.; zoning; encumbrances; appraised value; asking price; broker","Custom land register + Documents workspace → Approvals to ManCom","Title defects or adverse claims; multiple heirs (extrajudicial settlement); CARP/DAR coverage; informal settlers","Extend"],
+ ["04.2","04","Land agreement & milestone payments","ManCom approval","Agreement type (deed of sale, CTS, JV); price; milestones (condition, date, %); taxes borne by; JV sharing ratio","Sign → vendor bill per milestone → AP (16) → Accounting (land held for development / advances)","JV landowner paid in units (non-cash, inventory allocation); unmet milestone conditions; renegotiation; installment interest","Extend"],
+ ["04.3","04","Titling with fees","Final payment made; deed notarized","CGT; DST; transfer tax; registration fees; eCAR no.; new TCT no.; dates","Fees → AP; TCT no. → land register and project master; land cost capitalized to project analytic","Who shoulders taxes; late-filing surcharges; consolidation or subdivision of titles before development","Extend"],
+ ["05.1","05","Project setup","Land titled and project budget approved","Project code; name; company; location; type (horizontal / vertical); phases; blocks or towers; WBS; analytic account; permits (DP, ECC, BP, CR/LTS)","Project ↔ analytic account ↔ Budget; permit tracker; releases to unit creation (07.1)","Project across entities or JV; phasing changes; no LTS means no selling — system must block reservations","Configure"],
+ ["06.1","06","Construction contract & progress billing","Contract awarded; accomplishment report submitted","Contractor; contract amount; BOQ / cost code; downpayment %; retention %; progress %; cumulative billed; recoupment; variation orders; EWT","Purchase (contract/PO) → Project milestone % → vendor bill with retention and recoupment → AP; % completion → unit construction status and POC revenue","Variation orders; liquidated damages; back-charges; retention release after defects liability period; owner-furnished materials","Extend"],
+ ["07.1","07","Lot master creation & pricing","Project released for sale (LTS issued)","Lot ID (project-phase-block-lot; tower-floor-unit for condos); house model; lot and floor area; list price / TCP; price per sqm; VAT treatment; parking; construction status; sales status; mother / derivative title","Lot master (vendor-proposed) ↔ product and pricelist ↔ project analytic; availability board to CRM and brokers; every downstream document (reservation, CTS, ledger, turnover, title) references the Lot","Condo units, parking slots and house-and-lot packages modeled as lots; lot merge or split; price increases on unsold lots only; management / model-unit holds; VAT threshold treatment","Extend"],
+ ["07.2","07","Financing options setup","New price list or promo scheme","Scheme (spot cash, deferred cash, bank, Pag-IBIG, IHF); reservation fee; DP % and months; discount %; interest rate; loanable %; term; validity","Payment-term templates → sales computation (09.1) → amortization engine (11)","Promo expiry; scheme change after reservation (restructuring); Pag-IBIG loan ceilings","Extend"],
+ ["08.1","08","Broker / agent accreditation","Application received","Firm and agent names; PRC license no. and expiry; DHSUD registration; TIN and COR 2303; bank details; commission tier; parent firm; validity","Contacts (partner tags) → Documents → Approvals → commission plan; selectable on CRM / sales order","Expired license must block tagging; agent changing firms mid-deal; split commission between firms","Configure"],
+ ["09.1","09","Sales computation & reservation","Buyer selects unit and scheme","Buyer name, TIN, IDs, civil status; co-borrower; unit; TCP; discounts; VAT; other charges; reservation fee; DP schedule; balance; scheme; broker / agent; promo code","CRM opportunity → sales quotation (computation) → invoice / receipt for reservation fee → unit status reserved","Double reservation of one unit (lock needed); bounced RF check; reservation expiry and RF forfeiture; discount above authority; OFW buyers with SPA","Extend"],
+ ["09.2","09","CTS generation","Documents complete and DP policy met","CTS no.; parties; unit; TCP; payment schedule (due dates, principal / interest split); penalty clause; Maceda clause; signatories; notarization date","Sales order confirmed → Sign → Documents → buyer ledger and amortization schedule (11)","Amendments: transfer of rights, unit swap, restructuring; co-owner change; death of buyer","Extend"],
+ ["09.3","09","Revenue recognition","CTS signed and collectability threshold met (per policy)","% completion; collections %; cost-to-complete; significant financing component","Periodic journal in Accounting driven by project % complete (06.1) and collections (11.2)","PFRS 15 over-time recognition assumptions; reversal on cancellation; auditor-agreed thresholds","Extend"],
+ ["10.1","10","Lease contract & billing","Tenant accepts term sheet","Tenant; unit; lease rate; escalation %; term; start / end; security deposit; advance rent; CUSA; utilities; PDCs; VAT / EWT","Unit status leased → Rental or Subscription → recurring invoices → AR","Pre-termination; holdover; rent-free periods; applying deposit against damages","Configure"],
+ ["11.1","11","Buyer documentation","Reservation or CTS stage reached","Checklist per scheme; document status; received date; expiry (IDs); file","Documents workspace linked to buyer and unit; completeness gate for CTS (09.2) and takeout (13.1)","Expired documents; consularized documents from abroad","Configure"],
+ ["11.2","11","Receipting & collection posting","Payment received","Payor; amount; mode (cash, check, PDC, transfer, online); check no., bank, date; allocation (RF, DP, amortization, penalty, other charges); invoice series; VAT breakdown","Accounting payment → allocation on buyer ledger; BIR-registered invoice series (CAS / e-invoicing)","PDC warehousing; bounced checks; partial or over-payment; unidentified deposits; EOPT invoice-vs-receipt rules","Extend"],
+ ["11.3","11","SOA, delinquency & aging","Monthly cycle (timer) or due date lapsed","Amount due; paid; balance; days past due; penalty rate and amount; aging bucket","Follow-up reports → demand letters → collection dashboard → cancellation trigger (12.1)","Penalty waivers (approval); restructuring; grace periods under RA 6552","Extend"],
+ ["12.1","12","Cancellation & refund","Buyer request, or default beyond grace","Reason code; total paid; years of installments; cash surrender value (50% + 5%/yr after 5 yrs, max 90%); deductions; notarial notice date; effective date; approval","Accounting reversal (AR, revenue, commission clawback) → AP refund (16) → unit status available","Under 2 years paid (no CSV, 60-day grace); disputes; refunds in installments; unit already turned over","Extend"],
+ ["13.1","13","Bank / Pag-IBIG takeout","Equity fully paid","Lender; loan amount; loanable %; requirements checklist; application date; LOG / NOA no. and date; release date; proceeds; deductions (fees, MRI); DOAS","Takeout tracker → Titling (annotation) → Accounting (proceeds applied) → buyer balance closed","Disapproval or partial approval (buyer pays gap); Pag-IBIG buyback guarantee; LOG expiry","Extend"],
+ ["13.2","13","In-house financing","IHF chosen and approved","Principal; rate; term; amortization method; due day; collateral","Amortization schedule → monthly SOA (11.3) → interest income","Repricing; early payoff; later refinancing to a bank","Extend"],
+ ["14.1","14","TORC (taxes and other related charges) processing","Full payment reached / title transfer started","DST; transfer tax; registration fees; other fees; budget line; payee agency; liquidation; amount rechargeable to buyer","Titling → cash advance or bill → AP (16) → Accounting (buyer charge or project cost)","Zonal-value updates; unliquidated advances; surcharges","Configure"],
+ ["15.1","15","Turnover","Unit ready and account eligible","Unit; inspection date; punch-list items; rectification status; acceptance date; keys; meter readings; warranty end date","Field Service / Project tasks → Sign (acceptance) → unit status turned over → PM onboarding and dues (18.1)","Buyer no-show (deemed acceptance clause); major defects; turnover before full payment by exception","Configure"],
+ ["16.1","16","AP invoice processing","Vendor bill received","Vendor; TIN; bill no. and date; PO ref; receipt / accomplishment ref; VAT; EWT ATC code; retention; due date; analytic distribution; approver","Purchase ↔ bill (3-way match) → Approvals → payment batch → bank → BIR 2307 → budget actuals","Bills without PO; duplicates; partial payment; supplier advances; foreign currency","Standard"],
+ ["16.2","16","Disbursement","Approved bill falls due","Payment method; bank; check no.; release date; 2307","Accounting → bank file or check printing → bank reconciliation","Stale or cancelled checks; payment holds","Standard"],
+ ["17.1","17","Commission accrual & release","CTS signed (accrual); collection threshold reached (release)","Broker / agent; rate; base (net TCP); tranche %; release condition; EWT; non-cash incentives; clawback rule","Sales → commission computation → broker bill → AP (16); non-cash incentives via Purchase / Inventory","Clawback on cancellation; split deals; commission on discounted price; manager overrides","Extend"],
+ ["18.1","18","Homeowner onboarding & dues","Turnover accepted","Homeowner; unit; dues rate; start date; billing cycle; utilities","Subscription / recurring invoices → collection → HOA fund accounting","Dues arrears blocking services; developer-paid dues on unsold units","Configure"],
+ ["18.2","18","Servicing & PM expenses","Service request or scheduled maintenance","Ticket; category; unit; SLA; warranty flag; cost; vendor","Helpdesk / Field Service → Purchase → AP (property-management expenses)","Warranty vs chargeable; emergency repairs","Configure"],
+ ["18.3","18","HOA turnover","Turnover criteria met","HOA registration; fund balance; assets; documents","Final PM accounting close → Documents","Disputes on fund balance or common areas","Configure"],
+ ["19.1","19","Title processing & delivery","Full payment, or lender requires title for release","DOAS date; eCAR no.; new TCT / CCT no.; tax declaration; release date; recipient (buyer or lender)","Title tracker → Documents → buyer notice; feeds takeout release (13.1)","Mother title not yet subdivided; lost documents; unpaid real-property tax","Extend"],
+ ["X1.1","X1","Rolling forecasts","Month-end close","Sales forecast; collection forecast; cost-to-complete; cash forecast","All modules → Spreadsheet / dashboards","Unapproved reservations inflating pipeline; stale construction progress","Configure"],
+ ["X2.1","X2","KPIs & variance reporting","Period close","Budget vs actual by analytic account; absorption and sales velocity; collection efficiency; aging / DSO; % completion; cost variance","Accounting budget report → dashboards / BI","Timing differences (commitments vs actuals); reclassifications after close","Configure"]
+];
+const selG=document.getElementById("mxGroup");
+selG.innerHTML=`<option value="">All processes</option>`+P.map(p=>`<option value="${p.id}">${p.id} · ${esc(p.n)}</option>`).join("");
+function renderMx(){
+  const q=document.getElementById("mxSearch").value.trim().toLowerCase(), g=selG.value, f=document.getElementById("mxFit").value;
+  const rows=M.filter(r=>(!g||r[1]===g)&&(!f||r[7]===f)&&(!q||r.join(" ").toLowerCase().includes(q)));
+  let html="", last="";
+  rows.forEach(r=>{const p=PX[r[1]]; if(r[1]!==last){html+=`<tr class="grp" style="--c:${col(p.g)}"><td colspan="7">${p.id} · ${esc(p.n)}</td></tr>`; last=r[1];}
+    html+=`<tr><td class="ref">${r[0]}</td><td class="step">${esc(r[2])}</td><td class="trig">${esc(r[3])}</td><td class="data">${esc(r[4])}</td><td class="hand">${esc(r[5])}</td><td class="exc">${esc(r[6])}</td><td><span class="fit ${r[7]}">${r[7]}</span></td></tr>`;});
+  document.querySelector("#mx tbody").innerHTML = html || `<tr><td colspan="7" class="empty">No steps match. Clear the search or pick another process.</td></tr>`;
+}
+["mxSearch","mxGroup","mxFit"].forEach(id=>document.getElementById(id).addEventListener("input",renderMx));
+renderMx();
+
+/* ---------- S-4 ---------- */
+const MD=[
+ ["Company / entity","01","Legal name, TIN, BIR registration, CAS permit, fiscal year","<code>res.company</code>","All"],
+ ["Analytic plans","01","Business unit, project, phase, cost center, expense type","Accounting › Analytic plans","01, 03, 06, 16, X2"],
+ ["Budget line","01","Version, account, analytic, period, amount, status","Accounting › Budgets","03, 06, 14, 16, X2"],
+ ["Land parcel","04","OCT/TCT, area, owner, cost, status, linked project","Custom land register","04, 05, 19"],
+ ["Project / phase","05","Code, type, phases, blocks/towers, WBS, permits, LTS","<code>project.project</code> + analytic account","06, 07, 09, X1"],
+ ["Lot (unit master)","07","Lot ID, project / phase / block, house model, lot and floor area, price, construction status, sales status, title no., current buyer / CTS","Lot master model (vendor-proposed), linked to <code>product.product</code> and project analytic","09–15, 18, 19"],
+ ["Payment scheme","07","Scheme type, RF, DP %/months, rate, term, validity","Payment terms + custom scheme","09, 11, 13"],
+ ["Buyer / co-borrower","09","Name, TIN, IDs, civil status, address, employer, SPA","<code>res.partner</code>","09–15, 18, 19"],
+ ["Broker / agent","08","PRC license, DHSUD reg., TIN, tier, validity, parent firm","<code>res.partner</code> (tagged)","09, 17"],
+ ["Contract to sell","09","CTS no., unit, TCP, schedule, clauses, signatures","<code>sale.order</code> + <code>sign.request</code>","11, 12, 13, 17"],
+ ["Buyer ledger / schedule","11","Due lines, allocations, penalties, balance","<code>account.move</code> / <code>account.payment</code> + custom schedule","11, 12, 13, X1"],
+ ["Vendor / contractor","03","TIN, VAT status, ATC codes, bank, accreditation","<code>res.partner</code>","03, 06, 14, 16, 18"],
+ ["Title record","19","Mother / derivative title, eCAR, tax dec, custody, release","Custom title tracker + <code>documents.document</code>","04, 13, 19"],
+ ["Service ticket","18","Unit, category, SLA, warranty flag, cost","<code>helpdesk.ticket</code>","15, 18"]
+];
+document.querySelector("#md tbody").innerHTML=MD.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${r[1]}</td><td>${esc(r[2])}</td><td>${r[3]}</td><td>${esc(r[4])}</td></tr>`).join("");
+const OQ=[
+ "<b>TORC scope.</b> TORC = taxes and other related charges. List each tax and charge PHI books under it, who shoulders each (buyer vs developer), and whether it is advanced and recharged or billed upfront.",
+ "<b>Process numbering.</b> Confirm the proposed numbers for 01–03, 05–13 and 17 so every BRD chapter uses one ID set.",
+ "<b>Turnover eligibility.</b> Which payment status allows turnover (equity paid, loan approved, fully paid) and who can approve exceptions?",
+ "<b>Revenue recognition.</b> Agree the PFRS 15 method, collectability threshold and POC source with the external auditor before the Accounting design.",
+ "<b>Commission release rules.</b> Tranches, clawback on cancellation, and treatment of in-house vs external brokers.",
+ "<b>Invoicing compliance.</b> Current BIR CAS permit status and e-invoicing timeline — decides whether Odoo prints the official invoice series from go-live.",
+ "<b>Lot as master model (vendor proposal).</b> Confirm whether \"Lot\" is a custom real-estate model or Odoo's serial/lot record (<code>stock.lot</code>), and how it represents condo units, parking slots, house-and-lot packages, and merged or split lots.",
+ "<b>Lot status design.</b> Separate construction status and sales status fields on the Lot, and who may change each (Construction, Sales admin, Credit & collection, Titling).",
+ "<b>Migration from In4 Velocity.</b> How much buyer-ledger history moves (open balances only, or full payment history needed for Maceda computations)?",
+ "<b>Approval matrix (DOA).</b> Amount thresholds per document type, per company and per project to configure in Approvals."
+];
+document.getElementById("oq").innerHTML=OQ.map(q=>`<li>${q}</li>`).join("");
+</script>
+</body>
+</html>
