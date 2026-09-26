@@ -33,7 +33,7 @@ export function Progress({ approved, flagged, total }) {
   );
 }
 
-export function Modal({ open, title, onClose, children, footer }) {
+export function Modal({ open, title, onClose, children, footer, wide }) {
   const ref = useRef(null);
   useEffect(() => {
     const d = ref.current;
@@ -42,7 +42,7 @@ export function Modal({ open, title, onClose, children, footer }) {
     if (!open && d.open) d.close();
   }, [open]);
   return (
-    <dialog ref={ref} onClose={onClose} onCancel={onClose}>
+    <dialog ref={ref} onClose={onClose} onCancel={onClose} className={wide ? 'wide' : undefined}>
       <header>{title}</header>
       <div className="body">{children}</div>
       {footer && <footer>{footer}</footer>}
@@ -51,7 +51,7 @@ export function Modal({ open, title, onClose, children, footer }) {
 }
 
 export function Comments({ type, id }) {
-  const { user } = useAuth();
+  const { user, can } = useAuth();
   const [list, setList] = useState([]);
   const [body, setBody] = useState('');
   const [error, setError] = useState(null);
@@ -86,18 +86,18 @@ export function Comments({ type, id }) {
         <div className="comment" key={c.id}>
           <span className="who">{c.user_name || 'Former user'}</span>
           <span className="when">{fmtDateTime(c.created_at)}</span>
-          {(c.user_id === user.id || user.role === 'admin') && (
+          {(c.user_id === user.id || can('comments', 'delete')) && (
             <button className="btn sm ghost" style={{ marginLeft: 8 }} onClick={() => remove(c.id)}>Delete</button>
           )}
           <p>{c.body}</p>
         </div>
       ))}
-      <form onSubmit={post} style={{ marginTop: 10 }}>
+      {can('comments', 'add') && <form onSubmit={post} style={{ marginTop: 10 }}>
         <textarea value={body} onChange={(e) => setBody(e.target.value)} placeholder="Add a comment" aria-label="Add a comment" />
         <div className="row" style={{ marginTop: 6 }}>
           <button className="btn primary" disabled={busy || !body.trim()}>Post comment</button>
         </div>
-      </form>
+      </form>}
     </section>
   );
 }

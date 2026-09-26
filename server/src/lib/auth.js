@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { config } from '../config.js';
-import { q } from '../db/pool.js';
+import { q, currentContext } from '../db/pool.js';
+import { effectivePermissions } from './permissions.js';
 
 export const COOKIE = 'phi_token';
 
@@ -21,11 +22,17 @@ export function clearAuthCookie(res) {
 
 export async function loadUser(id) {
   const { rows } = await q(
-    `SELECT u.id, u.email, u.name, u.role, u.active, u.must_change_password,
-            COALESCE(array_agg(po.process_id ORDER BY po.process_id) FILTER (WHERE po.process_id IS NOT NULL), '{}') AS process_ids
-       FROM users u LEFT JOIN process_owners po ON po.user_id = u.id
-      WHERE u.id = $1 GROUP BY u.id`, [id]);
-  return rows[0];
+    `SELECT u.id, u.email, u.name, u.active, u.must_change_password,
+            r.id AS role_id, r.key AS role_key, r.name AS role_name, r.is_system AS role_is_system, r.permissions AS role_permissions,
+            COALESCE((SELECT array_agg(po.process_id ORDER BY po.process_id) FROM process_owners po WHERE po.user_id=u.id), '{}') AS process_ids,
+            COALESCE((SELECT array_agg(ud.domain_id ORDER BY ud.domain_id) FROM user_domains ud WHERE ud.user_id=u.id), '{}') AS domains
+       FROM users u JOIN roles r ON r.id=u.role_id
+      WHERE u.id = $1`, [id]);
+  const u = rows[0];
+  if (!u) return undefined;
+  const permissions = effectivePermissions({ key: u.role_key, is_system: u.role_is_system, permissions: u.role_permissions });
+  delete u.role_permissions;
+  return { ...u, permissions };
 }
 
 export async function requireAuth(req, res, next) {
@@ -44,6 +51,8 @@ export async function requireAuth(req, res, next) {
     return res.status(401).json({ error: 'This account is not active.' });
   }
   req.user = user;
+  const ctx = currentContext();
+  if (ctx) ctx.user = { id: user.id, name: user.name, email: user.email };
   next();
 }
 
@@ -53,26 +62,4 @@ export function requirePasswordFresh(req, res, next) {
     return res.status(403).json({ error: 'Change your password to continue.', code: 'PASSWORD_CHANGE_REQUIRED' });
   }
   next();
-}
-
-export const requireRole = (...roles) => (req, res, next) =>
-  roles.includes(req.user.role) ? next() : res.status(403).json({ error: "You don't have permission to do that." });
-
-export const canEditProcess = (user, processId) =>
-  user.role === 'admin' || (user.role === 'owner' && user.process_ids.includes(processId));
-
-export function assertCanEditProcess(user, processId) {
-  if (!canEditProcess(user, processId)) {
-    const e = new Error(`Only an admin or an owner assigned to process ${processId} can change this.`);
-    e.status = 403;
-    throw e;
-  }
-}
-
-export function assertEditor(user) {
-  if (!['admin', 'owner'].includes(user.role)) {
-    const e = new Error('Only admins and process owners can change this.');
-    e.status = 403;
-    throw e;
-  }
 }

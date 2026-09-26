@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { assertEditor } from '../lib/auth.js';
+import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
@@ -55,12 +55,10 @@ const Content = z.object({
 });
 
 r.put('/:id', async (req, res) => {
-  assertEditor(req.user);
   const decision = parse(Decision, pick(req.body, Object.keys(Decision.shape)));
   const content = parse(Content, pick(req.body, Object.keys(Content.shape)));
-  if (Object.keys(content).length && req.user.role !== 'admin') {
-    return res.status(403).json({ error: 'Only admins can edit the opportunity content. You can update the decision and tracking fields.' });
-  }
+  if (Object.keys(decision).length) assertCan(req.user, 'reengineering', 'edit');
+  if (Object.keys(content).length) assertCan(req.user, 'reengineering_content', 'edit', {}, 'Your role can update the decision and tracking fields, not the opportunity content.');
   const fields = { ...decision, ...content };
   const { sets, values } = buildUpdate(fields, 1, ['before_steps', 'after_steps']);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });

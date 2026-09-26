@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { requireRole, assertEditor } from '../lib/auth.js';
+import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
@@ -23,7 +23,7 @@ r.get('/', async (req, res) => {
 });
 
 r.post('/', async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'open_items', 'add');
   const b = parse(Item.partial().required({ title: true }), req.body);
   const row = await tx(async (c) => {
     const n = await c.query(`SELECT COALESCE(max(substring(code from 2)::int),0)+1 AS n FROM open_items WHERE code ~ '^Q[0-9]+$'`);
@@ -38,7 +38,7 @@ r.post('/', async (req, res) => {
 });
 
 r.put('/:id', async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'open_items', 'edit');
   const b = parse(Item.partial(), req.body);
   const { sets, values } = buildUpdate(b);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });
@@ -51,7 +51,8 @@ r.put('/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
-r.delete('/:id', requireRole('admin'), async (req, res) => {
+r.delete('/:id', async (req, res) => {
+  assertCan(req.user, 'open_items', 'delete');
   const u = await q('DELETE FROM open_items WHERE id=$1 RETURNING code, title', [req.params.id]);
   if (!u.rowCount) throw notFound('Open item');
   await logActivity({ query: q }, req.user.id, 'deleted', 'open_item', u.rows[0].code, u.rows[0].title);

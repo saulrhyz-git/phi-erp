@@ -19,7 +19,8 @@ function FilePicker({ file, setFile }) {
 }
 
 export default function Documents() {
-  const { isEditor, isAdmin } = useAuth();
+  const { can } = useAuth();
+  const canAdd = can('documents', 'add'); const isEditor = can('documents', 'edit'); const canDelete = can('documents', 'delete');
   const { data, error, loading, reload } = useApi('/documents');
   const [upload, setUpload] = useState(null); // { mode: 'new' } | { mode: 'version', doc }
   const [file, setFile] = useState(null);
@@ -63,7 +64,7 @@ export default function Documents() {
 
   return (
     <section className="sheet">
-      <SheetHead code="S-8" title="Project documents" actions={isEditor && <button className="btn primary" onClick={openNew}>Upload document</button>}>
+      <SheetHead code="S-8" title="Project documents" actions={canAdd && <button className="btn primary" onClick={openNew}>Upload document</button>}>
         One library for the SOW, correspondence with AWB, analysis workbooks and diagrams. Every upload is versioned; older versions stay downloadable.
       </SheetHead>
       <div className="toolbar">
@@ -111,7 +112,7 @@ export default function Documents() {
       </Modal>
 
       <Modal open={!!detail} title={detail?.title || ''} onClose={() => { setDetail(null); reload(); }}
-        footer={<>{isAdmin && <button className="btn danger" onClick={() => del(detail)}>Delete</button>}<span style={{ flex: 1 }} /><button className="btn" onClick={() => { setDetail(null); reload(); }}>Close</button></>}>
+        footer={<>{canDelete && <button className="btn danger" onClick={() => del(detail)}>Delete</button>}<span style={{ flex: 1 }} /><button className="btn" onClick={() => { setDetail(null); reload(); }}>Close</button></>}>
         {detail && (
           <>
             {isEditor && (

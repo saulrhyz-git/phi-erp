@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { assertCanEditProcess } from '../lib/auth.js';
+import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
@@ -48,7 +48,7 @@ const ProcessUpdate = z.object({
 });
 
 r.put('/:id', async (req, res) => {
-  assertCanEditProcess(req.user, req.params.id);
+  assertCan(req.user, 'processes', 'edit', { processId: req.params.id });
   const body = parse(ProcessUpdate, req.body);
   const { sets, values } = buildUpdate(body, 1, ['suppliers', 'inputs', 'steps', 'outputs', 'customers']);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });

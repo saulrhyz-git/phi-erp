@@ -27,7 +27,7 @@ const catIdx = args.indexOf('--category');
 const forced = catIdx >= 0 ? args[catIdx + 1] : null;
 if (!folder) { console.error('Usage: npm run import-docs -- /path/to/folder [--category "Name"]'); process.exit(1); }
 
-const admin = (await pool.query("SELECT id FROM users WHERE role='admin' ORDER BY id LIMIT 1")).rows[0]?.id ?? null;
+const admin = (await pool.query("SELECT u.id FROM users u JOIN roles r ON r.id=u.role_id WHERE r.key='project_manager' ORDER BY u.id LIMIT 1")).rows[0]?.id ?? null;
 let added = 0;
 for (const f of readdirSync(folder)) {
   const p = join(folder, f);

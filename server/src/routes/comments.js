@@ -2,9 +2,10 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { q } from '../db/pool.js';
 import { parse, notFound } from '../lib/util.js';
+import { assertCan, can } from '../lib/permissions.js';
 
 const r = Router();
-const Type = z.enum(['process', 'step', 'diagram', 'open_item', 'reengineering', 'gap', 'observation', 'appendix', 'document']);
+const Type = z.enum(['process', 'step', 'diagram', 'open_item', 'reengineering', 'gap', 'observation', 'appendix', 'document', 'tk_record', 'tk_task']);
 
 r.get('/', async (req, res) => {
   const { type, id } = parse(z.object({ type: Type, id: z.string().min(1) }), req.query);
@@ -16,7 +17,8 @@ r.get('/', async (req, res) => {
 });
 
 r.post('/', async (req, res) => {
-  const b = parse(z.object({ entity_type: Type, entity_id: z.string().min(1).max(40), body: z.string().trim().min(1).max(4000) }), req.body);
+  assertCan(req.user, 'comments', 'add');
+  const b = parse(z.object({ entity_type: Type, entity_id: z.string().min(1).max(60), body: z.string().trim().min(1).max(4000) }), req.body);
   const { rows } = await q(
     'INSERT INTO comments(entity_type,entity_id,user_id,body) VALUES ($1,$2,$3,$4) RETURNING *',
     [b.entity_type, b.entity_id, req.user.id, b.body]);
@@ -28,7 +30,7 @@ r.post('/', async (req, res) => {
 r.delete('/:id', async (req, res) => {
   const { rows } = await q('SELECT user_id FROM comments WHERE id=$1', [req.params.id]);
   if (!rows[0]) throw notFound('Comment');
-  if (rows[0].user_id !== req.user.id && req.user.role !== 'admin') {
+  if (rows[0].user_id !== req.user.id && !can(req.user, 'comments', 'delete')) {
     return res.status(403).json({ error: 'You can only delete your own comments.' });
   }
   await q('DELETE FROM comments WHERE id=$1', [req.params.id]);

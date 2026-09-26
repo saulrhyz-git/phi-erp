@@ -7,7 +7,8 @@ import { Comments, ErrorNote, ITEM_STATUS, Loading, Modal, SheetHead, Status } f
 const BLANK = { title: '', detail: '', owner: '', decision: '', target_date: '', status: 'open' };
 
 export default function OpenItems() {
-  const { isEditor, isAdmin } = useAuth();
+  const { can } = useAuth();
+  const canAdd = can('open_items', 'add'); const isEditor = can('open_items', 'edit'); const canDelete = can('open_items', 'delete');
   const { data, error, loading, reload } = useApi('/open-items');
   const [filter, setFilter] = useState('active');
   const [editing, setEditing] = useState(null); // item or BLANK for new
@@ -32,7 +33,7 @@ export default function OpenItems() {
 
   return (
     <section className="sheet">
-      <SheetHead code="S-5" title="Open items" actions={isEditor && <button className="btn primary" onClick={() => { setErr(null); setEditing({ ...BLANK }); }}>Add open item</button>}>
+      <SheetHead code="S-5" title="Open items" actions={canAdd && <button className="btn primary" onClick={() => { setErr(null); setEditing({ ...BLANK }); }}>Add open item</button>}>
         Decisions process owners need to close before BRD sign-off.
       </SheetHead>
       <div className="toolbar">
@@ -59,7 +60,7 @@ export default function OpenItems() {
                   <td style={{ whiteSpace: 'nowrap' }}>
                     <button className="btn sm ghost" onClick={() => setThread(it)}>Discuss{it.comment_count ? ` (${it.comment_count})` : ''}</button>{' '}
                     {isEditor && <button className="btn sm ghost" onClick={() => { setErr(null); setEditing({ ...it, target_date: it.target_date || '' }); }}>Edit</button>}{' '}
-                    {isAdmin && <button className="btn sm danger" onClick={() => del(it)}>Delete</button>}
+                    {canDelete && <button className="btn sm danger" onClick={() => del(it)}>Delete</button>}
                   </td>
                 </tr>
               ))}

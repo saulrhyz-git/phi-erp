@@ -23,13 +23,28 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **Discussion threads** on processes, diagrams, open items, re-engineering opportunities, SOW gaps, observations and documents, and a full **activity log**.
 - **Exports** — the Excel workbook (current state, including validation status) and all `.bpmn` files as a zip.
 
-**Roles**
+- **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
+- **Audit log** — immutable, hash-chained record of every change (see below).
 
-| Role | Can do |
-|---|---|
-| `admin` | Everything, including users, master data and deleting records. |
-| `owner` | Edits and validates the processes assigned to them. Edits diagrams, open items and Lot responses. |
-| `viewer` | Reads everything and comments. |
+**Roles and permissions (RBAC)**
+
+Each user has one role, and optionally one or more **domains** (SR Sales & Reservation, BC Billing & Collection, AF Accounting & Finance, IP Inventory & Project Management, IT IT & Data) and assigned **processes**. For every module a role grants View, Add, Edit and Delete at one of three levels: **All**, **Own** (records in the user's domains, or processes assigned to them) or **No**. The server enforces every check; the UI only hides what a role can't do.
+
+| Role | Built-in | Can do |
+|---|---|---|
+| Executive | Yes, locked | Sponsors and SteerCo. View everything, including the audit log. No changes. |
+| Project Manager | Yes, locked | View and change everything; manages users, roles and key dates. |
+| Process Owner | No (editable) | View everything; add and edit in own domain(s) and assigned processes. |
+| Viewer | No (editable) | View everything except confidential documents; comment. |
+
+Custom roles are created on the **Roles** page. The app never lets the last active Project Manager be demoted or deactivated.
+
+**Audit log**
+
+- Database triggers record every insert, update and delete on every table: who, when, IP, changed fields, before and after values. Sign-ins, failed sign-ins, sign-outs, downloads, exports and refused write attempts are logged by the app.
+- The `audit_log` table rejects UPDATE, DELETE and TRUNCATE, and each entry carries a SHA-256 hash of its content and the previous entry's hash. **Audit log → Verify** re-computes the whole chain.
+- Readable (and exportable to CSV) by roles with *Audit log: view* — Executive and Project Manager by default.
+- Hardening: a database superuser or the table owner can still disable triggers. The hash chain exposes edits to past entries; to also rule out removal of the newest entries, write down the "Latest #id / hash" periodically (e.g. in the monthly SteerCo minutes), and see *Running the app as a non-owner database user* below.
 
 ## Stack
 
@@ -136,7 +151,7 @@ sudo certbot --nginx -d blueprint.yourdomain.com
 
 Then set `COOKIE_SECURE=true` in `.env` and run `pm2 reload phi-blueprint --update-env`.
 
-Sign in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`. You'll be asked to set a new password. Then add process owners under **Users** and tick the processes each one validates.
+Sign in with `ADMIN_EMAIL` / `ADMIN_PASSWORD` (created as a Project Manager). You'll be asked to set a new password. Then add users under **Users**, pick each one's role, and tick their domains and the processes they validate.
 
 ## Updating
 
@@ -180,6 +195,35 @@ rm -rf /tmp/phi-documents
 
 The import guesses a category from each file name and skips files already in the library. Vendor documents such as the SOW are confidential, so keep them out of git and load them this way.
 
+## Upgrading to the RBAC, audit and toolkit release (migration 003)
+
+```bash
+cd /var/www/phi-blueprint && ./scripts/deploy.sh
+```
+
+`deploy.sh` backs up the database, then migration `003_rbac_audit_toolkit.sql`:
+- maps existing users: `admin` → Project Manager, `owner` → Process Owner, `viewer` → Viewer;
+- adds domains, roles, the toolkit tables and the audit log, and copies the existing activity history into the audit log as `LEGACY` entries;
+- `npm run seed` then loads the toolkit (schedule, key dates, registers) once.
+
+After deploying, open **Users** and assign each Process Owner their domain(s). Until they have a domain, they can view the toolkit but not change it.
+
+## Running the app as a non-owner database user (recommended)
+
+The app normally connects as the owner of the tables, which means that account could drop the audit triggers. For a stronger guarantee, run migrations as the owner but the app as a separate user:
+
+```sql
+CREATE USER phi_app WITH PASSWORD 'ANOTHER_STRONG_PASSWORD';
+GRANT CONNECT ON DATABASE phi_blueprint TO phi_app;
+GRANT USAGE ON SCHEMA public TO phi_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO phi_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO phi_app;
+REVOKE UPDATE, DELETE, TRUNCATE ON audit_log FROM phi_app;
+-- after future migrations, re-run the GRANT lines for new tables
+```
+
+Set `DATABASE_URL` in `.env` to `phi_app` for the running app, and run `npm run migrate` / `npm run seed` with the owner's URL (for example `DATABASE_URL=postgres://phi:…@localhost:5432/phi_blueprint npm run migrate`).
+
 ## Everyday operations
 
 | Task | Command |
@@ -189,8 +233,8 @@ The import guesses a category from each file name and skips files already in the
 | Manual backup | `./scripts/backup-db.sh` |
 | Daily backup (cron) | `0 2 * * * cd /var/www/phi-blueprint && ./scripts/backup-db.sh >> logs/backup.log 2>&1` |
 | Restore a backup | `gunzip -c backups/<file>.sql.gz \| psql "$DATABASE_URL"` (into an empty DB) |
-| Locked out / new admin | `npm run create-admin -- you@primaryhomes.com.ph "Your Name" 'TempPass12345'` |
-| Reset blueprint content to baseline | `npm run seed:force` — **deletes all edits, validations, comments, diagram versions, re-engineering decisions and SOW responses**; users and documents stay |
+| Locked out / new Project Manager | `npm run create-admin -- you@primaryhomes.com.ph "Your Name" 'TempPass12345'` |
+| Reset blueprint content to baseline | `npm run seed:force` — **deletes all edits, validations, comments, diagram versions, re-engineering decisions and SOW responses**; users, documents, the toolkit and the audit log stay (the reset itself is recorded in the audit log) |
 
 ## Schema changes
 

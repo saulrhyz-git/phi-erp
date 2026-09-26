@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q } from '../db/pool.js';
-import { assertEditor } from '../lib/auth.js';
+import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
@@ -65,7 +65,7 @@ const TABLES = {
 
 for (const [path, cfg] of Object.entries(TABLES)) {
   r.put(`/${path}/:id`, async (req, res) => {
-    assertEditor(req.user);
+    assertCan(req.user, 'sow', 'edit');
     const b = parse(cfg.schema, req.body);
     const { sets, values } = buildUpdate(b);
     if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });

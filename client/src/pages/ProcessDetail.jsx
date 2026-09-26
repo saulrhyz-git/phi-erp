@@ -82,12 +82,13 @@ function StepCard({ s, color, canEdit, onSaved }) {
 
 export default function ProcessDetail() {
   const { id } = useParams();
-  const { canEditProcess } = useAuth();
+  const { can } = useAuth();
   const { data: p, error, loading, reload } = useApi(`/processes/${id}`);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState(null);
   const [saveErr, setSaveErr] = useState(null);
-  const canEdit = canEditProcess(id);
+  const canEdit = can('processes', 'edit', { processId: id });
+  const canValidate = can('matrix', 'edit', { processId: id });
 
   const startEdit = () => {
     setForm({ name: p.name, owner_dept: p.owner_dept, odoo_home: p.odoo_home, fit: p.fit,
@@ -154,11 +155,11 @@ export default function ProcessDetail() {
       </section>
       <section className="sheet">
         <h3 style={{ marginTop: 0 }}>Hand-off steps ({p.matrix.length})</h3>
-        <p className="lede small">{canEdit
+        <p className="lede small">{canValidate
           ? 'You can validate this process. For each step, approve it, approve it with changes, or send it back for rework with a note.'
-          : 'Only the admin or an assigned owner of this process can validate these steps. Use the discussion thread for questions.'}</p>
+          : 'Only the Project Manager or an owner assigned to this process can validate these steps. Use the discussion thread for questions.'}</p>
         {p.matrix.length === 0 && <div className="empty">No hand-off steps for this process yet.</div>}
-        {p.matrix.map((s) => <StepCard key={s.id} s={s} color={p.color} canEdit={canEdit} onSaved={reload} />)}
+        {p.matrix.map((s) => <StepCard key={s.id} s={s} color={p.color} canEdit={canValidate} onSaved={reload} />)}
         <Comments type="process" id={p.id} />
       </section>
     </>

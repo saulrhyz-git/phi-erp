@@ -2,6 +2,7 @@ import { Router } from 'express';
 import ExcelJS from 'exceljs';
 import archiver from 'archiver';
 import { q } from '../db/pool.js';
+import { auditEvent } from '../lib/util.js';
 
 const r = Router();
 const stamp = () => new Date().toISOString().slice(0, 10);
@@ -103,6 +104,7 @@ r.get('/xlsx', async (req, res) => {
     app.rows.map((a) => ({ ...a, vendor_estimate: a.vendor_estimate === null ? null : Number(a.vendor_estimate) })));
 
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  await auditEvent('EXPORT', { summary: 'Downloaded blueprint Excel workbook' });
   res.setHeader('Content-Disposition', `attachment; filename="PHI_Process_Blueprint_${stamp()}.xlsx"`);
   await wb.xlsx.write(res);
   res.end();
@@ -112,6 +114,7 @@ r.get('/bpmn.zip', async (req, res) => {
   const { rows } = await q(
     `SELECT d.file_name, v.xml FROM diagrams d JOIN diagram_versions v ON v.diagram_id=d.id AND v.version=d.current_version ORDER BY d.sort`);
   res.setHeader('Content-Type', 'application/zip');
+  await auditEvent('EXPORT', { summary: 'Downloaded BPMN diagrams zip' });
   res.setHeader('Content-Disposition', `attachment; filename="PHI_BPMN_Diagrams_${stamp()}.zip"`);
   const zip = archiver('zip', { zlib: { level: 9 } });
   zip.on('error', (err) => res.destroy(err));

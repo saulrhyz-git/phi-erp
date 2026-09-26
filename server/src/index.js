@@ -5,8 +5,10 @@ import cookieParser from 'cookie-parser';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from './config.js';
-import { pool } from './db/pool.js';
-import { requireAuth, requirePasswordFresh, requireRole } from './lib/auth.js';
+import { pool, requestContext } from './db/pool.js';
+import { requireAuth, requirePasswordFresh } from './lib/auth.js';
+import { requireView } from './lib/permissions.js';
+import { auditEvent } from './lib/util.js';
 import authRoutes from './routes/auth.js';
 import metaRoutes from './routes/meta.js';
 import processRoutes from './routes/processes.js';
@@ -21,6 +23,9 @@ import exportRoutes from './routes/exports.js';
 import reengineeringRoutes from './routes/reengineering.js';
 import sowRoutes from './routes/sow.js';
 import documentRoutes from './routes/documents.js';
+import roleRoutes from './routes/roles.js';
+import auditRoutes from './routes/audit.js';
+import toolkitRoutes from './routes/toolkit.js';
 
 const app = express();
 app.set('trust proxy', 1); // behind Nginx
@@ -43,6 +48,8 @@ app.use(helmet({
   hsts: config.cookieSecure,
 }));
 app.use(compression());
+// Request context (who, from where) for the audit log. requireAuth fills in the user.
+app.use((req, res, next) => requestContext.run({ ip: req.ip }, next));
 const jsonBody = express.json({ limit: '6mb' });
 // Document uploads send the raw file as the body; everything else is JSON.
 app.use((req, res, next) => (req.method === 'POST' && req.path.startsWith('/api/documents') ? next() : jsonBody(req, res, next)));
@@ -57,18 +64,21 @@ api.get('/health', async (req, res) => {
 api.use('/auth', authRoutes);
 api.use(requireAuth, requirePasswordFresh);
 api.use(metaRoutes);
-api.use('/processes', processRoutes);
-api.use('/matrix', matrixRoutes);
+api.use('/processes', requireView('processes'), processRoutes);
+api.use('/matrix', requireView('matrix'), matrixRoutes);
 api.use(catalogRoutes);
-api.use('/open-items', openItemRoutes);
-api.use('/diagrams', diagramRoutes);
-api.use('/comments', commentRoutes);
-api.use('/activity', activityRoutes);
-api.use('/export', exportRoutes);
-api.use('/reengineering', reengineeringRoutes);
-api.use('/sow', sowRoutes);
-api.use('/documents', documentRoutes);
-api.use('/users', requireRole('admin'), userRoutes);
+api.use('/open-items', requireView('open_items'), openItemRoutes);
+api.use('/diagrams', requireView('diagrams'), diagramRoutes);
+api.use('/comments', requireView('comments'), commentRoutes);
+api.use('/activity', requireView('activity'), activityRoutes);
+api.use('/export', requireView('exports'), exportRoutes);
+api.use('/reengineering', requireView('reengineering'), reengineeringRoutes);
+api.use('/sow', requireView('sow'), sowRoutes);
+api.use('/documents', requireView('documents'), documentRoutes);
+api.use('/users', userRoutes);
+api.use('/roles', roleRoutes);
+api.use('/audit', auditRoutes);
+api.use('/toolkit', toolkitRoutes);
 api.use((req, res) => res.status(404).json({ error: 'Not found.' }));
 app.use('/api', api);
 
@@ -92,6 +102,10 @@ app.use((err, req, res, next) => {
   if (err.code === '23503') return res.status(400).json({ error: 'That refers to a record that does not exist.' });
   if (err.type === 'entity.too.large') return res.status(413).json({ error: 'That upload is too large.' });
   const status = err.status || 500;
+  // Refused write attempts are security-relevant: record them.
+  if (status === 403 && req.method !== 'GET' && req.user) {
+    auditEvent('ACCESS_DENIED', { summary: `${req.method} ${req.originalUrl}: ${err.message}` }).catch((e) => console.error('audit', e));
+  }
   if (status >= 500) console.error(err);
   res.status(status).json({ error: status >= 500 ? 'Something went wrong on the server. Check the logs.' : err.message });
 });

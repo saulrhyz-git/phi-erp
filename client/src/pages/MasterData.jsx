@@ -40,7 +40,8 @@ function EditableRow({ row, fields, canEdit, onSave, onDelete }) {
 }
 
 export default function MasterData() {
-  const { isAdmin, isEditor } = useAuth();
+  const { can } = useAuth();
+  const isAdmin = can('master_data', 'edit'); const canAddMd = can('master_data', 'add'); const isEditor = can('lot_responses', 'edit');
   const md = useApi('/master-data');
   const lot = useApi('/lot-touchpoints');
   const [newObj, setNewObj] = useState('');
@@ -81,7 +82,7 @@ export default function MasterData() {
             </table>
           </div>
         )}
-        {isAdmin && (
+        {canAddMd && (
           <form className="row" style={{ marginTop: 10 }} onSubmit={addObj}>
             <input type="text" placeholder="New master data object" value={newObj} onChange={(e) => setNewObj(e.target.value)} style={{ maxWidth: 320 }} />
             <button className="btn">Add object</button>

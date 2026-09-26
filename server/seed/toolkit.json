@@ -1,0 +1,4867 @@
+{
+ "settings": {
+  "anchors": {
+   "PRE": "2026-09-21",
+   "BRD": "2027-01-18",
+   "GL": "2027-09-01"
+  },
+  "hypercare_days": 90,
+  "gantt_start": "2026-09-14",
+  "gantt_end": "2027-12-27",
+  "awb_baseline_weeks": 20,
+  "anchor_notes": {
+   "PRE": "Pre-work start. Week of the 1st town hall (25-Sep-2026, done). Pre-BRD Phase 2 Day 1 = 5-Oct-2026.",
+   "BRD": "BRD kickoff with AWB — 3rd week of January 2027. Anchors AWB Phases 1–5.",
+   "GL": "Go-Live — Wed 1-Sep-2027 on a clean accounting period. Anchors Go/No-Go, cutover, training, parallel run and hypercare."
+  }
+ },
+ "tasks": [
+  {
+   "code": "X.1",
+   "phase": "X",
+   "name": "Project management & PMO (weekly status, RAID, schedule)",
+   "type": "Workstream",
+   "owner": "PHI PM + AWB PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 0,
+   "duration_days": 435,
+   "use_hypercare": false,
+   "notes": "Weekly PMO; status report every Friday (see 'Status Report').",
+   "status": "In Progress",
+   "sort": 1
+  },
+  {
+   "code": "X.2",
+   "phase": "X",
+   "name": "Steering Committee (monthly; ad hoc at gates)",
+   "type": "Workstream",
+   "owner": "Sponsor / SteerCo",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 0,
+   "duration_days": 435,
+   "use_hypercare": false,
+   "notes": "Approves gates, scope changes, Go/No-Go.",
+   "status": "In Progress",
+   "sort": 2
+  },
+  {
+   "code": "X.3",
+   "phase": "X",
+   "name": "Change management & communications",
+   "type": "Workstream",
+   "owner": "Change & Comms Lead",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 0,
+   "duration_days": 435,
+   "use_hypercare": false,
+   "notes": "Runs the 'Comms Plan'. Over-communicate the why (Rule 2).",
+   "status": "In Progress",
+   "sort": 3
+  },
+  {
+   "code": "X.4",
+   "phase": "X",
+   "name": "Data cleansing (continuous, owned by PHI)",
+   "type": "Workstream",
+   "owner": "IT & Data Lead + Process Owners",
+   "domain_id": "IT",
+   "anchor": "PRE",
+   "offset_days": 14,
+   "duration_days": 313,
+   "use_hypercare": false,
+   "notes": "Longest pole in most ERP projects — starts before contract signing.",
+   "status": "Not Started",
+   "sort": 4
+  },
+  {
+   "code": "X.5",
+   "phase": "X",
+   "name": "Change Control Board (bi-weekly from BRD sign-off)",
+   "type": "Workstream",
+   "owner": "CCB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 49,
+   "duration_days": 166,
+   "use_hypercare": false,
+   "notes": "Every scope change goes through a Change Request.",
+   "status": "Not Started",
+   "sort": 5
+  },
+  {
+   "code": "B.1",
+   "phase": "BLK",
+   "name": "Christmas / New Year freeze — no workshops",
+   "type": "Blackout",
+   "owner": "—",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 91,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Regular & special holidays Dec 24–Jan 1.",
+   "status": "",
+   "sort": 7
+  },
+  {
+   "code": "B.2",
+   "phase": "BLK",
+   "name": "Finance year-end close & BIR January deadlines",
+   "type": "Blackout",
+   "owner": "Finance",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": -14,
+   "duration_days": 33,
+   "use_hypercare": false,
+   "notes": "1604-C/1604-F & 2316/2307 issuance by Jan 31. Schedule Finance BRD workshops after this.",
+   "status": "",
+   "sort": 8
+  },
+  {
+   "code": "B.3",
+   "phase": "BLK",
+   "name": "Holy Week",
+   "type": "Blackout",
+   "owner": "—",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 63,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Maundy Thu 25-Mar, Good Fri 26-Mar, Black Sat 27-Mar 2027.",
+   "status": "",
+   "sort": 9
+  },
+  {
+   "code": "B.4",
+   "phase": "BLK",
+   "name": "Annual ITR deadline (15-Apr) & audited FS season",
+   "type": "Blackout",
+   "owner": "Finance",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 77,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Limit Finance workshops; Wave 2 Finance design starts after.",
+   "status": "",
+   "sort": 10
+  },
+  {
+   "code": "B.5",
+   "phase": "BLK",
+   "name": "Go-live change freeze (no In4 config changes)",
+   "type": "Blackout",
+   "owner": "IT",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -16,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "",
+   "sort": 11
+  },
+  {
+   "code": "0.1",
+   "phase": "P0",
+   "name": "Appoint Sponsor, Steering Committee, internal PM & project team",
+   "type": "Task",
+   "owner": "CEO / CIO",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": -7,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Done — team selected before the 25-Sep town hall.",
+   "status": "Complete",
+   "sort": 13
+  },
+  {
+   "code": "0.2",
+   "phase": "P0",
+   "name": "Finalize SOW S343096, commercial terms & contract with AWB",
+   "type": "Task",
+   "owner": "CIO / Legal / Finance",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 14,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "Confirm deliverables, acceptance criteria, billing milestones, key AWB personnel.",
+   "status": "Not Started",
+   "sort": 14
+  },
+  {
+   "code": "0.3",
+   "phase": "P0",
+   "name": "Agree Sept-2027 go-live & stretched phase dates with AWB",
+   "type": "Task",
+   "owner": "CIO + AWB",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 21,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "SOW pace is 20 weeks; this plan uses ~32. Confirm cost/resourcing impact.",
+   "status": "Not Started",
+   "sort": 15
+  },
+  {
+   "code": "M-CON",
+   "phase": "P0",
+   "name": "MILESTONE: AWB contract signed",
+   "type": "Milestone",
+   "owner": "CIO",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 39,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 16
+  },
+  {
+   "code": "0.4",
+   "phase": "P0",
+   "name": "Project charter, budget & contingency (10–15%) approved",
+   "type": "Task",
+   "owner": "PM / SteerCo",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 21,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "Include internal backfill/overtime and 'Other Potential Costs' from the Odoo vs Acumatica workbook.",
+   "status": "Not Started",
+   "sort": 17
+  },
+  {
+   "code": "M-CHR",
+   "phase": "P0",
+   "name": "MILESTONE: Project charter approved",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 46,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 18
+  },
+  {
+   "code": "0.5",
+   "phase": "P0",
+   "name": "Hosting decision & Odoo Enterprise licensing (60 users)",
+   "type": "Task",
+   "owner": "IT & Data Lead",
+   "domain_id": "IT",
+   "anchor": "PRE",
+   "offset_days": 28,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "Odoo.sh vs cloud vs on-prem; environments: Dev, Test/UAT, Staging, Prod.",
+   "status": "Not Started",
+   "sort": 19
+  },
+  {
+   "code": "0.6",
+   "phase": "P0",
+   "name": "Profile In4 Velocity data quality (baseline report)",
+   "type": "Task",
+   "owner": "IT & Data Lead",
+   "domain_id": "IT",
+   "anchor": "PRE",
+   "offset_days": 14,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "Feeds data migration scope (2.5). Duplicates, incomplete buyer records, unit status mismatches, open PDCs.",
+   "status": "Not Started",
+   "sort": 20
+  },
+  {
+   "code": "0.7",
+   "phase": "P0",
+   "name": "Freeze new In4 enhancements (break-fix only)",
+   "type": "Task",
+   "owner": "CIO",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 42,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 21
+  },
+  {
+   "code": "1.1",
+   "phase": "PB1",
+   "name": "Form Core Team; assign Process Owners & backups (5 domains)",
+   "type": "Task",
+   "owner": "Sponsor / PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 0,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Done. Sales & Reservation; Billing & Collection; Accounting & Finance; Inventory & Project Mgmt; IT & Data.",
+   "status": "Complete",
+   "sort": 23
+  },
+  {
+   "code": "M-TH",
+   "phase": "PB1",
+   "name": "MILESTONE: 1st town hall / general assembly",
+   "type": "Milestone",
+   "owner": "Sponsor / CIO",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 4,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "Done. Deck: ERP Town Hall — Getting Ready for BRD.",
+   "status": "Complete",
+   "sort": 24
+  },
+  {
+   "code": "1.2",
+   "phase": "PB1",
+   "name": "Define decision-making matrix & RACI",
+   "type": "Task",
+   "owner": "PM / SteerCo",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 7,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "See 'RACI' and 'Governance' tabs.",
+   "status": "Not Started",
+   "sort": 25
+  },
+  {
+   "code": "1.3",
+   "phase": "PB1",
+   "name": "Set up SharePoint/Drive folders & project channel",
+   "type": "Task",
+   "owner": "IT & Data Lead",
+   "domain_id": "IT",
+   "anchor": "PRE",
+   "offset_days": 7,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Folder structure in 'Read Me'.",
+   "status": "Not Started",
+   "sort": 26
+  },
+  {
+   "code": "1.4",
+   "phase": "PB1",
+   "name": "Core Team orientation: templates, mapping standards, 3 rules",
+   "type": "Task",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 7,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Walk Process Owners through the Phase 2 templates before Day 1.",
+   "status": "Not Started",
+   "sort": 27
+  },
+  {
+   "code": "M-ROS",
+   "phase": "PB1",
+   "name": "MILESTONE: Core Team roster & RACI published",
+   "type": "Milestone",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 11,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 28
+  },
+  {
+   "code": "M-P2",
+   "phase": "PB2",
+   "name": "MILESTONE: Pre-BRD Phase 2 Day 1 — As-Is documentation starts",
+   "type": "Milestone",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 14,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 30
+  },
+  {
+   "code": "2.1",
+   "phase": "PB2",
+   "name": "As-Is process mapping workshops (top 5–7 workflows per domain)",
+   "type": "Task",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 14,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "Reservation→CTS, billing, PDC encoding/bouncing, unit reclassification, project costing.",
+   "status": "Not Started",
+   "sort": 31
+  },
+  {
+   "code": "2.2",
+   "phase": "PB2",
+   "name": "Shadow IT & workaround inventory",
+   "type": "Task",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 14,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "'Shadow IT Register' tab.",
+   "status": "Not Started",
+   "sort": 32
+  },
+  {
+   "code": "2.3",
+   "phase": "PB2",
+   "name": "Pain point log — top 3 per department",
+   "type": "Task",
+   "owner": "Dept. Heads",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 21,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "'Pain Point Log' tab.",
+   "status": "Not Started",
+   "sort": 33
+  },
+  {
+   "code": "2.4",
+   "phase": "PB2",
+   "name": "List mandatory PH regulatory reports (BIR, DHSUD, SEC)",
+   "type": "Task",
+   "owner": "Accounting & Finance PO",
+   "domain_id": "AF",
+   "anchor": "PRE",
+   "offset_days": 21,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Sample of each current report attached.",
+   "status": "Not Started",
+   "sort": 34
+  },
+  {
+   "code": "2.5",
+   "phase": "PB2",
+   "name": "Data migration scope: migrate vs. archive",
+   "type": "Task",
+   "owner": "IT & Data Lead + POs",
+   "domain_id": "IT",
+   "anchor": "PRE",
+   "offset_days": 21,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "'Data Migration' tab — decide history depth per object.",
+   "status": "Not Started",
+   "sort": 35
+  },
+  {
+   "code": "2.6",
+   "phase": "PB2",
+   "name": "Preliminary fit-gap notes vs Odoo 19 demo",
+   "type": "Task",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 28,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "'Fit-Gap Log' tab. Request an AWB demo/trial access for this.",
+   "status": "Not Started",
+   "sort": 36
+  },
+  {
+   "code": "2.7",
+   "phase": "PB2",
+   "name": "Validate As-Is maps with Department Heads",
+   "type": "Task",
+   "owner": "Dept. Heads",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 35,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 37
+  },
+  {
+   "code": "M-ASIS",
+   "phase": "PB2",
+   "name": "MILESTONE: As-Is maps & logs complete",
+   "type": "Milestone",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 39,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 38
+  },
+  {
+   "code": "3.1",
+   "phase": "PB3",
+   "name": "Compile Pre-BRD Dossier v1 (draft)",
+   "type": "Task",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 42,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Maps, pain/Shadow IT log, fit-gap notes, data scope & cleansing status, regulatory report list.",
+   "status": "Not Started",
+   "sort": 40
+  },
+  {
+   "code": "M-DOSD",
+   "phase": "PB3",
+   "name": "MILESTONE: Dossier v1 reviewed by SteerCo",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 53,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 41
+  },
+  {
+   "code": "3.2",
+   "phase": "PB3",
+   "name": "Targeted data cleansing of priority objects (buyers, units, schedules, PDCs)",
+   "type": "Task",
+   "owner": "IT & Data Lead + POs",
+   "domain_id": "IT",
+   "anchor": "PRE",
+   "offset_days": 56,
+   "duration_days": 33,
+   "use_hypercare": false,
+   "notes": "Uses the data scope and profiling results. Biggest payoff of the extra time before BRD.",
+   "status": "Not Started",
+   "sort": 42
+  },
+  {
+   "code": "3.3",
+   "phase": "PB3",
+   "name": "Process Owners hands-on in Odoo 19 trial; draft To-Be ideas & legacy-step 'kill list'",
+   "type": "Task",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 56,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "Rule 1: arrive at BRD with proposals, not just complaints.",
+   "status": "Not Started",
+   "sort": 43
+  },
+  {
+   "code": "3.4",
+   "phase": "PB3",
+   "name": "Co-create BRD agenda with AWB (by business process, not module)",
+   "type": "Task",
+   "owner": "PM + AWB PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 71,
+   "duration_days": 44,
+   "use_hypercare": false,
+   "notes": "Draft before the holidays; confirm in January.",
+   "status": "Not Started",
+   "sort": 44
+  },
+  {
+   "code": "3.5",
+   "phase": "PB3",
+   "name": "Refresh As-Is maps & logs for changes since October",
+   "type": "Task",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 105,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Keeps the Dossier current after a 2-month gap.",
+   "status": "Not Started",
+   "sort": 45
+  },
+  {
+   "code": "3.6",
+   "phase": "PB3",
+   "name": "Data cleansing first-pass complete; Dept. Head sign-off",
+   "type": "Task",
+   "owner": "IT & Data Lead / Dept. Heads",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 105,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Form A in 'Sign-off Forms'.",
+   "status": "Not Started",
+   "sort": 46
+  },
+  {
+   "code": "3.7",
+   "phase": "PB3",
+   "name": "Finalize Pre-BRD Dossier v2",
+   "type": "Task",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 105,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 47
+  },
+  {
+   "code": "M-DOS",
+   "phase": "PB3",
+   "name": "MILESTONE: Pre-BRD Dossier sent to AWB (1 week before BRD)",
+   "type": "Milestone",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 112,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 48
+  },
+  {
+   "code": "3.8",
+   "phase": "PB3",
+   "name": "Logistics: rooms/links, test data, attendance confirmed",
+   "type": "Task",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 112,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Check Cebu local holidays around Sinulog (Sun 17-Jan-2027).",
+   "status": "Not Started",
+   "sort": 49
+  },
+  {
+   "code": "M-RDY",
+   "phase": "PB3",
+   "name": "GATE: Pre-BRD readiness",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "PRE",
+   "offset_days": 116,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 50
+  },
+  {
+   "code": "M-KO",
+   "phase": "AWB1",
+   "name": "MILESTONE: Project kickoff with AWB (onsite, Cebu)",
+   "type": "Milestone",
+   "owner": "Sponsor / AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 0,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 52
+  },
+  {
+   "code": "4.1",
+   "phase": "AWB1",
+   "name": "Environment provisioning (Dev / Test)",
+   "type": "Task",
+   "owner": "AWB + IT",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 0,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 53
+  },
+  {
+   "code": "4.2",
+   "phase": "AWB1",
+   "name": "BRD workshops — Sales, Reservation & CTS; Billing & Collection",
+   "type": "Task",
+   "owner": "AWB + POs",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 2,
+   "duration_days": 17,
+   "use_hypercare": false,
+   "notes": "Order-to-Cash end to end: reservation, CTS, amortization, PDCs, penalties, dunning.",
+   "status": "Not Started",
+   "sort": 54
+  },
+  {
+   "code": "4.3",
+   "phase": "AWB1",
+   "name": "BRD workshops — Land Acquisition, Inventory & Construction Monitoring",
+   "type": "Task",
+   "owner": "AWB + POs",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 14,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 55
+  },
+  {
+   "code": "4.4",
+   "phase": "AWB1",
+   "name": "BRD workshops — Supplier & Payments, Finance Core",
+   "type": "Task",
+   "owner": "AWB + Finance PO",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 21,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Placed after year-end close (B.2).",
+   "status": "Not Started",
+   "sort": 56
+  },
+  {
+   "code": "4.5",
+   "phase": "AWB1",
+   "name": "BRD workshops — CRM, Customer Loans & Servicing",
+   "type": "Task",
+   "owner": "AWB + POs",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 21,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 57
+  },
+  {
+   "code": "4.6",
+   "phase": "AWB1",
+   "name": "Integrations, reports & regulatory requirements (banks, BIR, DHSUD, SOA)",
+   "type": "Task",
+   "owner": "AWB + IT + Finance",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 28,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 58
+  },
+  {
+   "code": "4.7",
+   "phase": "AWB1",
+   "name": "BRD consolidation, PHI review & comments (2 rounds)",
+   "type": "Task",
+   "owner": "POs / PM",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 35,
+   "duration_days": 10,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 59
+  },
+  {
+   "code": "4.8",
+   "phase": "AWB1",
+   "name": "To-Be process design & final fit-gap; gap resolution decisions",
+   "type": "Task",
+   "owner": "AWB + POs + SteerCo",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 35,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Default rule: adopt Odoo standard unless a regulatory or critical business reason (Rule 1).",
+   "status": "Not Started",
+   "sort": 60
+  },
+  {
+   "code": "4.9",
+   "phase": "AWB1",
+   "name": "Data migration strategy & load templates issued",
+   "type": "Task",
+   "owner": "AWB + IT & Data",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 35,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 61
+  },
+  {
+   "code": "M-BRD",
+   "phase": "AWB1",
+   "name": "GATE: BRD signed off (scope baseline)",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 46,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 62
+  },
+  {
+   "code": "5.1",
+   "phase": "AWB2",
+   "name": "Functional design (FDD) — Wave 1",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 49,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Land Acquisition, Inventory, Reservation, Sales Management.",
+   "status": "Not Started",
+   "sort": 64
+  },
+  {
+   "code": "5.2",
+   "phase": "AWB2",
+   "name": "Configuration & build — Wave 1 (weekly playbacks)",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 56,
+   "duration_days": 40,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 65
+  },
+  {
+   "code": "5.3",
+   "phase": "AWB2",
+   "name": "PHI loads Wave 1 master data into templates (projects, units, price lists)",
+   "type": "Task",
+   "owner": "IT & Data + POs",
+   "domain_id": "IT",
+   "anchor": "BRD",
+   "offset_days": 63,
+   "duration_days": 40,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 66
+  },
+  {
+   "code": "5.4",
+   "phase": "AWB2",
+   "name": "Conference Room Pilot 1 — Wave 1",
+   "type": "Task",
+   "owner": "AWB + POs + Key Users",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 98,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 67
+  },
+  {
+   "code": "M-CRP1",
+   "phase": "AWB2",
+   "name": "MILESTONE: Wave 1 CRP accepted",
+   "type": "Milestone",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 102,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 68
+  },
+  {
+   "code": "6.1",
+   "phase": "AWB3",
+   "name": "Functional design (FDD) — Wave 2",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 84,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "CRM, Construction Monitoring, Supplier & Payments, Finance Core, Customer Loans & Servicing.",
+   "status": "Not Started",
+   "sort": 70
+  },
+  {
+   "code": "6.2",
+   "phase": "AWB3",
+   "name": "Configuration & build — Wave 2 (weekly playbacks)",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 98,
+   "duration_days": 47,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 71
+  },
+  {
+   "code": "6.3",
+   "phase": "AWB3",
+   "name": "Approved customizations & reports (BIR forms, DHSUD, SOA, amortization)",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 105,
+   "duration_days": 40,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 72
+  },
+  {
+   "code": "6.4",
+   "phase": "AWB3",
+   "name": "Integrations (bank files, payment channels, others)",
+   "type": "Task",
+   "owner": "AWB + IT",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 112,
+   "duration_days": 33,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 73
+  },
+  {
+   "code": "6.5",
+   "phase": "AWB3",
+   "name": "Security roles & segregation-of-duties design",
+   "type": "Task",
+   "owner": "AWB + IT + Finance",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 119,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 74
+  },
+  {
+   "code": "6.6",
+   "phase": "AWB3",
+   "name": "Conference Room Pilot 2 — end to end (Wave 1 + 2)",
+   "type": "Task",
+   "owner": "AWB + POs + Key Users",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 147,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 75
+  },
+  {
+   "code": "M-FRZ",
+   "phase": "AWB3",
+   "name": "GATE: Configuration & scope freeze",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 151,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 76
+  },
+  {
+   "code": "7.1",
+   "phase": "AWB4",
+   "name": "Mock migration 1 — master data",
+   "type": "Task",
+   "owner": "AWB + IT & Data",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 119,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Measure load errors; feed back into cleansing.",
+   "status": "Not Started",
+   "sort": 78
+  },
+  {
+   "code": "7.2",
+   "phase": "AWB4",
+   "name": "Mock migration 2 — masters + open items + balances",
+   "type": "Task",
+   "owner": "AWB + IT & Data",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 154,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Buyer ledgers, amortization schedules, open PDCs, AP/AR, GL balances.",
+   "status": "Not Started",
+   "sort": 79
+  },
+  {
+   "code": "7.3",
+   "phase": "AWB4",
+   "name": "System Integration Testing (SIT) — cycle 1",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 154,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 80
+  },
+  {
+   "code": "7.4",
+   "phase": "AWB4",
+   "name": "SIT cycle 2 & defect fixing",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 168,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "'Defect Log' tab.",
+   "status": "Not Started",
+   "sort": 81
+  },
+  {
+   "code": "7.5",
+   "phase": "AWB4",
+   "name": "Mock 2 reconciliation & data sign-off",
+   "type": "Task",
+   "owner": "Finance + POs",
+   "domain_id": "AF",
+   "anchor": "BRD",
+   "offset_days": 168,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Tie-out to In4 trial balance, sub-ledgers and unit counts.",
+   "status": "Not Started",
+   "sort": 82
+  },
+  {
+   "code": "M-SIT",
+   "phase": "AWB4",
+   "name": "MILESTONE: SIT exit",
+   "type": "Milestone",
+   "owner": "PM",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 179,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 83
+  },
+  {
+   "code": "8.1",
+   "phase": "AWB5",
+   "name": "UAT scripts written by Process Owners",
+   "type": "Task",
+   "owner": "Process Owners",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 147,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "'UAT Scripts' tab — real PHI scenarios, not demo data.",
+   "status": "Not Started",
+   "sort": 85
+  },
+  {
+   "code": "8.2",
+   "phase": "AWB5",
+   "name": "Train-the-Trainer (key users)",
+   "type": "Task",
+   "owner": "AWB",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 175,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Onsite, Cebu.",
+   "status": "Not Started",
+   "sort": 86
+  },
+  {
+   "code": "8.3",
+   "phase": "AWB5",
+   "name": "UAT round 1",
+   "type": "Task",
+   "owner": "Key Users",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 182,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Onsite AWB support.",
+   "status": "Not Started",
+   "sort": 87
+  },
+  {
+   "code": "8.4",
+   "phase": "AWB5",
+   "name": "UAT round 2 / regression",
+   "type": "Task",
+   "owner": "Key Users",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 196,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 88
+  },
+  {
+   "code": "M-UAT",
+   "phase": "AWB5",
+   "name": "GATE: UAT signed off",
+   "type": "Milestone",
+   "owner": "Process Owners / SteerCo",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 200,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 89
+  },
+  {
+   "code": "8.5",
+   "phase": "AWB5",
+   "name": "SOPs & end-user guides finalized",
+   "type": "Task",
+   "owner": "Process Owners + Trainers",
+   "domain_id": null,
+   "anchor": "BRD",
+   "offset_days": 182,
+   "duration_days": 26,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 90
+  },
+  {
+   "code": "8.6",
+   "phase": "AWB5",
+   "name": "End-user training (internal trainers)",
+   "type": "Task",
+   "owner": "Internal Trainers",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -30,
+   "duration_days": 19,
+   "use_hypercare": false,
+   "notes": "'Training Plan' tab. No access to Prod without passing training.",
+   "status": "Not Started",
+   "sort": 91
+  },
+  {
+   "code": "8.7",
+   "phase": "AWB5",
+   "name": "Parallel run: billing & amortization cycle vs In4",
+   "type": "Task",
+   "owner": "Billing PO + Finance",
+   "domain_id": "BC",
+   "anchor": "GL",
+   "offset_days": -30,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "Same cycle computed in both systems; variances explained.",
+   "status": "Not Started",
+   "sort": 92
+  },
+  {
+   "code": "8.8",
+   "phase": "AWB5",
+   "name": "Mock migration 3 — timed dress rehearsal",
+   "type": "Task",
+   "owner": "AWB + IT & Data",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -23,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Timed end to end — confirms the cutover window.",
+   "status": "Not Started",
+   "sort": 93
+  },
+  {
+   "code": "8.9",
+   "phase": "AWB5",
+   "name": "User access provisioning & role review",
+   "type": "Task",
+   "owner": "IT",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -23,
+   "duration_days": 12,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 94
+  },
+  {
+   "code": "9.1",
+   "phase": "AWB6",
+   "name": "Cutover runbook finalized & approved",
+   "type": "Task",
+   "owner": "PM + AWB PM",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -23,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "'Cutover Runbook' tab.",
+   "status": "Not Started",
+   "sort": 96
+  },
+  {
+   "code": "M-GNG",
+   "phase": "AWB6",
+   "name": "GATE: Go / No-Go decision",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -12,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "'Go-No-Go' checklist.",
+   "status": "Not Started",
+   "sort": 97
+  },
+  {
+   "code": "9.2",
+   "phase": "AWB6",
+   "name": "Transaction freeze & In4 cut-off",
+   "type": "Task",
+   "owner": "All departments",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -5,
+   "duration_days": 5,
+   "use_hypercare": false,
+   "notes": "Mon 30-Aug-2027 is National Heroes Day — plan staffing.",
+   "status": "Not Started",
+   "sort": 98
+  },
+  {
+   "code": "9.3",
+   "phase": "AWB6",
+   "name": "Final data migration & reconciliation",
+   "type": "Task",
+   "owner": "AWB + IT & Data + Finance",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": -4,
+   "duration_days": 4,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 99
+  },
+  {
+   "code": "M-GL",
+   "phase": "AWB6",
+   "name": "MILESTONE: GO-LIVE",
+   "type": "Milestone",
+   "owner": "Sponsor",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": 0,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 100
+  },
+  {
+   "code": "9.4",
+   "phase": "AWB6",
+   "name": "August close in In4 & opening-balance true-up in Odoo",
+   "type": "Task",
+   "owner": "Finance",
+   "domain_id": "AF",
+   "anchor": "GL",
+   "offset_days": 0,
+   "duration_days": 10,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 101
+  },
+  {
+   "code": "9.5",
+   "phase": "AWB6",
+   "name": "Hypercare (AWB, 90 days)",
+   "type": "Task",
+   "owner": "AWB + IT",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": 0,
+   "duration_days": 90,
+   "use_hypercare": true,
+   "notes": "Daily triage first 2 weeks, then weekly.",
+   "status": "Not Started",
+   "sort": 102
+  },
+  {
+   "code": "9.6",
+   "phase": "AWB6",
+   "name": "First month-end close in Odoo (September)",
+   "type": "Task",
+   "owner": "Finance",
+   "domain_id": "AF",
+   "anchor": "GL",
+   "offset_days": 30,
+   "duration_days": 8,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 103
+  },
+  {
+   "code": "M-MEC",
+   "phase": "AWB6",
+   "name": "MILESTONE: First month-end close complete",
+   "type": "Milestone",
+   "owner": "CFO",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": 37,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 104
+  },
+  {
+   "code": "9.7",
+   "phase": "AWB6",
+   "name": "First quarterly BIR filings from Odoo data",
+   "type": "Task",
+   "owner": "Finance",
+   "domain_id": "AF",
+   "anchor": "GL",
+   "offset_days": 40,
+   "duration_days": 15,
+   "use_hypercare": false,
+   "notes": "Confirm exact forms and due dates with tax team.",
+   "status": "Not Started",
+   "sort": 105
+  },
+  {
+   "code": "9.8",
+   "phase": "AWB6",
+   "name": "Hypercare exit review & handover to BAU support",
+   "type": "Task",
+   "owner": "PM + AWB + IT",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": 82,
+   "duration_days": 8,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 106
+  },
+  {
+   "code": "M-HC",
+   "phase": "AWB6",
+   "name": "GATE: Hypercare exit & project acceptance",
+   "type": "Milestone",
+   "owner": "SteerCo",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": 89,
+   "duration_days": 0,
+   "use_hypercare": false,
+   "notes": "",
+   "status": "Not Started",
+   "sort": 107
+  },
+  {
+   "code": "10.1",
+   "phase": "POST",
+   "name": "Post-implementation review & benefits tracking",
+   "type": "Task",
+   "owner": "PM / Sponsor",
+   "domain_id": null,
+   "anchor": "GL",
+   "offset_days": 90,
+   "duration_days": 11,
+   "use_hypercare": false,
+   "notes": "Measure against Pain Point Log baseline.",
+   "status": "Not Started",
+   "sort": 109
+  },
+  {
+   "code": "10.2",
+   "phase": "POST",
+   "name": "In4 Velocity read-only archive & decommission plan",
+   "type": "Task",
+   "owner": "IT & Data Lead",
+   "domain_id": "IT",
+   "anchor": "GL",
+   "offset_days": 91,
+   "duration_days": 17,
+   "use_hypercare": false,
+   "notes": "Retain records per BIR/SEC retention rules before switching off.",
+   "status": "Not Started",
+   "sort": 110
+  }
+ ],
+ "records": [
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "Steering Committee",
+    "chair": "Project Sponsor",
+    "members": "CEO/President, CIO, CFO, Head of Sales, PM, AWB Engagement Lead",
+    "frequency": "Monthly + at every GATE",
+    "duration": "90 min",
+    "purpose_decisions": "Approve gates, budget, scope changes above PM threshold, Go/No-Go; resolve escalations",
+    "inputs": "Status report, RAID top 10, CR summary",
+    "outputs": "Decisions (Decision Log)"
+   },
+   "sort": 0
+  },
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "PMO / Project Status",
+    "chair": "PHI PM",
+    "members": "PHI PM, AWB PM, Process Owners, IT & Data Lead",
+    "frequency": "Weekly (Mon)",
+    "duration": "60 min",
+    "purpose_decisions": "Progress vs plan, RAID, next-2-week look-ahead",
+    "inputs": "Master Schedule, RAID",
+    "outputs": "Weekly Status Report (Fri)"
+   },
+   "sort": 1
+  },
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "Change Control Board",
+    "chair": "PHI PM",
+    "members": "PM, CIO, CFO rep, affected Process Owner, AWB PM",
+    "frequency": "Bi-weekly after BRD sign-off",
+    "duration": "45 min",
+    "purpose_decisions": "Assess & approve/reject Change Requests",
+    "inputs": "CR forms with AWB estimates",
+    "outputs": "CR decisions"
+   },
+   "sort": 2
+  },
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "Process Owner stand-up",
+    "chair": "PHI PM",
+    "members": "Process Owners, AWB functional leads",
+    "frequency": "Daily during BRD & UAT (15 min)",
+    "duration": "15 min",
+    "purpose_decisions": "Blockers, workshop prep, defect triage",
+    "inputs": "Defect Log",
+    "outputs": "Actions"
+   },
+   "sort": 3
+  },
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "Data Working Group",
+    "chair": "IT & Data Lead",
+    "members": "IT & Data Lead, data stewards per domain, AWB data consultant",
+    "frequency": "Weekly",
+    "duration": "60 min",
+    "purpose_decisions": "Cleansing progress, migration mock results, reconciliation",
+    "inputs": "Data Migration tracker",
+    "outputs": "Updated tracker"
+   },
+   "sort": 4
+  },
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "Town hall / all-hands update",
+    "chair": "Sponsor / CIO",
+    "members": "All staff",
+    "frequency": "At kickoff, BRD sign-off, UAT, Go-Live, Hypercare exit",
+    "duration": "45 min",
+    "purpose_decisions": "Explain the why, show progress, open Q&A",
+    "inputs": "Comms Plan",
+    "outputs": "Q&A log"
+   },
+   "sort": 5
+  },
+  {
+   "register": "governance",
+   "domain_id": null,
+   "data": {
+    "forum": "Hypercare triage",
+    "chair": "IT Lead",
+    "members": "IT, AWB support, Process Owners",
+    "frequency": "Daily first 2 weeks after Go-Live, then 2x/week",
+    "duration": "30 min",
+    "purpose_decisions": "Prioritize tickets, monitor stability",
+    "inputs": "Ticket queue",
+    "outputs": "Resolved/queued tickets"
+   },
+   "sort": 6
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Project charter & budget",
+    "sponsor": "A",
+    "steerco": "C",
+    "cio": "R",
+    "cfo": "C",
+    "phi_pm": "R",
+    "process_owners": "I",
+    "key_users": "I",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "I",
+    "awb_consultants": "I"
+   },
+   "sort": 0
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Scope baseline (BRD sign-off)",
+    "sponsor": "I",
+    "steerco": "A",
+    "cio": "R",
+    "cfo": "C",
+    "phi_pm": "R",
+    "process_owners": "R",
+    "key_users": "C",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "R"
+   },
+   "sort": 1
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Process change decisions (To-Be)",
+    "sponsor": "I",
+    "steerco": "A",
+    "cio": "C",
+    "cfo": "C",
+    "phi_pm": "C",
+    "process_owners": "R",
+    "key_users": "C",
+    "it_and_data_lead": "I",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "C"
+   },
+   "sort": 2
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Change Requests",
+    "sponsor": "I",
+    "steerco": "A",
+    "cio": "R",
+    "cfo": "C",
+    "phi_pm": "R",
+    "process_owners": "C",
+    "key_users": "I",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "C"
+   },
+   "sort": 3
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "As-Is process mapping",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "I",
+    "cfo": "I",
+    "phi_pm": "A",
+    "process_owners": "R",
+    "key_users": "C",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "I",
+    "awb_consultants": "I"
+   },
+   "sort": 4
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Pain Point & Shadow IT logs",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "I",
+    "cfo": "I",
+    "phi_pm": "A",
+    "process_owners": "R",
+    "key_users": "R",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "I",
+    "awb_consultants": "I"
+   },
+   "sort": 5
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Configuration & build",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "C",
+    "cfo": "I",
+    "phi_pm": "C",
+    "process_owners": "C",
+    "key_users": "I",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "A",
+    "awb_consultants": "R"
+   },
+   "sort": 6
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Data cleansing",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "A",
+    "cfo": "C",
+    "phi_pm": "C",
+    "process_owners": "R",
+    "key_users": "R",
+    "it_and_data_lead": "R",
+    "change_and_comms": "I",
+    "awb_pm": "I",
+    "awb_consultants": "C"
+   },
+   "sort": 7
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Data migration loads",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "A",
+    "cfo": "C",
+    "phi_pm": "C",
+    "process_owners": "C",
+    "key_users": "I",
+    "it_and_data_lead": "R",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "R"
+   },
+   "sort": 8
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Data reconciliation & sign-off",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "C",
+    "cfo": "A",
+    "phi_pm": "C",
+    "process_owners": "R",
+    "key_users": "C",
+    "it_and_data_lead": "R",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "C"
+   },
+   "sort": 9
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "SIT",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "I",
+    "cfo": "I",
+    "phi_pm": "C",
+    "process_owners": "C",
+    "key_users": "I",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "A",
+    "awb_consultants": "R"
+   },
+   "sort": 10
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "UAT scripts & execution",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "I",
+    "cfo": "C",
+    "phi_pm": "A",
+    "process_owners": "R",
+    "key_users": "R",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "C"
+   },
+   "sort": 11
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Training delivery",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "I",
+    "cfo": "I",
+    "phi_pm": "C",
+    "process_owners": "A",
+    "key_users": "R",
+    "it_and_data_lead": "C",
+    "change_and_comms": "R",
+    "awb_pm": "C",
+    "awb_consultants": "R"
+   },
+   "sort": 12
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Communications",
+    "sponsor": "C",
+    "steerco": "I",
+    "cio": "A",
+    "cfo": "I",
+    "phi_pm": "C",
+    "process_owners": "C",
+    "key_users": "I",
+    "it_and_data_lead": "I",
+    "change_and_comms": "R",
+    "awb_pm": "I",
+    "awb_consultants": "I"
+   },
+   "sort": 13
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Cutover execution",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "A",
+    "cfo": "C",
+    "phi_pm": "R",
+    "process_owners": "R",
+    "key_users": "C",
+    "it_and_data_lead": "R",
+    "change_and_comms": "C",
+    "awb_pm": "R",
+    "awb_consultants": "R"
+   },
+   "sort": 14
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Go/No-Go decision",
+    "sponsor": "C",
+    "steerco": "A",
+    "cio": "R",
+    "cfo": "R",
+    "phi_pm": "R",
+    "process_owners": "C",
+    "key_users": "I",
+    "it_and_data_lead": "C",
+    "change_and_comms": "I",
+    "awb_pm": "C",
+    "awb_consultants": "I"
+   },
+   "sort": 15
+  },
+  {
+   "register": "raci",
+   "domain_id": null,
+   "data": {
+    "activity": "Hypercare & BAU handover",
+    "sponsor": "I",
+    "steerco": "I",
+    "cio": "A",
+    "cfo": "C",
+    "phi_pm": "R",
+    "process_owners": "C",
+    "key_users": "C",
+    "it_and_data_lead": "R",
+    "change_and_comms": "I",
+    "awb_pm": "R",
+    "awb_consultants": "R"
+   },
+   "sort": 16
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Project Sponsor",
+    "department": "Executive",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "10%",
+    "backup": "",
+    "scope_notes": "Owns business case; chairs SteerCo"
+   },
+   "sort": 0
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Steering Committee member",
+    "department": "CFO",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "5%",
+    "backup": "",
+    "scope_notes": ""
+   },
+   "sort": 1
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Steering Committee member",
+    "department": "Head of Sales",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "5%",
+    "backup": "",
+    "scope_notes": ""
+   },
+   "sort": 2
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "CIO",
+    "department": "IT",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "30%",
+    "backup": "",
+    "scope_notes": "Accountable for delivery"
+   },
+   "sort": 3
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Project Manager (PHI)",
+    "department": "PMO",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "100%",
+    "backup": "",
+    "scope_notes": "Full-time recommended"
+   },
+   "sort": 4
+  },
+  {
+   "register": "roster",
+   "domain_id": "SR",
+   "data": {
+    "role": "Process Owner — Sales & Reservation",
+    "department": "Sales",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "50%",
+    "backup": "[Backup]",
+    "scope_notes": "Selling, reservations, cancellations, reactivations"
+   },
+   "sort": 5
+  },
+  {
+   "register": "roster",
+   "domain_id": "BC",
+   "data": {
+    "role": "Process Owner — Billing & Collection",
+    "department": "Collections",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "50%",
+    "backup": "[Backup]",
+    "scope_notes": "Amortization, PDC mgmt, penalties, dunning"
+   },
+   "sort": 6
+  },
+  {
+   "register": "roster",
+   "domain_id": "AF",
+   "data": {
+    "role": "Process Owner — Accounting & Finance",
+    "department": "Finance",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "50%",
+    "backup": "[Backup]",
+    "scope_notes": "BIR compliance, AP/AR, bank recon, project costing"
+   },
+   "sort": 7
+  },
+  {
+   "register": "roster",
+   "domain_id": "IP",
+   "data": {
+    "role": "Process Owner — Inventory & Project Mgmt",
+    "department": "Project Dev't",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "50%",
+    "backup": "[Backup]",
+    "scope_notes": "Unit master, construction progress, handover"
+   },
+   "sort": 8
+  },
+  {
+   "register": "roster",
+   "domain_id": "IT",
+   "data": {
+    "role": "Process Owner — IT & Data",
+    "department": "IT",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "75%",
+    "backup": "[Backup]",
+    "scope_notes": "In4 extraction, Odoo infrastructure, security"
+   },
+   "sort": 9
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Change & Communications Lead",
+    "department": "HR / Corp Comms",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "30%",
+    "backup": "",
+    "scope_notes": "Runs Comms Plan, town halls"
+   },
+   "sort": 10
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Training Lead",
+    "department": "HR",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "30% (100% Jul–Aug)",
+    "backup": "",
+    "scope_notes": ""
+   },
+   "sort": 11
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "Key User (per domain, 2–3 each)",
+    "department": "Various",
+    "name": "[Names]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "20% (60% in UAT)",
+    "backup": "",
+    "scope_notes": "Future trainers & first-line support"
+   },
+   "sort": 12
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "AWB Engagement Lead",
+    "department": "AWB",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "",
+    "backup": "",
+    "scope_notes": "From SOW"
+   },
+   "sort": 13
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "AWB Project Manager",
+    "department": "AWB",
+    "name": "[Name]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "",
+    "backup": "",
+    "scope_notes": "Manila-based; onsite Cebu for key events"
+   },
+   "sort": 14
+  },
+  {
+   "register": "roster",
+   "domain_id": null,
+   "data": {
+    "role": "AWB Functional Consultants",
+    "department": "AWB",
+    "name": "[Names]",
+    "email": "",
+    "mobile": "",
+    "time_allocation": "",
+    "backup": "",
+    "scope_notes": ""
+   },
+   "sort": 15
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Town hall kickoff",
+    "audience": "All staff",
+    "key_message": "Why we're changing, timeline, 3 rules",
+    "channel": "In person + recording",
+    "owner": "Sponsor / CIO",
+    "when": "25-Sep-2026",
+    "frequency": "Once",
+    "status": "Complete"
+   },
+   "sort": 0
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Project channel & FAQ page",
+    "audience": "All staff",
+    "key_message": "Where to ask questions and raise hand-flags",
+    "channel": "Teams/Slack + SharePoint",
+    "owner": "Change & Comms",
+    "when": "From 2-Oct-2026",
+    "frequency": "Updated weekly",
+    "status": "Not Started"
+   },
+   "sort": 1
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Process Owner briefing",
+    "audience": "Process Owners, backups",
+    "key_message": "Role, time commitment, templates",
+    "channel": "Workshop",
+    "owner": "PM",
+    "when": "Wk of 28-Sep-2026",
+    "frequency": "Once",
+    "status": "Not Started"
+   },
+   "sort": 2
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Pre-BRD progress update",
+    "audience": "All staff",
+    "key_message": "As-Is done; what we learned; what happens until BRD",
+    "channel": "Town hall / email",
+    "owner": "CIO",
+    "when": "Early Nov 2026",
+    "frequency": "Once",
+    "status": "Not Started"
+   },
+   "sort": 3
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Manager toolkit",
+    "audience": "Dept. Heads / supervisors",
+    "key_message": "Talking points; how to answer 'what happens to my job?'",
+    "channel": "Email + 30-min session",
+    "owner": "Change & Comms",
+    "when": "Before each phase",
+    "frequency": "Per phase",
+    "status": "Not Started"
+   },
+   "sort": 4
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Monthly ERP update",
+    "audience": "All staff",
+    "key_message": "Progress, what's next, wins, what we heard",
+    "channel": "Email / newsletter",
+    "owner": "Change & Comms",
+    "when": "Monthly from Oct 2026",
+    "frequency": "Monthly",
+    "status": "Not Started"
+   },
+   "sort": 5
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "BRD sign-off update",
+    "audience": "All staff",
+    "key_message": "What was decided; process changes coming",
+    "channel": "Town hall",
+    "owner": "Sponsor",
+    "when": "Mar 2027",
+    "frequency": "Once",
+    "status": "Not Started"
+   },
+   "sort": 6
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "'Day in the life' demos",
+    "audience": "Affected teams",
+    "key_message": "Show new screens for their daily work",
+    "channel": "Short demos",
+    "owner": "Key Users",
+    "when": "May–Jul 2027",
+    "frequency": "Per wave",
+    "status": "Not Started"
+   },
+   "sort": 7
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Training invitations",
+    "audience": "End users",
+    "key_message": "Schedule, prerequisites, access rules",
+    "channel": "Calendar + email",
+    "owner": "Training Lead",
+    "when": "Jul 2027",
+    "frequency": "Once",
+    "status": "Not Started"
+   },
+   "sort": 8
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Cutover notice",
+    "audience": "All staff, brokers, buyers (as needed)",
+    "key_message": "Freeze dates, what stops, what to do",
+    "channel": "Email + memo",
+    "owner": "PM / Sales",
+    "when": "3 weeks before Go-Live",
+    "frequency": "Reminder at T-7, T-1",
+    "status": "Not Started"
+   },
+   "sort": 9
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "External notice to buyers/brokers",
+    "audience": "Buyers, brokers, banks",
+    "key_message": "Any change to SOAs, payment channels, receipts",
+    "channel": "Letter / SMS / portal",
+    "owner": "Sales & Collection",
+    "when": "Aug 2027",
+    "frequency": "Once",
+    "status": "Not Started"
+   },
+   "sort": 10
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Go-Live announcement & support desk",
+    "audience": "All staff",
+    "key_message": "We're live; how to get help",
+    "channel": "Email + channel",
+    "owner": "CIO",
+    "when": "01-Sep-2027",
+    "frequency": "Daily notes first 2 weeks",
+    "status": "Not Started"
+   },
+   "sort": 11
+  },
+  {
+   "register": "comms",
+   "domain_id": null,
+   "data": {
+    "communication": "Hypercare close & thank-you",
+    "audience": "All staff",
+    "key_message": "Results, recognitions, what's next",
+    "channel": "Town hall",
+    "owner": "Sponsor",
+    "when": "Nov 2027",
+    "frequency": "Once",
+    "status": "Not Started"
+   },
+   "sort": 12
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-11-02",
+    "day": "Mon",
+    "holiday_blackout": "All Souls' Day — verify if declared",
+    "type": "Special (verify)",
+    "project_impact": "Dossier v1 week"
+   },
+   "sort": 0
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-11-30",
+    "day": "Mon",
+    "holiday_blackout": "Bonifacio Day",
+    "type": "Regular holiday",
+    "project_impact": "Targeted cleansing"
+   },
+   "sort": 1
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-12-08",
+    "day": "Tue",
+    "holiday_blackout": "Immaculate Conception",
+    "type": "Special non-working",
+    "project_impact": "Targeted cleansing"
+   },
+   "sort": 2
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-12-24",
+    "day": "Thu",
+    "holiday_blackout": "Christmas Eve",
+    "type": "Special non-working",
+    "project_impact": "Holiday freeze"
+   },
+   "sort": 3
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-12-25",
+    "day": "Fri",
+    "holiday_blackout": "Christmas Day",
+    "type": "Regular holiday",
+    "project_impact": "Holiday freeze"
+   },
+   "sort": 4
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-12-30",
+    "day": "Wed",
+    "holiday_blackout": "Rizal Day",
+    "type": "Regular holiday",
+    "project_impact": "Holiday freeze"
+   },
+   "sort": 5
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2026-12-31",
+    "day": "Thu",
+    "holiday_blackout": "Last day of the year",
+    "type": "Special non-working",
+    "project_impact": "Holiday freeze"
+   },
+   "sort": 6
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-01-01",
+    "day": "Fri",
+    "holiday_blackout": "New Year's Day",
+    "type": "Regular holiday",
+    "project_impact": "Holiday freeze"
+   },
+   "sort": 7
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-01-17",
+    "day": "Sun",
+    "holiday_blackout": "Sinulog (Cebu) — check local declarations for Fri 15 / Mon 18",
+    "type": "Local",
+    "project_impact": "BRD kickoff week"
+   },
+   "sort": 8
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-02-24",
+    "day": "Wed",
+    "holiday_blackout": "Cebu City Charter Day — check local declaration",
+    "type": "Local",
+    "project_impact": "BRD workshops"
+   },
+   "sort": 9
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-02-25",
+    "day": "Thu",
+    "holiday_blackout": "EDSA Revolution Anniversary",
+    "type": "Special (verify)",
+    "project_impact": "BRD workshops"
+   },
+   "sort": 10
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-03-25",
+    "day": "Thu",
+    "holiday_blackout": "Maundy Thursday",
+    "type": "Regular holiday",
+    "project_impact": "Wave 1 build"
+   },
+   "sort": 11
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-03-26",
+    "day": "Fri",
+    "holiday_blackout": "Good Friday",
+    "type": "Regular holiday",
+    "project_impact": "Wave 1 build"
+   },
+   "sort": 12
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-03-27",
+    "day": "Sat",
+    "holiday_blackout": "Black Saturday",
+    "type": "Special non-working",
+    "project_impact": "—"
+   },
+   "sort": 13
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-04-09",
+    "day": "Fri",
+    "holiday_blackout": "Araw ng Kagitingan",
+    "type": "Regular holiday",
+    "project_impact": "Wave 1 build"
+   },
+   "sort": 14
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-06-12",
+    "day": "Sat",
+    "holiday_blackout": "Independence Day",
+    "type": "Regular holiday",
+    "project_impact": "—"
+   },
+   "sort": 15
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-08-21",
+    "day": "Sat",
+    "holiday_blackout": "Ninoy Aquino Day",
+    "type": "Special non-working",
+    "project_impact": "—"
+   },
+   "sort": 16
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-08-30",
+    "day": "Mon",
+    "holiday_blackout": "National Heroes Day",
+    "type": "Regular holiday",
+    "project_impact": "CUTOVER WEEKEND — plan staffing/pay"
+   },
+   "sort": 17
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-11-01",
+    "day": "Mon",
+    "holiday_blackout": "All Saints' Day",
+    "type": "Special non-working",
+    "project_impact": "Hypercare"
+   },
+   "sort": 18
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "2027-11-30",
+    "day": "Tue",
+    "holiday_blackout": "Bonifacio Day",
+    "type": "Regular holiday",
+    "project_impact": "Hypercare exit week"
+   },
+   "sort": 19
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "Various",
+    "day": "",
+    "holiday_blackout": "Eid'l Fitr & Eid'l Adha 2027 (dates set by proclamation)",
+    "type": "Regular holiday",
+    "project_impact": "Verify"
+   },
+   "sort": 20
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "Jan 1–Feb 5, 2027",
+    "day": "",
+    "holiday_blackout": "Finance year-end close; 1604-C/1604-F by 31-Jan",
+    "type": "Business blackout",
+    "project_impact": "Finance BRD sessions placed after"
+   },
+   "sort": 21
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "Apr 5–16, 2027",
+    "day": "",
+    "holiday_blackout": "Annual ITR (15-Apr) & audited FS season",
+    "type": "Business blackout",
+    "project_impact": "Limit Finance workshops"
+   },
+   "sort": 22
+  },
+  {
+   "register": "holidays",
+   "domain_id": null,
+   "data": {
+    "date": "Monthly, days 1–10",
+    "day": "",
+    "holiday_blackout": "Month-end close & monthly BIR filings",
+    "type": "Business blackout",
+    "project_impact": "Avoid Finance UAT/training on close days"
+   },
+   "sort": 23
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-01",
+    "type": "Risk",
+    "description": "Timeline stretch (20-wk SOW → ~32 wks) not agreed or priced by AWB",
+    "area": "Schedule / Cost",
+    "probability": "High",
+    "impact": "High",
+    "mitigation_response": "Confirm in contract (task 0.3); map revised billing milestones",
+    "owner": "CIO",
+    "due": "2026-10-30",
+    "status": "Open"
+   },
+   "sort": 0
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-02",
+    "type": "Risk",
+    "description": "Process Owners not released from day jobs; workshops under-attended",
+    "area": "Schedule",
+    "probability": "High",
+    "impact": "High",
+    "mitigation_response": "Manager-approved allocations; backfill budget; SteerCo tracks attendance",
+    "owner": "Sponsor",
+    "due": "2026-10-02",
+    "status": "Open"
+   },
+   "sort": 1
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-11",
+    "type": "Risk",
+    "description": "Momentum loss and stale As-Is maps in the Nov–Jan gap before BRD",
+    "area": "Schedule / Quality",
+    "probability": "Med",
+    "impact": "Med",
+    "mitigation_response": "Bridge work: targeted cleansing, Odoo 19 hands-on, To-Be ideas; refresh maps 4–8 Jan (task 3.5); monthly update",
+    "owner": "PM",
+    "due": "2027-01-08",
+    "status": "Open"
+   },
+   "sort": 2
+  },
+  {
+   "register": "raid",
+   "domain_id": "IT",
+   "data": {
+    "id": "R-03",
+    "type": "Risk",
+    "description": "Poor In4 data quality delays migration (duplicates, incomplete buyer/unit data)",
+    "area": "Quality",
+    "probability": "High",
+    "impact": "High",
+    "mitigation_response": "Start cleansing Oct 2026; 3 mock migrations; Dept. Head sign-off",
+    "owner": "IT & Data Lead",
+    "due": "2027-01-08",
+    "status": "Open"
+   },
+   "sort": 3
+  },
+  {
+   "register": "raid",
+   "domain_id": "AF",
+   "data": {
+    "id": "R-04",
+    "type": "Risk",
+    "description": "Finance availability during year-end close and ITR season",
+    "area": "Schedule",
+    "probability": "High",
+    "impact": "Med",
+    "mitigation_response": "Finance BRD after 5-Feb; Wave 2 Finance design after 16-Apr",
+    "owner": "CFO",
+    "due": "2027-01-15",
+    "status": "Open"
+   },
+   "sort": 4
+  },
+  {
+   "register": "raid",
+   "domain_id": "AF",
+   "data": {
+    "id": "R-05",
+    "type": "Risk",
+    "description": "PH regulatory reports (BIR forms, DHSUD) need customization beyond Odoo 19 localization",
+    "area": "Scope / Cost",
+    "probability": "Med",
+    "impact": "High",
+    "mitigation_response": "Regulatory list in Dossier; confirm in fit-gap; budget for reports",
+    "owner": "Finance PO",
+    "due": "2027-03-05",
+    "status": "Open"
+   },
+   "sort": 5
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-06",
+    "type": "Risk",
+    "description": "Scope creep after BRD sign-off",
+    "area": "Scope",
+    "probability": "High",
+    "impact": "High",
+    "mitigation_response": "Change Control Board; freeze 18-Jun-2027; 'standard first' rule",
+    "owner": "PM",
+    "due": "2027-03-05",
+    "status": "Open"
+   },
+   "sort": 6
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-07",
+    "type": "Risk",
+    "description": "Remote delivery from AWB Manila slows issue resolution",
+    "area": "Schedule",
+    "probability": "Med",
+    "impact": "Med",
+    "mitigation_response": "Agree onsite presence for workshops, UAT, cutover; daily stand-ups",
+    "owner": "PM",
+    "due": "2026-10-30",
+    "status": "Open"
+   },
+   "sort": 7
+  },
+  {
+   "register": "raid",
+   "domain_id": "BC",
+   "data": {
+    "id": "R-08",
+    "type": "Risk",
+    "description": "Amortization / penalty computations differ from In4",
+    "area": "Quality",
+    "probability": "Med",
+    "impact": "High",
+    "mitigation_response": "Parallel run of billing cycle before Go-Live; reconcile to peso",
+    "owner": "Billing PO",
+    "due": "2027-08-13",
+    "status": "Open"
+   },
+   "sort": 8
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-09",
+    "type": "Risk",
+    "description": "Resistance to change / fear of losing control of work",
+    "area": "Adoption",
+    "probability": "Med",
+    "impact": "High",
+    "mitigation_response": "Comms Plan, manager toolkit, key-user network (Rules 2 & 3)",
+    "owner": "Change Lead",
+    "due": "2027-08-31",
+    "status": "Open"
+   },
+   "sort": 9
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "R-10",
+    "type": "Risk",
+    "description": "Cutover over holiday weekend (30-Aug National Heroes Day)",
+    "area": "Schedule / Cost",
+    "probability": "Med",
+    "impact": "Med",
+    "mitigation_response": "Staffing plan & holiday pay approved; or move Go-Live anchor",
+    "owner": "PM",
+    "due": "2027-08-13",
+    "status": "Open"
+   },
+   "sort": 10
+  },
+  {
+   "register": "raid",
+   "domain_id": null,
+   "data": {
+    "id": "A-01",
+    "type": "Assumption",
+    "description": "AWB SOW S343096 phases & 90-day hypercare apply as written, re-dated to this plan",
+    "area": "",
+    "probability": "",
+    "impact": "",
+    "mitigation_response": "Validate at contract",
+    "owner": "CIO",
+    "due": "2026-10-30",
+    "status": "Open"
+   },
+   "sort": 11
+  },
+  {
+   "register": "raid",
+   "domain_id": "AF",
+   "data": {
+    "id": "A-02",
+    "type": "Assumption",
+    "description": "Go-Live on 1-Sep-2027 with August closed in In4 afterwards",
+    "area": "",
+    "probability": "",
+    "impact": "",
+    "mitigation_response": "Confirm with CFO",
+    "owner": "CFO",
+    "due": "2026-11-06",
+    "status": "Open"
+   },
+   "sort": 12
+  },
+  {
+   "register": "raid",
+   "domain_id": "IT",
+   "data": {
+    "id": "D-01",
+    "type": "Dependency",
+    "description": "Hosting & licenses ready before environment provisioning (18-Jan-2027)",
+    "area": "",
+    "probability": "",
+    "impact": "",
+    "mitigation_response": "Task 0.5",
+    "owner": "IT & Data Lead",
+    "due": "2026-11-13",
+    "status": "Open"
+   },
+   "sort": 13
+  },
+  {
+   "register": "raid",
+   "domain_id": "AF",
+   "data": {
+    "id": "D-02",
+    "type": "Dependency",
+    "description": "Bank file formats / payment channel specs from banks",
+    "area": "",
+    "probability": "",
+    "impact": "",
+    "mitigation_response": "Request in Feb 2027",
+    "owner": "Finance PO",
+    "due": "2027-03-31",
+    "status": "Open"
+   },
+   "sort": 14
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "SR",
+   "data": {
+    "id": "SR-01",
+    "domain": "Sales & Reservation",
+    "process_workflow": "Unit reservation to Contract to Sell (CTS)",
+    "priority": "Focus area",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 0
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "SR",
+   "data": {
+    "id": "SR-02",
+    "domain": "Sales & Reservation",
+    "process_workflow": "Reservation cancellation & refund / forfeiture",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 1
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "SR",
+   "data": {
+    "id": "SR-03",
+    "domain": "Sales & Reservation",
+    "process_workflow": "Account reactivation / restructuring",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 2
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "SR",
+   "data": {
+    "id": "SR-04",
+    "domain": "Sales & Reservation",
+    "process_workflow": "Broker/agent commission computation & release",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 3
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "BC",
+   "data": {
+    "id": "BC-01",
+    "domain": "Billing & Collection",
+    "process_workflow": "Billing generation & Statement of Account",
+    "priority": "Focus area",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 4
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "BC",
+   "data": {
+    "id": "BC-02",
+    "domain": "Billing & Collection",
+    "process_workflow": "PDC encoding, deposit & bounced-check handling",
+    "priority": "Focus area",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 5
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "BC",
+   "data": {
+    "id": "BC-03",
+    "domain": "Billing & Collection",
+    "process_workflow": "Amortization schedule & recalculation",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 6
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "BC",
+   "data": {
+    "id": "BC-04",
+    "domain": "Billing & Collection",
+    "process_workflow": "Penalties, dunning & collection letters",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 7
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "BC",
+   "data": {
+    "id": "BC-05",
+    "domain": "Billing & Collection",
+    "process_workflow": "Loan take-out (bank / Pag-IBIG) & balance transfer",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 8
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "AF",
+   "data": {
+    "id": "AF-01",
+    "domain": "Accounting & Finance",
+    "process_workflow": "Project costing & cost allocation",
+    "priority": "Focus area",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 9
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "AF",
+   "data": {
+    "id": "AF-02",
+    "domain": "Accounting & Finance",
+    "process_workflow": "AP: purchase to payment",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 10
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "AF",
+   "data": {
+    "id": "AF-03",
+    "domain": "Accounting & Finance",
+    "process_workflow": "AR & revenue recognition",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 11
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "AF",
+   "data": {
+    "id": "AF-04",
+    "domain": "Accounting & Finance",
+    "process_workflow": "Bank reconciliation",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 12
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "AF",
+   "data": {
+    "id": "AF-05",
+    "domain": "Accounting & Finance",
+    "process_workflow": "Month-end close & BIR filings",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 13
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IP",
+   "data": {
+    "id": "IP-01",
+    "domain": "Inventory & Project Mgmt",
+    "process_workflow": "Unit master maintenance",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 14
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IP",
+   "data": {
+    "id": "IP-02",
+    "domain": "Inventory & Project Mgmt",
+    "process_workflow": "Unit reclassification",
+    "priority": "Focus area",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 15
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IP",
+   "data": {
+    "id": "IP-03",
+    "domain": "Inventory & Project Mgmt",
+    "process_workflow": "Construction progress tracking per unit",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 16
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IP",
+   "data": {
+    "id": "IP-04",
+    "domain": "Inventory & Project Mgmt",
+    "process_workflow": "Unit turnover / handover to buyer",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 17
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IP",
+   "data": {
+    "id": "IP-05",
+    "domain": "Inventory & Project Mgmt",
+    "process_workflow": "Land acquisition",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 18
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IT",
+   "data": {
+    "id": "IT-01",
+    "domain": "IT & Data",
+    "process_workflow": "User access & role management",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 19
+  },
+  {
+   "register": "process_inventory",
+   "domain_id": "IT",
+   "data": {
+    "id": "IT-02",
+    "domain": "IT & Data",
+    "process_workflow": "In4 data extraction & reporting requests",
+    "priority": "",
+    "process_owner": "[PO]",
+    "monthly_volume": "",
+    "map_link": "",
+    "status": "Not Started"
+   },
+   "sort": 20
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Master",
+    "data_object": "Chart of accounts & mapping In4 → Odoo",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate (re-mapped)",
+    "scope_history_depth": "n/a",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 0
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "IP",
+   "data": {
+    "category": "Master",
+    "data_object": "Projects / phases / buildings",
+    "owner_domain": "Inventory & Project Mgmt",
+    "decision": "Migrate",
+    "scope_history_depth": "All active",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 1
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "IP",
+   "data": {
+    "category": "Master",
+    "data_object": "Unit master (lot/unit, specs, status, price)",
+    "owner_domain": "Inventory & Project Mgmt",
+    "decision": "Migrate",
+    "scope_history_depth": "All",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 2
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "SR",
+   "data": {
+    "category": "Master",
+    "data_object": "Price lists & payment schemes",
+    "owner_domain": "Sales & Reservation",
+    "decision": "Migrate",
+    "scope_history_depth": "Active",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 3
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "SR",
+   "data": {
+    "category": "Master",
+    "data_object": "Buyers / customers (incl. co-buyers)",
+    "owner_domain": "Sales & Reservation",
+    "decision": "Migrate",
+    "scope_history_depth": "Active + fully paid (TBD)",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 4
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "SR",
+   "data": {
+    "category": "Master",
+    "data_object": "Brokers / agents & commission schemes",
+    "owner_domain": "Sales & Reservation",
+    "decision": "Migrate",
+    "scope_history_depth": "Active",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 5
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Master",
+    "data_object": "Vendors / suppliers / contractors",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate",
+    "scope_history_depth": "Active (last 24 months)",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 6
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "IT",
+   "data": {
+    "category": "Master",
+    "data_object": "Employees / users (touchpoints only)",
+    "owner_domain": "IT & Data",
+    "decision": "Migrate",
+    "scope_history_depth": "Active",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 7
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "IP",
+   "data": {
+    "category": "Master",
+    "data_object": "Land acquisition records",
+    "owner_domain": "Inventory & Project Mgmt",
+    "decision": "Migrate",
+    "scope_history_depth": "Open",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 8
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "SR",
+   "data": {
+    "category": "Open item",
+    "data_object": "Reservations & Contracts to Sell (open)",
+    "owner_domain": "Sales & Reservation",
+    "decision": "Migrate",
+    "scope_history_depth": "Open",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 9
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "BC",
+   "data": {
+    "category": "Open item",
+    "data_object": "Amortization schedules (remaining + paid history)",
+    "owner_domain": "Billing & Collection",
+    "decision": "Migrate",
+    "scope_history_depth": "Open accounts; history TBD",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 10
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "BC",
+   "data": {
+    "category": "Open item",
+    "data_object": "Open PDCs (undeposited)",
+    "owner_domain": "Billing & Collection",
+    "decision": "Migrate",
+    "scope_history_depth": "Open",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 11
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "BC",
+   "data": {
+    "category": "Open item",
+    "data_object": "Buyer AR balances & penalties",
+    "owner_domain": "Billing & Collection",
+    "decision": "Migrate",
+    "scope_history_depth": "Open",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 12
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Open item",
+    "data_object": "Open AP / vendor bills",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate",
+    "scope_history_depth": "Open",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 13
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Open item",
+    "data_object": "Open purchase orders / contracts",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate",
+    "scope_history_depth": "Open",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 14
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Balance",
+    "data_object": "GL opening balances (trial balance at cutover)",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate",
+    "scope_history_depth": "As of 31-Aug-2027",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 15
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Balance",
+    "data_object": "Project cost-to-date by project/phase",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate",
+    "scope_history_depth": "As of cutover",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 16
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "Balance",
+    "data_object": "Fixed assets register",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Migrate",
+    "scope_history_depth": "Active",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 17
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "BC",
+   "data": {
+    "category": "History",
+    "data_object": "Closed/cancelled accounts & paid history",
+    "owner_domain": "Billing & Collection",
+    "decision": "Archive (read-only In4)",
+    "scope_history_depth": "n/a",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 18
+  },
+  {
+   "register": "data_migration",
+   "domain_id": "AF",
+   "data": {
+    "category": "History",
+    "data_object": "Historical GL transactions",
+    "owner_domain": "Accounting & Finance",
+    "decision": "Archive (read-only In4)",
+    "scope_history_depth": "n/a",
+    "in4_record_count": "",
+    "cleansing_pct_done": "",
+    "mock_1_result": "",
+    "mock_2_result": "",
+    "mock_3_result": "",
+    "sign_off_status": "Not Started"
+   },
+   "sort": 19
+  },
+  {
+   "register": "uat",
+   "domain_id": "SR",
+   "data": {
+    "test_id": "UAT-01",
+    "process_id": "SR-01",
+    "scenario": "Reserve a unit, collect reservation fee, convert to CTS",
+    "preconditions_test_data": "Unit available; buyer new",
+    "steps": "1) Create buyer 2) Reserve unit 3) Post reservation fee 4) Generate CTS",
+    "expected_result": "Unit status = Reserved→Sold; receipt issued; CTS generated",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 0
+  },
+  {
+   "register": "uat",
+   "domain_id": "SR",
+   "data": {
+    "test_id": "UAT-02",
+    "process_id": "SR-02",
+    "scenario": "Cancel reservation with forfeiture",
+    "preconditions_test_data": "Reserved unit",
+    "steps": "1) Cancel 2) Apply forfeiture policy 3) Release unit",
+    "expected_result": "Unit back to Available; forfeiture posted to correct GL",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 1
+  },
+  {
+   "register": "uat",
+   "domain_id": "SR",
+   "data": {
+    "test_id": "UAT-03",
+    "process_id": "SR-03",
+    "scenario": "Reactivate a cancelled account",
+    "preconditions_test_data": "Cancelled account",
+    "steps": "1) Reactivate 2) Rebuild schedule",
+    "expected_result": "Balance & schedule correct; audit trail kept",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 2
+  },
+  {
+   "register": "uat",
+   "domain_id": "BC",
+   "data": {
+    "test_id": "UAT-04",
+    "process_id": "BC-03",
+    "scenario": "Restructure payment terms & recalculate amortization",
+    "preconditions_test_data": "Active account mid-term",
+    "steps": "1) Change term/rate 2) Recalculate",
+    "expected_result": "New schedule matches approved computation to the peso",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 3
+  },
+  {
+   "register": "uat",
+   "domain_id": "BC",
+   "data": {
+    "test_id": "UAT-05",
+    "process_id": "BC-01",
+    "scenario": "Monthly billing run & SOA",
+    "preconditions_test_data": "Active accounts",
+    "steps": "1) Run billing 2) Print/email SOA",
+    "expected_result": "Amounts match parallel run; SOA format approved",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 4
+  },
+  {
+   "register": "uat",
+   "domain_id": "BC",
+   "data": {
+    "test_id": "UAT-06",
+    "process_id": "BC-02",
+    "scenario": "Encode PDCs, deposit, handle bounced check",
+    "preconditions_test_data": "Buyer with PDCs",
+    "steps": "1) Encode 12 PDCs 2) Deposit 3) Mark one bounced",
+    "expected_result": "Bounced PDC reverses payment, applies penalty, alerts collector",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 5
+  },
+  {
+   "register": "uat",
+   "domain_id": "BC",
+   "data": {
+    "test_id": "UAT-07",
+    "process_id": "BC-04",
+    "scenario": "Penalty and dunning letter",
+    "preconditions_test_data": "Overdue account",
+    "steps": "1) Age account 2) Run dunning",
+    "expected_result": "Correct penalty; correct letter level",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 6
+  },
+  {
+   "register": "uat",
+   "domain_id": "BC",
+   "data": {
+    "test_id": "UAT-08",
+    "process_id": "BC-05",
+    "scenario": "Bank / Pag-IBIG loan take-out",
+    "preconditions_test_data": "Account at take-out stage",
+    "steps": "1) Record loan proceeds 2) Close buyer AR",
+    "expected_result": "Buyer AR cleared; bank receivable posted",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 7
+  },
+  {
+   "register": "uat",
+   "domain_id": "SR",
+   "data": {
+    "test_id": "UAT-09",
+    "process_id": "SR-04",
+    "scenario": "Broker commission computation & release",
+    "preconditions_test_data": "Sold unit with broker",
+    "steps": "1) Trigger commission 2) Approve 3) Pay",
+    "expected_result": "Commission per scheme; withholding tax applied",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 8
+  },
+  {
+   "register": "uat",
+   "domain_id": "IP",
+   "data": {
+    "test_id": "UAT-10",
+    "process_id": "IP-02",
+    "scenario": "Unit reclassification",
+    "preconditions_test_data": "Unit in inventory",
+    "steps": "1) Reclassify type/price",
+    "expected_result": "Inventory & price updated; history retained",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 9
+  },
+  {
+   "register": "uat",
+   "domain_id": "IP",
+   "data": {
+    "test_id": "UAT-11",
+    "process_id": "IP-03",
+    "scenario": "Record construction progress per unit",
+    "preconditions_test_data": "Unit under construction",
+    "steps": "1) Update % completion",
+    "expected_result": "Progress visible per unit; feeds revenue recognition if applicable",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 10
+  },
+  {
+   "register": "uat",
+   "domain_id": "IP",
+   "data": {
+    "test_id": "UAT-12",
+    "process_id": "IP-04",
+    "scenario": "Unit turnover / handover",
+    "preconditions_test_data": "Fully paid or bank-financed unit",
+    "steps": "1) Complete checklist 2) Turn over",
+    "expected_result": "Status Turned Over; documents tracked",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 11
+  },
+  {
+   "register": "uat",
+   "domain_id": "AF",
+   "data": {
+    "test_id": "UAT-13",
+    "process_id": "AF-02",
+    "scenario": "Purchase to payment with EWT",
+    "preconditions_test_data": "Approved PO",
+    "steps": "1) Receive 2) Bill 3) Pay with 2307",
+    "expected_result": "Correct EWT; BIR 2307 generated",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 12
+  },
+  {
+   "register": "uat",
+   "domain_id": "AF",
+   "data": {
+    "test_id": "UAT-14",
+    "process_id": "AF-04",
+    "scenario": "Bank reconciliation",
+    "preconditions_test_data": "Bank statement loaded",
+    "steps": "1) Import 2) Match 3) Reconcile",
+    "expected_result": "Reconciled balance = bank",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 13
+  },
+  {
+   "register": "uat",
+   "domain_id": "AF",
+   "data": {
+    "test_id": "UAT-15",
+    "process_id": "AF-01",
+    "scenario": "Project cost allocation & report",
+    "preconditions_test_data": "Costs posted",
+    "steps": "1) Allocate 2) Run project cost report",
+    "expected_result": "Ties to GL",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 14
+  },
+  {
+   "register": "uat",
+   "domain_id": "AF",
+   "data": {
+    "test_id": "UAT-16",
+    "process_id": "AF-05",
+    "scenario": "Month-end close & BIR reports",
+    "preconditions_test_data": "Month's transactions",
+    "steps": "1) Close 2) Generate required BIR/DHSUD reports",
+    "expected_result": "Reports match manual computation; formats acceptable",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 15
+  },
+  {
+   "register": "uat",
+   "domain_id": "IT",
+   "data": {
+    "test_id": "UAT-17",
+    "process_id": "IT-01",
+    "scenario": "Role-based access",
+    "preconditions_test_data": "Test users per role",
+    "steps": "1) Try out-of-role actions",
+    "expected_result": "Access denied where expected; SoD respected",
+    "actual_result": "",
+    "round_1": "",
+    "round_2": "",
+    "tester": "",
+    "date": "",
+    "defect_id": ""
+   },
+   "sort": 16
+  },
+  {
+   "register": "training",
+   "domain_id": "SR",
+   "data": {
+    "module_course": "Sales & Reservation",
+    "audience": "Sales staff, sales admin",
+    "content": "Reservation → CTS, cancellations, reactivation",
+    "trainer": "Key User (Sales)",
+    "format": "Classroom + sandbox",
+    "days": "2",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Quiz ≥80% + hands-on task"
+   },
+   "sort": 0
+  },
+  {
+   "register": "training",
+   "domain_id": "SR",
+   "data": {
+    "module_course": "Brokers / agents (if portal used)",
+    "audience": "External brokers",
+    "content": "Reservation requests, commission status",
+    "trainer": "Sales Admin",
+    "format": "Short session / video",
+    "days": "1",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Walk-through"
+   },
+   "sort": 1
+  },
+  {
+   "register": "training",
+   "domain_id": "BC",
+   "data": {
+    "module_course": "Billing & Collection",
+    "audience": "Billing, collection, cashiers",
+    "content": "Billing run, SOA, PDCs, penalties, dunning",
+    "trainer": "Key User (Billing)",
+    "format": "Classroom + sandbox",
+    "days": "3",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Quiz ≥80% + hands-on"
+   },
+   "sort": 2
+  },
+  {
+   "register": "training",
+   "domain_id": "AF",
+   "data": {
+    "module_course": "Accounting & Finance",
+    "audience": "Accounting, AP/AR, treasury",
+    "content": "AP, AR, bank recon, project costing, close, BIR reports",
+    "trainer": "Key User (Finance)",
+    "format": "Classroom + sandbox",
+    "days": "4",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Quiz ≥80% + mock close"
+   },
+   "sort": 3
+  },
+  {
+   "register": "training",
+   "domain_id": "IP",
+   "data": {
+    "module_course": "Inventory & Project Mgmt",
+    "audience": "Project dev't, engineering, turnover",
+    "content": "Unit master, reclassification, construction progress, handover",
+    "trainer": "Key User (Projects)",
+    "format": "Classroom + sandbox",
+    "days": "2",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Hands-on task"
+   },
+   "sort": 4
+  },
+  {
+   "register": "training",
+   "domain_id": "IP",
+   "data": {
+    "module_course": "Land Acquisition",
+    "audience": "Land acquisition team",
+    "content": "Land records & documents",
+    "trainer": "Key User (Projects)",
+    "format": "Classroom",
+    "days": "1",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Hands-on task"
+   },
+   "sort": 5
+  },
+  {
+   "register": "training",
+   "domain_id": null,
+   "data": {
+    "module_course": "CRM",
+    "audience": "Sales & marketing",
+    "content": "Leads, pipeline, activities",
+    "trainer": "Key User (Sales)",
+    "format": "Classroom",
+    "days": "1",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Hands-on task"
+   },
+   "sort": 6
+  },
+  {
+   "register": "training",
+   "domain_id": null,
+   "data": {
+    "module_course": "Management reporting",
+    "audience": "Managers, executives",
+    "content": "Dashboards, approvals, key reports",
+    "trainer": "PM / Key Users",
+    "format": "Short session",
+    "days": "1",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "—"
+   },
+   "sort": 7
+  },
+  {
+   "register": "training",
+   "domain_id": "IT",
+   "data": {
+    "module_course": "System administration",
+    "audience": "IT",
+    "content": "Users, roles, backups, upgrades, support process",
+    "trainer": "AWB",
+    "format": "Workshop",
+    "days": "3",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "Handover checklist"
+   },
+   "sort": 8
+  },
+  {
+   "register": "training",
+   "domain_id": null,
+   "data": {
+    "module_course": "Hypercare refreshers",
+    "audience": "All users",
+    "content": "Top 10 support tickets, tips",
+    "trainer": "Key Users",
+    "format": "Drop-in clinics",
+    "days": "1",
+    "session_dates": "",
+    "no_to_train": "",
+    "no_passed": "",
+    "assessment": "—"
+   },
+   "sort": 9
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-21 days",
+    "step": "Send cutover notice to all staff; confirm cutover team & contact list",
+    "owner": "PM",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 0
+  },
+  {
+   "register": "cutover",
+   "domain_id": "IT",
+   "data": {
+    "when": "T-14 days",
+    "step": "Freeze master data changes except via controlled request",
+    "owner": "IT & Data Lead",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 1
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-10 days",
+    "step": "Confirm Mock 3 timings fit window; finalize runbook",
+    "owner": "PM + AWB PM",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 2
+  },
+  {
+   "register": "cutover",
+   "domain_id": "SR",
+   "data": {
+    "when": "T-7 days",
+    "step": "Stop new reservation types / promos that need new setup",
+    "owner": "Sales PO",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 3
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-7 days",
+    "step": "Production environment ready; users & roles loaded; printers/forms tested",
+    "owner": "IT + AWB",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 4
+  },
+  {
+   "register": "cutover",
+   "domain_id": "IT",
+   "data": {
+    "when": "T-5 days",
+    "step": "Final extract of static masters (COA, projects, vendors) & load to Prod",
+    "owner": "AWB + IT & Data",
+    "planned_duration": "",
+    "notes_rollback": "Keep In4 as system of record until Go",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 5
+  },
+  {
+   "register": "cutover",
+   "domain_id": "BC",
+   "data": {
+    "when": "T-3 days",
+    "step": "Last PDC deposit batch in In4; list all undeposited PDCs",
+    "owner": "Billing PO",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 6
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-2 days (Fri 27-Aug)",
+    "step": "Transaction freeze in In4 at 5:00 PM; users log out",
+    "owner": "All departments",
+    "planned_duration": "",
+    "notes_rollback": "Record exact freeze time",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 7
+  },
+  {
+   "register": "cutover",
+   "domain_id": "AF",
+   "data": {
+    "when": "T-2 days",
+    "step": "Run final In4 reports: TB, AR aging, AP aging, unit status, open PDCs, open CTS",
+    "owner": "Finance + IT & Data",
+    "planned_duration": "",
+    "notes_rollback": "Signed copies = reconciliation baseline",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 8
+  },
+  {
+   "register": "cutover",
+   "domain_id": "IT",
+   "data": {
+    "when": "T-2 → T-1",
+    "step": "Extract & transform open items (reservations, CTS, schedules, PDCs, AR, AP)",
+    "owner": "IT & Data + AWB",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 9
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-1 (Sat–Tue)",
+    "step": "Load open items & balances into Odoo Prod",
+    "owner": "AWB",
+    "planned_duration": "",
+    "notes_rollback": "Estimated hours from Mock 3",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 10
+  },
+  {
+   "register": "cutover",
+   "domain_id": "AF",
+   "data": {
+    "when": "T-1",
+    "step": "Reconcile: record counts, AR/AP subledger totals, unit counts, GL balances",
+    "owner": "Finance + POs",
+    "planned_duration": "",
+    "notes_rollback": "Variance must be zero or explained",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 11
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-1",
+    "step": "Smoke test top 10 transactions in Prod (then reverse)",
+    "owner": "Key Users",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 12
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-1 (Tue 31-Aug, 6 PM)",
+    "step": "Final Go decision call; sign Go-Live Acceptance",
+    "owner": "Sponsor + SteerCo",
+    "planned_duration": "",
+    "notes_rollback": "Rollback = continue in In4 (still intact)",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 13
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T-0 (Wed 1-Sep)",
+    "step": "GO-LIVE: open Odoo to users; support desk & floor walkers active",
+    "owner": "CIO / IT",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 14
+  },
+  {
+   "register": "cutover",
+   "domain_id": "AF",
+   "data": {
+    "when": "T+1 → T+10",
+    "step": "Close August in In4; true-up opening balances in Odoo",
+    "owner": "Finance",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 15
+  },
+  {
+   "register": "cutover",
+   "domain_id": null,
+   "data": {
+    "when": "T+1 → T+14",
+    "step": "Daily hypercare triage",
+    "owner": "IT + AWB",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 16
+  },
+  {
+   "register": "cutover",
+   "domain_id": "AF",
+   "data": {
+    "when": "T+30",
+    "step": "First month-end close in Odoo",
+    "owner": "Finance",
+    "planned_duration": "",
+    "notes_rollback": "",
+    "verified_by": "",
+    "actual_start": "",
+    "actual_end": "",
+    "status": "Not Started"
+   },
+   "sort": 17
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Business readiness",
+    "criterion": "UAT signed off by all Process Owners (≥95% pass, no Sev 1)",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 0
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Business readiness",
+    "criterion": "Parallel billing/amortization run reconciled to In4",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 1
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Business readiness",
+    "criterion": "SOPs published; process changes communicated to all affected staff",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 2
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Business readiness",
+    "criterion": "Buyers/brokers/banks notified of any external changes (SOA, receipts, payment channels)",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 3
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "People",
+    "criterion": "≥90% of end users trained and passed assessment",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 4
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "People",
+    "criterion": "Key users/floor walkers assigned per department for first 2 weeks",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 5
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "People",
+    "criterion": "Cutover staffing & holiday coverage (30-Aug) approved",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 6
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Data",
+    "criterion": "Mock 3 completed within cutover window",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 7
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Data",
+    "criterion": "Mock 3 reconciliation: zero or explained variances; Finance sign-off",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 8
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Data",
+    "criterion": "Data cleansing sign-off from Department Heads",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 9
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Technical",
+    "criterion": "Production environment, backups & monitoring verified",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 10
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Technical",
+    "criterion": "User accounts & roles provisioned and SoD-reviewed",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 11
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Technical",
+    "criterion": "Integrations (banks, payment channels) tested end to end",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 12
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Technical",
+    "criterion": "No open Severity 1 defects; Sev 2 have agreed workarounds",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 13
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Compliance",
+    "criterion": "Required BIR/DHSUD/SEC reports produce correct output",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 14
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Compliance",
+    "criterion": "Official receipts / invoices format & numbering compliant",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 15
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Support",
+    "criterion": "Hypercare support model, escalation path & ticketing ready",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 16
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Support",
+    "criterion": "In4 read-only access retained for history",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 17
+  },
+  {
+   "register": "go_no_go",
+   "domain_id": null,
+   "data": {
+    "area": "Cutover",
+    "criterion": "Runbook approved; rollback criteria agreed",
+    "owner": "",
+    "rag": "",
+    "evidence_link": "",
+    "comments": ""
+   },
+   "sort": 18
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 0,
+   "data": {
+    "task_code": "M-CON",
+    "criteria": "Signed contract; SOW deliverables, acceptance criteria, billing milestones and named AWB team agreed; Sept-2027 go-live confirmed in writing.",
+    "approver": "CIO",
+    "evidence": "Signed contract & SOW",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 1,
+   "data": {
+    "task_code": "M-CHR",
+    "criteria": "Charter states objectives, scope, budget incl. contingency, governance, key risks; Sponsor signs.",
+    "approver": "SteerCo",
+    "evidence": "Project Charter",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 2,
+   "data": {
+    "task_code": "M-TH",
+    "criteria": "All staff briefed on why, timeline and the 3 rules; Q&A captured. Held 25-Sep-2026.",
+    "approver": "Sponsor / CIO",
+    "evidence": "Town hall deck, Q&A log",
+    "status": "Complete",
+    "actual_date": "2026-09-25",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 3,
+   "data": {
+    "task_code": "M-ROS",
+    "criteria": "All 5 Process Owners + backups named with ≥50% time allocation approved by their managers; RACI and decision matrix approved.",
+    "approver": "PM",
+    "evidence": "Team Roster, RACI",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 4,
+   "data": {
+    "task_code": "M-P2",
+    "criteria": "Process Owners oriented on templates; mapping workshop calendar issued per domain.",
+    "approver": "PM",
+    "evidence": "Workshop calendar",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 5,
+   "data": {
+    "task_code": "M-ASIS",
+    "criteria": "Top 5–7 workflows mapped per domain and validated; Pain Point Log and Shadow IT Register complete.",
+    "approver": "PM",
+    "evidence": "Process maps, logs",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 6,
+   "data": {
+    "task_code": "M-DOSD",
+    "criteria": "Dossier v1 has all 5 components; SteerCo agrees remaining gaps and the Nov–Dec cleansing priorities.",
+    "approver": "SteerCo",
+    "evidence": "Dossier v1",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 7,
+   "data": {
+    "task_code": "M-DOS",
+    "criteria": "Dossier complete with all 5 components; sent to AWB ≥ 5 working days before BRD.",
+    "approver": "PM",
+    "evidence": "Pre-BRD Dossier",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 8,
+   "data": {
+    "task_code": "M-RDY",
+    "criteria": "Checklist deliverables 1–8 done; cleansing first-pass signed by Dept. Heads; BRD schedule & attendance confirmed.",
+    "approver": "SteerCo",
+    "evidence": "Pre-BRD checklist",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 9,
+   "data": {
+    "task_code": "M-KO",
+    "criteria": "Kickoff held; project plan, governance and communication channels agreed with AWB.",
+    "approver": "Sponsor / AWB",
+    "evidence": "Kickoff deck, minutes",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 10,
+   "data": {
+    "task_code": "M-BRD",
+    "criteria": "BRD reviewed in 2 rounds; every requirement traced to a process; gaps classified (config / custom / out of scope); signed by POs and SteerCo.",
+    "approver": "SteerCo",
+    "evidence": "Signed BRD (Sign-off Forms)",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 11,
+   "data": {
+    "task_code": "M-CRP1",
+    "criteria": "Wave 1 processes demonstrated end to end on PHI data; open issues logged and owned.",
+    "approver": "Process Owners",
+    "evidence": "CRP1 results",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 12,
+   "data": {
+    "task_code": "M-FRZ",
+    "criteria": "All Wave 1+2 config complete; approved CRs only after this date; CRP2 accepted.",
+    "approver": "SteerCo",
+    "evidence": "CRP2 results, CR log",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 13,
+   "data": {
+    "task_code": "M-SIT",
+    "criteria": "All test cases executed; no open Severity 1/2 defects; integrations pass.",
+    "approver": "PM",
+    "evidence": "SIT report, Defect Log",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 14,
+   "data": {
+    "task_code": "M-UAT",
+    "criteria": "≥95% UAT scripts passed; no open Sev 1, Sev 2 with agreed workaround; Mock 2 data reconciled; POs sign.",
+    "approver": "Process Owners / SteerCo",
+    "evidence": "UAT Sign-off form",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 15,
+   "data": {
+    "task_code": "M-GNG",
+    "criteria": "Go-No-Go checklist all green or accepted; Mock 3 timed within cutover window; users trained; support ready.",
+    "approver": "SteerCo",
+    "evidence": "Go-No-Go checklist",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 16,
+   "data": {
+    "task_code": "M-GL",
+    "criteria": "Production live; opening balances loaded; users transacting.",
+    "approver": "Sponsor",
+    "evidence": "Go-Live Acceptance form",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 17,
+   "data": {
+    "task_code": "M-MEC",
+    "criteria": "September books closed in Odoo within agreed close calendar; TB reconciled.",
+    "approver": "CFO",
+    "evidence": "Close checklist, TB",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  },
+  {
+   "register": "milestones",
+   "domain_id": null,
+   "sort": 18,
+   "data": {
+    "task_code": "M-HC",
+    "criteria": "Hypercare exit criteria met: no Sev 1, backlog agreed, BAU support model live, documentation handed over.",
+    "approver": "SteerCo",
+    "evidence": "Project acceptance",
+    "status": "Not Started",
+    "actual_date": "",
+    "comments": ""
+   }
+  }
+ ]
+}

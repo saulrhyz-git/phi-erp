@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { assertCanEditProcess, requireRole } from '../lib/auth.js';
+import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
@@ -40,7 +40,7 @@ async function getStep(id) {
 
 r.post('/', async (req, res) => {
   const b = parse(StepBody, req.body);
-  assertCanEditProcess(req.user, b.process_id);
+  assertCan(req.user, 'matrix', 'add', { processId: b.process_id });
   const row = await tx(async (c) => {
     const { rows } = await c.query(
       `INSERT INTO matrix_steps(ref,process_id,step,trigger_event,data_fields,handoff,exceptions,fit,sort,updated_by)
@@ -54,7 +54,7 @@ r.post('/', async (req, res) => {
 
 r.put('/:id', async (req, res) => {
   const step = await getStep(req.params.id);
-  assertCanEditProcess(req.user, step.process_id);
+  assertCan(req.user, 'matrix', 'edit', { processId: step.process_id });
   const b = parse(StepBody.omit({ process_id: true }).partial(), req.body);
   const { sets, values } = buildUpdate(b);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });
@@ -68,7 +68,7 @@ r.put('/:id', async (req, res) => {
 
 r.post('/:id/validate', async (req, res) => {
   const step = await getStep(req.params.id);
-  assertCanEditProcess(req.user, step.process_id);
+  assertCan(req.user, 'matrix', 'edit', { processId: step.process_id });
   const b = parse(z.object({
     status: z.enum(['pending', 'approved', 'changes', 'rework']),
     comment: z.string().trim().max(4000).default(''),
@@ -85,8 +85,9 @@ r.post('/:id/validate', async (req, res) => {
   res.json({ ok: true });
 });
 
-r.delete('/:id', requireRole('admin'), async (req, res) => {
+r.delete('/:id', async (req, res) => {
   const step = await getStep(req.params.id);
+  assertCan(req.user, 'matrix', 'delete', { processId: step.process_id });
   await tx(async (c) => {
     await c.query('DELETE FROM matrix_steps WHERE id=$1', [step.id]);
     await logActivity(c, req.user.id, 'deleted', 'step', step.ref, step.step);

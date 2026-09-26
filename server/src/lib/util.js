@@ -31,3 +31,14 @@ export function buildUpdate(fields, startIndex = 1, jsonFields = []) {
   }
   return { sets, values };
 }
+
+// Writes an application event (sign-in, export, download, denied access…) to the immutable audit log.
+// Data changes are captured automatically by database triggers; use this only for non-data events.
+export async function auditEvent(action, { table = null, recordId = null, summary = '', user, ip } = {}) {
+  const { currentContext, pool } = await import('../db/pool.js');
+  const ctx = currentContext() || {};
+  const u = user ?? ctx.user ?? null;
+  await pool.query(
+    `INSERT INTO audit_log(user_id,user_name,user_email,ip,action,table_name,record_id,summary) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [u?.id ?? null, u?.name ?? null, u?.email ?? null, ip ?? ctx.ip ?? null, action, table, recordId == null ? null : String(recordId), String(summary).slice(0, 1000)]);
+}

@@ -10,7 +10,8 @@ import { Comments, ErrorNote, Loading, SheetHead } from '../components/ui.jsx';
 
 export default function DiagramView() {
   const { id } = useParams();
-  const { isEditor } = useAuth();
+  const { can } = useAuth();
+  const isEditor = can('diagrams', 'edit');
   const { data, error, loading, reload } = useApi(`/diagrams/${id}`);
   const container = useRef(null);
   const instance = useRef(null);

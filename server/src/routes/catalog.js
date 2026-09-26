@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { requireRole, assertEditor } from '../lib/auth.js';
+import { assertCan, requireAction, requireView } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
+r.use(requireView('master_data'));
 const t = z.string().trim().max(2000);
 
 // ---- Master data (admin edits) ----
@@ -13,7 +14,7 @@ const MD = z.object({ object: z.string().trim().min(1).max(200), owning_process:
 r.get('/master-data', async (req, res) => {
   res.json((await q('SELECT * FROM master_data ORDER BY sort, id')).rows);
 });
-r.post('/master-data', requireRole('admin'), async (req, res) => {
+r.post('/master-data', requireAction('master_data', 'add'), async (req, res) => {
   const b = parse(MD.partial({ owning_process: true, key_fields: true, odoo_home: true, used_by: true }), req.body);
   const row = await tx(async (c) => {
     const { rows } = await c.query(
@@ -25,7 +26,7 @@ r.post('/master-data', requireRole('admin'), async (req, res) => {
   });
   res.status(201).json(row);
 });
-r.put('/master-data/:id', requireRole('admin'), async (req, res) => {
+r.put('/master-data/:id', requireAction('master_data', 'edit'), async (req, res) => {
   const b = parse(MD.partial(), req.body);
   const { sets, values } = buildUpdate(b);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });
@@ -35,7 +36,7 @@ r.put('/master-data/:id', requireRole('admin'), async (req, res) => {
   await logActivity({ query: q }, req.user.id, 'updated', 'master_data', req.params.id, u.rows[0].object);
   res.json({ ok: true });
 });
-r.delete('/master-data/:id', requireRole('admin'), async (req, res) => {
+r.delete('/master-data/:id', requireAction('master_data', 'delete'), async (req, res) => {
   const u = await q('DELETE FROM master_data WHERE id=$1 RETURNING object', [req.params.id]);
   if (!u.rowCount) throw notFound('Master data object');
   await logActivity({ query: q }, req.user.id, 'deleted', 'master_data', req.params.id, u.rows[0].object);
@@ -49,11 +50,9 @@ r.get('/lot-touchpoints', async (req, res) => {
   res.json((await q('SELECT * FROM lot_touchpoints ORDER BY sort, id')).rows);
 });
 r.put('/lot-touchpoints/:id', async (req, res) => {
-  assertEditor(req.user);
   const b = parse(LT.partial(), req.body);
-  if (req.user.role !== 'admin' && (b.process_label !== undefined || b.effect !== undefined)) {
-    return res.status(403).json({ error: 'Only admins can change the process or effect columns.' });
-  }
+  if (b.process_label !== undefined || b.effect !== undefined) assertCan(req.user, 'master_data', 'edit', {}, 'Your role can only change the Lot fields and vendor responses, not the process or effect columns.');
+  if (b.fields_needed !== undefined || b.vendor_response !== undefined) assertCan(req.user, 'lot_responses', 'edit');
   const { sets, values } = buildUpdate(b);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });
   values.push(req.params.id);
@@ -62,7 +61,7 @@ r.put('/lot-touchpoints/:id', async (req, res) => {
   await logActivity({ query: q }, req.user.id, 'updated', 'lot_touchpoint', req.params.id, u.rows[0].process_label);
   res.json({ ok: true });
 });
-r.post('/lot-touchpoints', requireRole('admin'), async (req, res) => {
+r.post('/lot-touchpoints', requireAction('master_data', 'add'), async (req, res) => {
   const b = parse(LT.partial({ effect: true, fields_needed: true, vendor_response: true }), req.body);
   const { rows } = await q(
     `INSERT INTO lot_touchpoints(process_label,effect,fields_needed,vendor_response,sort)

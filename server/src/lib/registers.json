@@ -1,0 +1,1935 @@
+{
+ "registers": [
+  {
+   "key": "milestones",
+   "label": "Milestones & gates",
+   "title": "Milestones & Stage Gates",
+   "group": "Plan & govern",
+   "description": "Dates come from the Master Schedule. A GATE is a formal SteerCo decision: the next phase does not start until its criteria are met or explicitly waived.",
+   "howTo": [
+    "Planned dates are linked to the schedule and move when the anchor dates change.",
+    "Map AWB billing milestones here once confirmed from SOW S343096 (task 0.2)."
+   ],
+   "columns": [
+    {
+     "key": "task_code",
+     "label": "Schedule ID",
+     "type": "text"
+    },
+    {
+     "key": "criteria",
+     "label": "Exit criteria",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "approver",
+     "label": "Approver",
+     "type": "text"
+    },
+    {
+     "key": "evidence",
+     "label": "Evidence / deliverable",
+     "type": "text"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    },
+    {
+     "key": "actual_date",
+     "label": "Actual date",
+     "type": "date"
+    },
+    {
+     "key": "comments",
+     "label": "Comments",
+     "type": "textarea"
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "task_code",
+   "special": "milestones"
+  },
+  {
+   "key": "governance",
+   "label": "Governance & cadence",
+   "title": "Governance Structure & Meeting Cadence",
+   "group": "Plan & govern",
+   "description": "Who meets, how often, and what they decide.",
+   "howTo": [
+    "Keep the cadence even when things are going well — it is how bad news travels fast (Rule 3).",
+    "Escalation path: Process Owner → PM → Steering Committee → Sponsor. Target: decision within 3 working days."
+   ],
+   "columns": [
+    {
+     "key": "forum",
+     "label": "Forum",
+     "type": "text"
+    },
+    {
+     "key": "chair",
+     "label": "Chair",
+     "type": "text"
+    },
+    {
+     "key": "members",
+     "label": "Members",
+     "type": "textarea"
+    },
+    {
+     "key": "frequency",
+     "label": "Frequency",
+     "type": "text"
+    },
+    {
+     "key": "duration",
+     "label": "Duration",
+     "type": "text"
+    },
+    {
+     "key": "purpose_decisions",
+     "label": "Purpose / decisions",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "inputs",
+     "label": "Inputs",
+     "type": "text"
+    },
+    {
+     "key": "outputs",
+     "label": "Outputs",
+     "type": "text"
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "forum"
+  },
+  {
+   "key": "raci",
+   "label": "RACI matrix",
+   "title": "RACI Matrix",
+   "group": "Plan & govern",
+   "description": "R = Responsible (does the work) · A = Accountable (one per row, final say) · C = Consulted · I = Informed",
+   "howTo": [
+    "Exactly one 'A' per row. Adjust to PHI's structure, then have SteerCo approve (task 1.2)."
+   ],
+   "columns": [
+    {
+     "key": "activity",
+     "label": "Activity",
+     "type": "textarea"
+    },
+    {
+     "key": "sponsor",
+     "label": "Sponsor",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "steerco",
+     "label": "SteerCo",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "cio",
+     "label": "CIO",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "cfo",
+     "label": "CFO",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "phi_pm",
+     "label": "PHI PM",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "process_owners",
+     "label": "Process Owners",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "key_users",
+     "label": "Key Users",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "it_and_data_lead",
+     "label": "IT & Data Lead",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "change_and_comms",
+     "label": "Change & Comms",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "awb_pm",
+     "label": "AWB PM",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    },
+    {
+     "key": "awb_consultants",
+     "label": "AWB Consultants",
+     "type": "select",
+     "options": [
+      "",
+      "R",
+      "A",
+      "C",
+      "I"
+     ],
+     "short": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "activity"
+  },
+  {
+   "key": "roster",
+   "label": "Team roster",
+   "title": "Core Team Roster",
+   "group": "Plan & govern",
+   "description": "Deliverable 1 of the Pre-BRD checklist. Keep current — it is the project's phone book.",
+   "howTo": [
+    "Get each person's manager to approve the time allocation in writing; unbacked allocations are the #1 cause of slippage."
+   ],
+   "columns": [
+    {
+     "key": "role",
+     "label": "Role",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "department",
+     "label": "Department",
+     "type": "text"
+    },
+    {
+     "key": "name",
+     "label": "Name",
+     "type": "text"
+    },
+    {
+     "key": "email",
+     "label": "Email",
+     "type": "text"
+    },
+    {
+     "key": "mobile",
+     "label": "Mobile",
+     "type": "text"
+    },
+    {
+     "key": "time_allocation",
+     "label": "Time allocation",
+     "type": "text"
+    },
+    {
+     "key": "backup",
+     "label": "Backup",
+     "type": "text"
+    },
+    {
+     "key": "scope_notes",
+     "label": "Scope / notes",
+     "type": "textarea",
+     "wide": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "role"
+  },
+  {
+   "key": "comms",
+   "label": "Comms plan",
+   "title": "Communications Plan",
+   "group": "Plan & govern",
+   "description": "Rule 2: over-communicate the why — then do it again.",
+   "howTo": [
+    "Every message answers three questions: what is changing, why, and what it means for me.",
+    "Log every question from town halls and the channel; answer publicly in the FAQ."
+   ],
+   "columns": [
+    {
+     "key": "communication",
+     "label": "Communication",
+     "type": "text"
+    },
+    {
+     "key": "audience",
+     "label": "Audience",
+     "type": "text"
+    },
+    {
+     "key": "key_message",
+     "label": "Key message",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "channel",
+     "label": "Channel",
+     "type": "text"
+    },
+    {
+     "key": "owner",
+     "label": "Owner",
+     "type": "text"
+    },
+    {
+     "key": "when",
+     "label": "When",
+     "type": "text"
+    },
+    {
+     "key": "frequency",
+     "label": "Frequency",
+     "type": "text"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "communication"
+  },
+  {
+   "key": "holidays",
+   "label": "Holidays & blackouts",
+   "title": "PH Holidays & Business Blackouts (planning view)",
+   "group": "Plan & govern",
+   "description": "2027 dates are based on fixed-date holidays and the 2027 Easter date. VERIFY against the official 2027 Proclamation and Cebu local declarations when released.",
+   "howTo": [],
+   "columns": [
+    {
+     "key": "date",
+     "label": "Date",
+     "type": "date"
+    },
+    {
+     "key": "day",
+     "label": "Day",
+     "type": "text"
+    },
+    {
+     "key": "holiday_blackout",
+     "label": "Holiday / blackout",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "type",
+     "label": "Type",
+     "type": "text"
+    },
+    {
+     "key": "project_impact",
+     "label": "Project impact",
+     "type": "textarea",
+     "wide": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "date"
+  },
+  {
+   "key": "raid",
+   "label": "RAID log",
+   "title": "RAID Log — Risks, Assumptions, Issues, Dependencies",
+   "group": "Control",
+   "description": "Pre-populated with the risks this plan already knows about. Review weekly at PMO; top 10 go to SteerCo.",
+   "howTo": [
+    "Anyone can raise an item — raising a real issue early is never blamed (Rule 3).",
+    "Probability & Impact: High / Med / Low. Close items only with evidence."
+   ],
+   "columns": [
+    {
+     "key": "id",
+     "label": "ID",
+     "type": "text"
+    },
+    {
+     "key": "type",
+     "label": "Type",
+     "type": "select",
+     "options": [
+      "",
+      "Risk",
+      "Assumption",
+      "Issue",
+      "Dependency"
+     ]
+    },
+    {
+     "key": "description",
+     "label": "Description",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "area",
+     "label": "Area",
+     "type": "text"
+    },
+    {
+     "key": "probability",
+     "label": "Probability",
+     "type": "select",
+     "options": [
+      "",
+      "High",
+      "Med",
+      "Low"
+     ],
+     "badge": true
+    },
+    {
+     "key": "impact",
+     "label": "Impact",
+     "type": "select",
+     "options": [
+      "",
+      "High",
+      "Med",
+      "Low"
+     ],
+     "badge": true
+    },
+    {
+     "key": "mitigation_response",
+     "label": "Mitigation / response",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "owner",
+     "label": "Owner",
+     "type": "text"
+    },
+    {
+     "key": "due",
+     "label": "Due",
+     "type": "date"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Open",
+      "Monitoring",
+      "Closed"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": "id",
+   "codePrefix": null,
+   "titleField": "type"
+  },
+  {
+   "key": "decisions",
+   "label": "Decision log",
+   "title": "Decision Log",
+   "group": "Control",
+   "description": "Every decision that changes scope, process, data or schedule — so nobody re-litigates it later.",
+   "howTo": [
+    "Record the options considered and why one won. Link to the CR or RAID item if any."
+   ],
+   "columns": [
+    {
+     "key": "id",
+     "label": "ID",
+     "type": "text"
+    },
+    {
+     "key": "date",
+     "label": "Date",
+     "type": "date"
+    },
+    {
+     "key": "decision",
+     "label": "Decision",
+     "type": "textarea",
+     "wide": true,
+     "badge": true
+    },
+    {
+     "key": "options_considered",
+     "label": "Options considered",
+     "type": "textarea"
+    },
+    {
+     "key": "rationale",
+     "label": "Rationale",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "decided_by",
+     "label": "Decided by",
+     "type": "text"
+    },
+    {
+     "key": "impact_scope_time_cost",
+     "label": "Impact (scope/time/cost)",
+     "type": "text"
+    },
+    {
+     "key": "related_cr_raid",
+     "label": "Related CR / RAID",
+     "type": "text"
+    }
+   ],
+   "codeField": "id",
+   "codePrefix": "DEC-",
+   "titleField": "date"
+  },
+  {
+   "key": "change_requests",
+   "label": "Change requests",
+   "title": "Change Request Log & Form",
+   "group": "Control",
+   "description": "Applies from BRD sign-off (scope baseline). One row = one CR.",
+   "howTo": [
+    "1) Requester fills columns A–G.  2) AWB estimates effort (H).  3) CCB decides (I–K).",
+    "Standard first: a CR must show why Odoo standard cannot work (regulatory, contractual or critical business need)."
+   ],
+   "columns": [
+    {
+     "key": "cr_no",
+     "label": "CR #",
+     "type": "text"
+    },
+    {
+     "key": "date_raised",
+     "label": "Date raised",
+     "type": "date"
+    },
+    {
+     "key": "requested_by",
+     "label": "Requested by",
+     "type": "text"
+    },
+    {
+     "key": "process_module",
+     "label": "Process / module",
+     "type": "text"
+    },
+    {
+     "key": "description_of_change",
+     "label": "Description of change",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "business_justification",
+     "label": "Business justification",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "priority",
+     "label": "Priority",
+     "type": "select",
+     "options": [
+      "",
+      "High",
+      "Medium",
+      "Low"
+     ]
+    },
+    {
+     "key": "awb_effort_hrs",
+     "label": "AWB effort (hrs)",
+     "type": "text"
+    },
+    {
+     "key": "schedule_impact",
+     "label": "Schedule impact",
+     "type": "text"
+    },
+    {
+     "key": "ccb_decision",
+     "label": "CCB decision",
+     "type": "select",
+     "options": [
+      "",
+      "Approved",
+      "Rejected",
+      "Deferred",
+      "Pending"
+     ],
+     "badge": true
+    },
+    {
+     "key": "decision_date",
+     "label": "Decision date",
+     "type": "date"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": "cr_no",
+   "codePrefix": "CR-",
+   "titleField": "date_raised"
+  },
+  {
+   "key": "status_reports",
+   "label": "Status reports",
+   "title": "Weekly Status Reports",
+   "group": "Control",
+   "description": "One record per week, filed every Friday by the PM. RAG = Red / Amber / Green.",
+   "howTo": [
+    "Copy last week's report with \"Duplicate\", then update it.",
+    "Top risks come from the RAID log; decisions needed go to the next SteerCo."
+   ],
+   "columns": [
+    {
+     "key": "week_ending",
+     "label": "Week ending",
+     "type": "date"
+    },
+    {
+     "key": "prepared_by",
+     "label": "Prepared by",
+     "type": "text"
+    },
+    {
+     "key": "phase",
+     "label": "Current phase",
+     "type": "text"
+    },
+    {
+     "key": "overall",
+     "label": "Overall",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true,
+     "short": true
+    },
+    {
+     "key": "schedule",
+     "label": "Schedule",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true,
+     "short": true
+    },
+    {
+     "key": "scope",
+     "label": "Scope",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true,
+     "short": true
+    },
+    {
+     "key": "budget",
+     "label": "Budget",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true,
+     "short": true
+    },
+    {
+     "key": "resources",
+     "label": "Resources",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true,
+     "short": true
+    },
+    {
+     "key": "data",
+     "label": "Data readiness",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true,
+     "short": true
+    },
+    {
+     "key": "accomplished",
+     "label": "Accomplished this week",
+     "type": "textarea",
+     "wide": true,
+     "detail": true
+    },
+    {
+     "key": "next_two_weeks",
+     "label": "Planned next 2 weeks",
+     "type": "textarea",
+     "wide": true,
+     "detail": true
+    },
+    {
+     "key": "milestones_30d",
+     "label": "Milestones due in next 30 days",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "risks",
+     "label": "Top risks & issues",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "decisions_needed",
+     "label": "Decisions needed from SteerCo",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "hand_flags",
+     "label": "Hand-flags raised (and response)",
+     "type": "textarea",
+     "detail": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "week_ending"
+  },
+  {
+   "key": "process_inventory",
+   "label": "Process inventory",
+   "title": "Process Inventory (As-Is)",
+   "group": "Pre-BRD",
+   "description": "Master list of workflows to map in Pre-BRD Phase 2. Each Process Owner maps their top 5–7.",
+   "howTo": [
+    "Map what people actually do (including spreadsheets and re-typing), not the policy manual.",
+    "Flowchart naming: <ID>_<Process>_AsIs_v1 (e.g., BC-02_PDC_AsIs_v1.drawio) saved in 02_As-Is folder.",
+    "For each step note: who, which system/spreadsheet, volume per month, time taken, pain points."
+   ],
+   "columns": [
+    {
+     "key": "id",
+     "label": "ID",
+     "type": "text"
+    },
+    {
+     "key": "domain",
+     "label": "Domain",
+     "type": "text"
+    },
+    {
+     "key": "process_workflow",
+     "label": "Process / workflow",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "priority",
+     "label": "Priority",
+     "type": "text"
+    },
+    {
+     "key": "process_owner",
+     "label": "Process Owner",
+     "type": "text"
+    },
+    {
+     "key": "monthly_volume",
+     "label": "Monthly volume",
+     "type": "text"
+    },
+    {
+     "key": "map_link",
+     "label": "Map link",
+     "type": "textarea"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": "id",
+   "codePrefix": null,
+   "titleField": "domain"
+  },
+  {
+   "key": "pain_points",
+   "label": "Pain point log",
+   "title": "Pain Point Log",
+   "group": "Pre-BRD",
+   "description": "Each department lists its top 3 frustrations with In4 Velocity. Becomes the baseline for measuring benefits after Go-Live.",
+   "howTo": [
+    "Describe the pain in business terms and estimate the time lost; that number is what we measure after Go-Live."
+   ],
+   "columns": [
+    {
+     "key": "id",
+     "label": "ID",
+     "type": "text"
+    },
+    {
+     "key": "department",
+     "label": "Department",
+     "type": "text"
+    },
+    {
+     "key": "pain_point",
+     "label": "Pain point",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "process_id",
+     "label": "Process ID",
+     "type": "text"
+    },
+    {
+     "key": "frequency",
+     "label": "Frequency",
+     "type": "select",
+     "options": [
+      "",
+      "Daily",
+      "Weekly",
+      "Monthly",
+      "Occasional"
+     ]
+    },
+    {
+     "key": "time_lost_month_hrs",
+     "label": "Time lost / month (hrs)",
+     "type": "text"
+    },
+    {
+     "key": "business_impact",
+     "label": "Business impact",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "rank_1_3",
+     "label": "Rank (1–3)",
+     "type": "select",
+     "options": [
+      "",
+      "1",
+      "2",
+      "3"
+     ]
+    },
+    {
+     "key": "raised_by",
+     "label": "Raised by",
+     "type": "text"
+    },
+    {
+     "key": "target_fix_in_odoo",
+     "label": "Target fix in Odoo?",
+     "type": "text"
+    }
+   ],
+   "codeField": "id",
+   "codePrefix": "PP-",
+   "titleField": "department"
+  },
+  {
+   "key": "shadow_it",
+   "label": "Shadow IT register",
+   "title": "Shadow IT & Workaround Register",
+   "group": "Pre-BRD",
+   "description": "Every spreadsheet, manual computation or outside tool used to cover for In4 gaps. Prime automation candidates.",
+   "howTo": [
+    "Sharing a workaround is never a confession — it's a map of where Odoo must do better (Rule 3).",
+    "Attach a sample (with personal data masked) in 02_As-Is/Shadow-IT."
+   ],
+   "columns": [
+    {
+     "key": "id",
+     "label": "ID",
+     "type": "text"
+    },
+    {
+     "key": "department",
+     "label": "Department",
+     "type": "text"
+    },
+    {
+     "key": "tool_file_name",
+     "label": "Tool / file name",
+     "type": "text"
+    },
+    {
+     "key": "type",
+     "label": "Type",
+     "type": "select",
+     "options": [
+      "",
+      "Excel",
+      "Google Sheet",
+      "Access DB",
+      "Paper form",
+      "Other app",
+      "Email"
+     ]
+    },
+    {
+     "key": "what_it_does",
+     "label": "What it does",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "why_it_exists_in4_gap",
+     "label": "Why it exists (In4 gap)",
+     "type": "textarea"
+    },
+    {
+     "key": "owner_user",
+     "label": "Owner / user",
+     "type": "text"
+    },
+    {
+     "key": "update_frequency",
+     "label": "Update frequency",
+     "type": "text"
+    },
+    {
+     "key": "feeds_which_report_decision",
+     "label": "Feeds which report/decision",
+     "type": "text"
+    },
+    {
+     "key": "replace_in_odoo",
+     "label": "Replace in Odoo?",
+     "type": "select",
+     "options": [
+      "",
+      "Yes",
+      "No",
+      "Partially",
+      "TBD"
+     ]
+    }
+   ],
+   "codeField": "id",
+   "codePrefix": "SIT-",
+   "titleField": "department"
+  },
+  {
+   "key": "data_migration",
+   "label": "Data migration",
+   "title": "Data Migration Scope & Tracker",
+   "group": "Pre-BRD",
+   "description": "Deliverables 4 & 5 of the Pre-BRD checklist. Decide migrate vs archive, then track cleansing and each mock load.",
+   "howTo": [
+    "Record counts must reconcile source (In4) ↔ Odoo after every mock. Finance signs off balances; Process Owners sign off masters.",
+    "'History depth' is a business decision — more history means more cleansing and longer loads."
+   ],
+   "columns": [
+    {
+     "key": "category",
+     "label": "Category",
+     "type": "text"
+    },
+    {
+     "key": "data_object",
+     "label": "Data object",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "owner_domain",
+     "label": "Owner (domain)",
+     "type": "text"
+    },
+    {
+     "key": "decision",
+     "label": "Decision",
+     "type": "select",
+     "options": [
+      "",
+      "Migrate",
+      "Migrate (re-mapped)",
+      "Archive (read-only In4)",
+      "Do not migrate",
+      "TBD"
+     ],
+     "badge": true
+    },
+    {
+     "key": "scope_history_depth",
+     "label": "Scope / history depth",
+     "type": "text"
+    },
+    {
+     "key": "in4_record_count",
+     "label": "In4 record count",
+     "type": "text"
+    },
+    {
+     "key": "cleansing_pct_done",
+     "label": "Cleansing % done",
+     "type": "text"
+    },
+    {
+     "key": "mock_1_result",
+     "label": "Mock 1 result",
+     "type": "select",
+     "options": [
+      "",
+      "Pass",
+      "Pass w/ issues",
+      "Fail",
+      "N/A"
+     ]
+    },
+    {
+     "key": "mock_2_result",
+     "label": "Mock 2 result",
+     "type": "select",
+     "options": [
+      "",
+      "Pass",
+      "Pass w/ issues",
+      "Fail",
+      "N/A"
+     ]
+    },
+    {
+     "key": "mock_3_result",
+     "label": "Mock 3 result",
+     "type": "select",
+     "options": [
+      "",
+      "Pass",
+      "Pass w/ issues",
+      "Fail",
+      "N/A"
+     ]
+    },
+    {
+     "key": "sign_off_status",
+     "label": "Sign-off status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "category"
+  },
+  {
+   "key": "fit_gap",
+   "label": "Fit-gap log",
+   "title": "Fit-Gap Log",
+   "group": "Pre-BRD",
+   "description": "Starts in Pre-BRD Phase 2 (from the Odoo 19 demo); finalized in AWB Phase 1 (task 4.8).",
+   "howTo": [
+    "Fit = standard Odoo · Config = settings/Studio · Custom = development · Gap-Process = change our process instead · Out = not in scope.",
+    "Rule 1: prefer 'Gap-Process' over 'Custom' unless the requirement is regulatory or a genuine differentiator."
+   ],
+   "columns": [
+    {
+     "key": "req_id",
+     "label": "Req ID",
+     "type": "text"
+    },
+    {
+     "key": "process_id",
+     "label": "Process ID",
+     "type": "text"
+    },
+    {
+     "key": "requirement",
+     "label": "Requirement",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "source_pain_point_regulation",
+     "label": "Source (pain point / regulation)",
+     "type": "text"
+    },
+    {
+     "key": "moscow",
+     "label": "MoSCoW",
+     "type": "select",
+     "options": [
+      "",
+      "Must",
+      "Should",
+      "Could",
+      "Won't"
+     ],
+     "badge": true
+    },
+    {
+     "key": "classification",
+     "label": "Classification",
+     "type": "select",
+     "options": [
+      "",
+      "Fit",
+      "Config",
+      "Custom",
+      "Gap-Process",
+      "Out"
+     ],
+     "badge": true
+    },
+    {
+     "key": "proposed_resolution",
+     "label": "Proposed resolution",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "awb_effort_hrs",
+     "label": "AWB effort (hrs)",
+     "type": "text"
+    },
+    {
+     "key": "decision",
+     "label": "Decision",
+     "type": "select",
+     "options": [
+      "",
+      "Accepted",
+      "Rejected",
+      "Deferred",
+      "Pending"
+     ],
+     "badge": true
+    },
+    {
+     "key": "decided_by",
+     "label": "Decided by",
+     "type": "text"
+    }
+   ],
+   "codeField": "req_id",
+   "codePrefix": "REQ-",
+   "titleField": "process_id"
+  },
+  {
+   "key": "uat",
+   "label": "UAT scripts",
+   "title": "UAT Test Scripts",
+   "group": "Build & test",
+   "description": "Written by Process Owners (task 8.1), executed by Key Users (tasks 8.3–8.4). Use real PHI scenarios and migrated data.",
+   "howTo": [
+    "One script = one business scenario end to end. Record evidence (screenshot/report) for every Pass.",
+    "Any Fail → log in 'Defect Log' and enter the Defect ID here. Exit: ≥95% pass, no open Severity 1."
+   ],
+   "columns": [
+    {
+     "key": "test_id",
+     "label": "Test ID",
+     "type": "text"
+    },
+    {
+     "key": "process_id",
+     "label": "Process ID",
+     "type": "text"
+    },
+    {
+     "key": "scenario",
+     "label": "Scenario",
+     "type": "textarea"
+    },
+    {
+     "key": "preconditions_test_data",
+     "label": "Preconditions / test data",
+     "type": "text"
+    },
+    {
+     "key": "steps",
+     "label": "Steps",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "expected_result",
+     "label": "Expected result",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "actual_result",
+     "label": "Actual result",
+     "type": "text"
+    },
+    {
+     "key": "round_1",
+     "label": "Round 1",
+     "type": "select",
+     "options": [
+      "",
+      "Pass",
+      "Fail",
+      "Blocked",
+      "Not Run"
+     ],
+     "badge": true
+    },
+    {
+     "key": "round_2",
+     "label": "Round 2",
+     "type": "select",
+     "options": [
+      "",
+      "Pass",
+      "Fail",
+      "Blocked",
+      "Not Run"
+     ],
+     "badge": true
+    },
+    {
+     "key": "tester",
+     "label": "Tester",
+     "type": "text"
+    },
+    {
+     "key": "date",
+     "label": "Date",
+     "type": "date"
+    },
+    {
+     "key": "defect_id",
+     "label": "Defect ID",
+     "type": "text"
+    }
+   ],
+   "codeField": "test_id",
+   "codePrefix": "UAT-",
+   "titleField": "process_id"
+  },
+  {
+   "key": "defects",
+   "label": "Defect log",
+   "title": "Defect Log (SIT / UAT / Hypercare)",
+   "group": "Build & test",
+   "description": "Severity 1 = blocks a critical process, no workaround · 2 = major, workaround exists · 3 = minor · 4 = cosmetic.",
+   "howTo": [
+    "Triage daily during test cycles. Only the tester who raised a defect closes it, after retest."
+   ],
+   "columns": [
+    {
+     "key": "defect_id",
+     "label": "Defect ID",
+     "type": "text"
+    },
+    {
+     "key": "date",
+     "label": "Date",
+     "type": "date"
+    },
+    {
+     "key": "test_id",
+     "label": "Test ID",
+     "type": "text"
+    },
+    {
+     "key": "phase",
+     "label": "Phase",
+     "type": "select",
+     "options": [
+      "",
+      "SIT 1",
+      "SIT 2",
+      "UAT R1",
+      "UAT R2",
+      "Hypercare"
+     ]
+    },
+    {
+     "key": "module_process",
+     "label": "Module / process",
+     "type": "text"
+    },
+    {
+     "key": "description",
+     "label": "Description",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "severity",
+     "label": "Severity",
+     "type": "select",
+     "options": [
+      "",
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "badge": true
+    },
+    {
+     "key": "assigned_to",
+     "label": "Assigned to",
+     "type": "text"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "New",
+      "In Progress",
+      "Fixed",
+      "Retest",
+      "Closed",
+      "Rejected"
+     ],
+     "badge": true
+    },
+    {
+     "key": "target_fix_date",
+     "label": "Target fix date",
+     "type": "date"
+    },
+    {
+     "key": "resolution",
+     "label": "Resolution",
+     "type": "textarea"
+    },
+    {
+     "key": "retested_by",
+     "label": "Retested by",
+     "type": "text"
+    }
+   ],
+   "codeField": "defect_id",
+   "codePrefix": "DEF-",
+   "titleField": "date"
+  },
+  {
+   "key": "training",
+   "label": "Training plan",
+   "title": "Training Plan",
+   "group": "Build & test",
+   "description": "Train-the-Trainer by AWB (task 8.2); end-user training by PHI Key Users (task 8.6), close to Go-Live.",
+   "howTo": [
+    "Rule: no production login until the user passes the module assessment.",
+    "Train on the UAT environment with migrated (Mock 2/3) data so screens look familiar."
+   ],
+   "columns": [
+    {
+     "key": "module_course",
+     "label": "Module / course",
+     "type": "text"
+    },
+    {
+     "key": "audience",
+     "label": "Audience",
+     "type": "text"
+    },
+    {
+     "key": "content",
+     "label": "Content",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "trainer",
+     "label": "Trainer",
+     "type": "text"
+    },
+    {
+     "key": "format",
+     "label": "Format",
+     "type": "text"
+    },
+    {
+     "key": "days",
+     "label": "Days",
+     "type": "text"
+    },
+    {
+     "key": "session_dates",
+     "label": "Session dates",
+     "type": "text"
+    },
+    {
+     "key": "no_to_train",
+     "label": "# to train",
+     "type": "text"
+    },
+    {
+     "key": "no_passed",
+     "label": "# passed",
+     "type": "text"
+    },
+    {
+     "key": "assessment",
+     "label": "Assessment",
+     "type": "text"
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "module_course"
+  },
+  {
+   "key": "cutover",
+   "label": "Cutover runbook",
+   "title": "Cutover Runbook (draft)",
+   "group": "Cutover & go-live",
+   "description": "Timed to Go-Live Wed 1-Sep-2027. Rehearse fully in Mock 3 (task 8.8) and update durations from actuals.",
+   "howTo": [
+    "Every step needs a named owner, a verifier and a planned duration. Nothing happens that isn't on this list.",
+    "Rollback point: until the Go decision (T-1 evening) In4 remains the system of record."
+   ],
+   "columns": [
+    {
+     "key": "when",
+     "label": "When",
+     "type": "text"
+    },
+    {
+     "key": "step",
+     "label": "Step",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "owner",
+     "label": "Owner",
+     "type": "text"
+    },
+    {
+     "key": "planned_duration",
+     "label": "Planned duration",
+     "type": "text"
+    },
+    {
+     "key": "notes_rollback",
+     "label": "Notes / rollback",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "verified_by",
+     "label": "Verified by",
+     "type": "text"
+    },
+    {
+     "key": "actual_start",
+     "label": "Actual start",
+     "type": "text"
+    },
+    {
+     "key": "actual_end",
+     "label": "Actual end",
+     "type": "text"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "when"
+  },
+  {
+   "key": "go_no_go",
+   "label": "Go / No-Go checklist",
+   "title": "Go / No-Go Checklist",
+   "group": "Cutover & go-live",
+   "description": "Reviewed by SteerCo at the GATE (Master Schedule M-GNG). All Green, or Amber with an accepted mitigation.",
+   "howTo": [
+    "Red on any Data or Compliance item = No-Go by default."
+   ],
+   "columns": [
+    {
+     "key": "area",
+     "label": "Area",
+     "type": "text"
+    },
+    {
+     "key": "criterion",
+     "label": "Criterion",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "owner",
+     "label": "Owner",
+     "type": "text"
+    },
+    {
+     "key": "rag",
+     "label": "RAG",
+     "type": "select",
+     "options": [
+      "",
+      "Green",
+      "Amber",
+      "Red"
+     ],
+     "badge": true
+    },
+    {
+     "key": "evidence_link",
+     "label": "Evidence / link",
+     "type": "text"
+    },
+    {
+     "key": "comments",
+     "label": "Comments",
+     "type": "textarea"
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "area"
+  },
+  {
+   "key": "signoffs",
+   "label": "Sign-offs",
+   "title": "Sign-off Register & Forms",
+   "group": "Cutover & go-live",
+   "description": "Record every formal sign-off. Print a blank form from the Forms section, collect signatures, upload the signed copy to Documents and log it here.",
+   "howTo": [
+    "One record per signed form (per department for Forms A and D).",
+    "Link the scanned signed copy from the Documents library."
+   ],
+   "columns": [
+    {
+     "key": "form",
+     "label": "Form",
+     "type": "select",
+     "options": [
+      "",
+      "FORM A — Data Cleansing Completion Sign-off (Pre-BRD)",
+      "FORM B — Business Requirements Document (BRD) Sign-off",
+      "FORM C — Data Migration Reconciliation Sign-off (per mock / final)",
+      "FORM D — User Acceptance Testing (UAT) Sign-off",
+      "FORM E — Go-Live Acceptance",
+      "FORM F — Hypercare Exit & Project Acceptance"
+     ]
+    },
+    {
+     "key": "reference",
+     "label": "Scope / reference",
+     "type": "text",
+     "wide": true
+    },
+    {
+     "key": "signed_by",
+     "label": "Signed by",
+     "type": "textarea"
+    },
+    {
+     "key": "date",
+     "label": "Date signed",
+     "type": "date"
+    },
+    {
+     "key": "conditions",
+     "label": "Conditions / exceptions",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "document",
+     "label": "Signed copy (Documents link)",
+     "type": "text"
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Draft",
+      "Circulating",
+      "Signed",
+      "Signed with conditions",
+      "Rejected"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": null,
+   "codePrefix": null,
+   "titleField": "form",
+   "special": "signoffs",
+   "forms": [
+    {
+     "title": "FORM A — Data Cleansing Completion Sign-off (Pre-BRD)",
+     "fields": [
+      "Department",
+      "Data objects covered",
+      "Records reviewed / corrected",
+      "Known remaining issues",
+      "Cleansing deadline met? (Y/N)"
+     ],
+     "statement": "I confirm my department's data listed above has been reviewed and is fit for migration, except for the issues noted.",
+     "signatories": [
+      "Process Owner / Dept. Head",
+      "PHI Project Manager",
+      "CIO",
+      "Sponsor / SteerCo",
+      "AWB Project Manager"
+     ]
+    },
+    {
+     "title": "FORM B — Business Requirements Document (BRD) Sign-off",
+     "fields": [
+      "BRD version & date",
+      "Processes covered",
+      "Open items at sign-off (list)",
+      "Gaps approved for customization",
+      "Items deferred / out of scope"
+     ],
+     "statement": "We confirm the BRD reflects PHI's requirements and becomes the scope baseline. Changes after this date go through Change Control.",
+     "signatories": [
+      "Process Owner / Dept. Head",
+      "PHI Project Manager",
+      "CIO",
+      "Sponsor / SteerCo",
+      "AWB Project Manager"
+     ]
+    },
+    {
+     "title": "FORM C — Data Migration Reconciliation Sign-off (per mock / final)",
+     "fields": [
+      "Load (Mock 1 / 2 / 3 / Final)",
+      "Objects reconciled",
+      "Record count: In4 vs Odoo",
+      "Balance variances & explanation",
+      "Accepted? (Y/N)"
+     ],
+     "statement": "I confirm the migrated data reconciles to the source as stated.",
+     "signatories": [
+      "Process Owner / Dept. Head",
+      "PHI Project Manager",
+      "CIO",
+      "Sponsor / SteerCo",
+      "AWB Project Manager"
+     ]
+    },
+    {
+     "title": "FORM D — User Acceptance Testing (UAT) Sign-off",
+     "fields": [
+      "Process domain",
+      "Scripts executed / passed",
+      "Open defects (by severity)",
+      "Workarounds agreed",
+      "Conditions of acceptance"
+     ],
+     "statement": "We accept the system for our processes, subject to the conditions stated.",
+     "signatories": [
+      "Process Owner / Dept. Head",
+      "PHI Project Manager",
+      "CIO",
+      "Sponsor / SteerCo",
+      "AWB Project Manager"
+     ]
+    },
+    {
+     "title": "FORM E — Go-Live Acceptance",
+     "fields": [
+      "Go/No-Go checklist result",
+      "Final reconciliation result",
+      "Exceptions accepted",
+      "Go-Live date & time",
+      "Rollback decision point"
+     ],
+     "statement": "The Steering Committee authorizes Go-Live of Odoo 19 as PHI's system of record.",
+     "signatories": [
+      "Process Owner / Dept. Head",
+      "PHI Project Manager",
+      "CIO",
+      "Sponsor / SteerCo",
+      "AWB Project Manager"
+     ]
+    },
+    {
+     "title": "FORM F — Hypercare Exit & Project Acceptance",
+     "fields": [
+      "Open tickets by severity",
+      "Backlog handed to BAU",
+      "Documentation handed over",
+      "Benefits baseline review date",
+      "Contract deliverables complete? (Y/N)"
+     ],
+     "statement": "PHI accepts project completion and transition to steady-state support.",
+     "signatories": [
+      "Process Owner / Dept. Head",
+      "PHI Project Manager",
+      "CIO",
+      "Sponsor / SteerCo",
+      "AWB Project Manager"
+     ]
+    }
+   ]
+  }
+ ],
+ "phases": [
+  {
+   "code": "P0",
+   "label": "Phase 0 · Program Setup & Contracting",
+   "dark": "#44546A",
+   "light": "#ACB9CA"
+  },
+  {
+   "code": "PB1",
+   "label": "Pre-BRD 1 · Governance & Team Mobilization",
+   "dark": "#C55A11",
+   "light": "#F4B183"
+  },
+  {
+   "code": "PB2",
+   "label": "Pre-BRD 2 · As-Is Process Documentation",
+   "dark": "#C55A11",
+   "light": "#F8CBAD"
+  },
+  {
+   "code": "PB3",
+   "label": "Pre-BRD 3 · Dossier, Cleansing & BRD Readiness",
+   "dark": "#C55A11",
+   "light": "#F4B183"
+  },
+  {
+   "code": "AWB1",
+   "label": "AWB Phase 1 · Mobilisation & Discovery (BRD)",
+   "dark": "#1F4E79",
+   "light": "#9DC3E6"
+  },
+  {
+   "code": "AWB2",
+   "label": "AWB Phase 2 · Design & Build – Wave 1",
+   "dark": "#0E6E6E",
+   "light": "#8FD3CF"
+  },
+  {
+   "code": "AWB3",
+   "label": "AWB Phase 3 · Design & Build – Wave 2",
+   "dark": "#375623",
+   "light": "#A9D18E"
+  },
+  {
+   "code": "AWB4",
+   "label": "AWB Phase 4 · Data Migration & SIT",
+   "dark": "#5B2C83",
+   "light": "#C9B2E0"
+  },
+  {
+   "code": "AWB5",
+   "label": "AWB Phase 5 · UAT & Training",
+   "dark": "#7F6000",
+   "light": "#FFD966"
+  },
+  {
+   "code": "AWB6",
+   "label": "AWB Phase 6 · Cutover, Go-Live & Hypercare",
+   "dark": "#9E1B1B",
+   "light": "#F4A6A6"
+  },
+  {
+   "code": "POST",
+   "label": "Post-Project · Review & Decommission",
+   "dark": "#44546A",
+   "light": "#ACB9CA"
+  },
+  {
+   "code": "X",
+   "label": "Cross-cutting workstreams",
+   "dark": "#595959",
+   "light": "#BFBFBF"
+  },
+  {
+   "code": "BLK",
+   "label": "Blackouts & constraints",
+   "dark": "#C00000",
+   "light": "#FADBD8"
+  }
+ ]
+}

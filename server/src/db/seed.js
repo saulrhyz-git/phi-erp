@@ -15,7 +15,8 @@ async function seedContent() {
   }
   await tx(async (c) => {
     if (force) {
-      await c.query(`TRUNCATE comments, activity_log, diagram_versions, diagrams, open_items, lot_touchpoints,
+      await c.query("DELETE FROM comments WHERE entity_type NOT IN ('tk_record','tk_task')"); // toolkit threads stay
+      await c.query(`TRUNCATE activity_log, diagram_versions, diagrams, open_items, lot_touchpoints,
         master_data, matrix_steps, process_owners, sow_gaps, processes, stages, process_groups RESTART IDENTITY CASCADE`);
     }
     for (const [i, g] of data.groups.entries()) {
@@ -112,9 +113,38 @@ async function seedAdmin() {
   if (rows.length) { console.log(`Admin ${ADMIN_EMAIL} already exists.`); return; }
   const hash = await bcrypt.hash(ADMIN_PASSWORD, 12);
   await pool.query(
-    "INSERT INTO users(email,name,password_hash,role,must_change_password) VALUES ($1,$2,$3,'admin',TRUE)",
+    "INSERT INTO users(email,name,password_hash,role_id,must_change_password) VALUES ($1,$2,$3,(SELECT id FROM roles WHERE key='project_manager'),TRUE)",
     [ADMIN_EMAIL, ADMIN_NAME || 'Blueprint Admin', hash]);
-  console.log(`Created admin ${ADMIN_EMAIL} — they'll be asked to change the password on first sign-in.`);
+  console.log(`Created Project Manager ${ADMIN_EMAIL} — they'll be asked to change the password on first sign-in.`);
 }
 
-seedContent().then(seedProject).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });
+async function seedToolkit() {
+  const data = JSON.parse(readFileSync(join(config.seedDir, 'toolkit.json'), 'utf8'));
+  const empty = async (table) => (await pool.query(`SELECT count(*)::int AS n FROM ${table}`)).rows[0].n === 0;
+  const done = [];
+  await tx(async (c) => {
+    const has = await c.query("SELECT 1 FROM tk_settings WHERE key='schedule'");
+    if (!has.rowCount) {
+      await c.query("INSERT INTO tk_settings(key,value) VALUES ('schedule',$1)", [JSON.stringify(data.settings)]);
+      done.push('key dates');
+    }
+    if (await empty('tk_tasks')) {
+      for (const t of data.tasks) {
+        await c.query(
+          `INSERT INTO tk_tasks(code,phase,name,type,owner,domain_id,anchor,offset_days,duration_days,use_hypercare,notes,status,sort)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+          [t.code, t.phase, t.name, t.type, t.owner, t.domain_id, t.anchor, t.offset_days, t.duration_days, t.use_hypercare, t.notes, t.status, t.sort]);
+      }
+      done.push(`${data.tasks.length} schedule tasks`);
+    }
+    if (await empty('tk_records')) {
+      for (const r of data.records) {
+        await c.query('INSERT INTO tk_records(register,domain_id,data,sort) VALUES ($1,$2,$3,$4)', [r.register, r.domain_id, JSON.stringify(r.data), r.sort]);
+      }
+      done.push(`${data.records.length} toolkit register rows`);
+    }
+  });
+  console.log(done.length ? `Seeded toolkit: ${done.join('; ')}.` : 'Toolkit data already present — skipping.');
+}
+
+seedContent().then(seedProject).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });

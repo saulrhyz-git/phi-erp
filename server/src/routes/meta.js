@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { q } from '../db/pool.js';
+import { requireView } from '../lib/permissions.js';
 
 const r = Router();
 
@@ -11,7 +12,11 @@ r.get('/meta', async (req, res) => {
   res.json({ groups: groups.rows, stages: stages.rows });
 });
 
-r.get('/dashboard', async (req, res) => {
+r.get('/domains', async (req, res) => {
+  res.json((await q('SELECT * FROM domains ORDER BY sort')).rows);
+});
+
+r.get('/dashboard', requireView('dashboard'), async (req, res) => {
   const [steps, fit, items, diagrams, recent, reeng, gaps, obs, docs] = await Promise.all([
     q(`SELECT validation_status AS status, count(*)::int AS n FROM matrix_steps GROUP BY 1`),
     q(`SELECT g.id AS group_id, g.name, g.color, m.fit, count(*)::int AS n

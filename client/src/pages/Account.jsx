@@ -29,7 +29,7 @@ export default function Account() {
     <section className="sheet">
       <SheetHead title="Your account">{user.name} · {user.email}</SheetHead>
       {user.must_change_password && <div className="notice">Set a new password before you continue. Your current one is temporary.</div>}
-      {user.role === 'owner' && <p className="lede">You can validate and edit processes: {user.process_ids.length ? user.process_ids.join(', ') : 'none assigned yet — ask the admin'}.</p>}
+      <p className="lede">Role: <b>{user.role_name}</b>. Domains: <b>{user.domains.length ? user.domains.join(', ') : 'none'}</b>. Processes you validate: <b>{user.process_ids.length ? user.process_ids.join(', ') : 'none'}</b>. Ask the Project Manager to change these.</p>
       <form onSubmit={submit} style={{ maxWidth: 420 }}>
         {msg && <div className={`notice ${msg.type}`}>{msg.text}</div>}
         <label className="field"><span>Current password</span><input type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required /></label>

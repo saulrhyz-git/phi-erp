@@ -3,6 +3,19 @@ import { api } from './api.js';
 
 const AuthCtx = createContext(null);
 
+// Mirrors server/src/lib/permissions.js#can. The server always re-checks; this only decides what to show.
+// scope: which modules are scoped by domain or by process ('own' only means something there).
+const PROCESS_SCOPED = ['processes', 'matrix'];
+export function canUser(user, module, action, ctx = {}) {
+  const level = user?.permissions?.[module]?.[action] ?? 'none';
+  if (level === 'all') return true;
+  if (level !== 'own') return false;
+  if (PROCESS_SCOPED.includes(module)) {
+    return 'processId' in ctx ? user.process_ids.includes(ctx.processId) : user.process_ids.length > 0;
+  }
+  return 'domain' in ctx ? !!ctx.domain && user.domains.includes(ctx.domain) : user.domains.length > 0;
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(undefined); // undefined = loading, null = signed out
 
@@ -35,12 +48,12 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const canEditProcess = (pid) => !!user && (user.role === 'admin' || (user.role === 'owner' && user.process_ids.includes(pid)));
-  const isEditor = !!user && (user.role === 'admin' || user.role === 'owner');
-  const isAdmin = user?.role === 'admin';
+  const can = (module, action = 'view', ctx) => canUser(user, module, action, ctx);
+  // Levels ('none' | 'own' | 'all'), handy for explaining what a user can do.
+  const level = (module, action) => user?.permissions?.[module]?.[action] ?? 'none';
 
   return (
-    <AuthCtx.Provider value={{ user, refresh, login, logout, canEditProcess, isEditor, isAdmin }}>
+    <AuthCtx.Provider value={{ user, refresh, login, logout, can, level }}>
       {children}
     </AuthCtx.Provider>
   );

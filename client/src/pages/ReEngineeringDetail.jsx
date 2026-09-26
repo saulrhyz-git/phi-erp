@@ -40,7 +40,8 @@ const CONTENT_FIELDS = [
 
 export default function ReEngineeringDetail() {
   const { id } = useParams();
-  const { isEditor, isAdmin } = useAuth();
+  const { can } = useAuth();
+  const isEditor = can('reengineering', 'edit'); const isAdmin = can('reengineering_content', 'edit');
   const { data: r, error, loading, reload } = useApi(`/reengineering/${id}`);
   const [edit, setEdit] = useState(null); // 'decision' | 'kpi' | 'content'
   if (loading && !r) return <div className="sheet"><Loading /></div>;

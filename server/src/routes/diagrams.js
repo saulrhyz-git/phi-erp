@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { assertEditor } from '../lib/auth.js';
+import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity } from '../lib/util.js';
 
 const r = Router();
@@ -64,7 +64,7 @@ async function addVersion(userId, d, xml, note) {
 }
 
 r.post('/:id/versions', async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'diagrams', 'edit');
   const d = await getDiagram(req.params.id);
   const b = parse(z.object({
     xml: z.string().min(50).max(5_000_000).refine((x) => /<([a-zA-Z0-9]+:)?definitions[\s>]/.test(x), 'Not a BPMN 2.0 document'),
@@ -75,7 +75,7 @@ r.post('/:id/versions', async (req, res) => {
 });
 
 r.post('/:id/restore/:version', async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'diagrams', 'edit');
   const d = await getDiagram(req.params.id);
   const from = Number(req.params.version);
   const xml = await getXml(d.id, from);

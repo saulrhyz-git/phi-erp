@@ -2,8 +2,8 @@ import { Router } from 'express';
 import express from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
-import { assertEditor, requireRole } from '../lib/auth.js';
-import { parse, notFound, logActivity } from '../lib/util.js';
+import { assertCan, can } from '../lib/permissions.js';
+import { parse, notFound, logActivity, auditEvent } from '../lib/util.js';
 
 const r = Router();
 const MAX = 25 * 1024 * 1024;
@@ -19,13 +19,13 @@ r.get('/', async (req, res) => {
        JOIN document_files v ON v.document_id=d.id AND v.version=d.current_version
        LEFT JOIN users u ON u.id=v.uploaded_by
       WHERE (NOT d.confidential OR $1)
-      ORDER BY d.category, d.title`, [req.user.role !== 'viewer']);
+      ORDER BY d.category, d.title`, [can(req.user, 'documents_confidential', 'view')]);
   res.json({ categories: CATEGORIES, documents: rows });
 });
 
 async function getDoc(id, user) {
   const { rows } = await q('SELECT * FROM documents WHERE id=$1', [id]);
-  if (!rows[0] || (rows[0].confidential && user.role === 'viewer')) throw notFound('Document');
+  if (!rows[0] || (rows[0].confidential && !can(user, 'documents_confidential', 'view'))) throw notFound('Document');
   return rows[0];
 }
 
@@ -42,6 +42,7 @@ r.get('/:id/download', async (req, res) => {
   const v = req.query.v ? Number(req.query.v) : d.current_version;
   const { rows } = await q('SELECT file_name, mime, data FROM document_files WHERE document_id=$1 AND version=$2', [d.id, v]);
   if (!rows[0]) throw notFound('Version');
+  await auditEvent('DOWNLOAD', { table: 'documents', recordId: `${d.id}/${v}`, summary: `${d.title} v${v}${d.confidential ? ' (confidential)' : ''} — ${rows[0].file_name}` });
   const inline = req.query.inline === '1' && /^(application\/pdf|image\/)/.test(rows[0].mime);
   res.setHeader('Content-Type', rows[0].mime);
   res.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename*=UTF-8''${encodeURIComponent(rows[0].file_name)}`);
@@ -63,7 +64,7 @@ function fileFrom(req) {
 
 // Create a document with its first file. Metadata travels in headers so the body can be the raw file.
 r.post('/', raw, async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'documents', 'add');
   const f = fileFrom(req);
   const meta = parse(z.object({
     title: z.string().trim().min(1).max(200), category: z.enum(CATEGORIES), description: z.string().trim().max(2000),
@@ -82,7 +83,7 @@ r.post('/', raw, async (req, res) => {
 });
 
 r.post('/:id/versions', raw, async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'documents', 'edit');
   const d = await getDoc(req.params.id, req.user);
   const f = fileFrom(req);
   const note = hdr(req, 'X-Version-Note').slice(0, 500);
@@ -99,7 +100,7 @@ r.post('/:id/versions', raw, async (req, res) => {
 });
 
 r.put('/:id', async (req, res) => {
-  assertEditor(req.user);
+  assertCan(req.user, 'documents', 'edit');
   const d = await getDoc(req.params.id, req.user);
   const b = parse(z.object({
     title: z.string().trim().min(1).max(200), category: z.enum(CATEGORIES), description: z.string().trim().max(2000), confidential: z.boolean(),
@@ -110,7 +111,8 @@ r.put('/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
-r.delete('/:id', requireRole('admin'), async (req, res) => {
+r.delete('/:id', async (req, res) => {
+  assertCan(req.user, 'documents', 'delete');
   const d = await getDoc(req.params.id, req.user);
   await q('DELETE FROM documents WHERE id=$1', [d.id]);
   await q("DELETE FROM comments WHERE entity_type='document' AND entity_id=$1", [String(d.id)]);

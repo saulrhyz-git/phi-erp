@@ -63,7 +63,8 @@ function Overview() {
 }
 
 function Gaps() {
-  const { isEditor } = useAuth();
+  const { can } = useAuth();
+  const isEditor = can('sow', 'edit');
   const { data, error, loading, reload } = useApi('/sow/gaps');
   const [kind, setKind] = useState('process');
   const [edit, setEdit] = useState(null);
@@ -120,7 +121,8 @@ function Gaps() {
 }
 
 function Appendix() {
-  const { isEditor } = useAuth();
+  const { can } = useAuth();
+  const isEditor = can('sow', 'edit');
   const { data, error, loading, reload } = useApi('/sow/appendix');
   const [edit, setEdit] = useState(null);
   if (loading && !data) return <Loading />;
@@ -159,7 +161,8 @@ function Appendix() {
 }
 
 function Observations() {
-  const { isEditor } = useAuth();
+  const { can } = useAuth();
+  const isEditor = can('sow', 'edit');
   const { data, error, loading, reload } = useApi('/sow/observations');
   const [edit, setEdit] = useState(null);
   const [thread, setThread] = useState(null);
