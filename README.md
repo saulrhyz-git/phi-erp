@@ -26,6 +26,17 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
 - **Audit log** — immutable, hash-chained record of every change (see below).
 
+**Colour themes**
+
+Pick a theme at the bottom of the sidebar; the choice is remembered per browser.
+
+- **Calm** (default) is a gentle, low-glare palette. Body text is 15:1 contrast, muted text at least 4.9:1, and every status badge at least 7:1.
+- **High contrast** is for bright site offices, projectors and low vision.
+- **Dark** is a dark palette.
+- **Auto** follows the device: Calm, or Dark when the device prefers dark.
+
+Schedule phase colours follow the theme.
+
 **Updating status**
 
 Anyone whose role has *Update status* can change a toolkit record's status straight from the list — the coloured status pill in the Gantt, the schedule table, and each register — or from the record's dialog. Other fields stay read-only.

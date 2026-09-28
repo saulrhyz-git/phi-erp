@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Map, Layers, GitBranch, Table2, Database, ListChecks, Sparkles, FileSignature, FolderOpen,
-  Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X,
+  Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X, Monitor, Leaf, Contrast, Moon,
 } from 'lucide-react';
+import { THEMES, getTheme, setTheme } from '../theme.js';
+
+const THEME_ICON = { system: Monitor, calm: Leaf, contrast: Contrast, dark: Moon };
 import { useAuth } from '../auth.jsx';
 
 const BLUEPRINT = [
@@ -34,6 +37,8 @@ export default function Layout() {
   const loc = useLocation();
   const [collapsed, setCollapsed] = useState(readPref);
   const [open, setOpen] = useState(false);
+  const [theme, setThemeState] = useState(getTheme);
+  const pickTheme = (t) => { setTheme(t); setThemeState(t); };
   useEffect(() => { setOpen(false); window.scrollTo(0, 0); }, [loc.pathname]);
   const toggle = () => setCollapsed((c) => { try { localStorage.setItem('phi.sidebar', c ? 'open' : 'collapsed'); } catch { /* storage unavailable */ } return !c; });
 
@@ -71,6 +76,16 @@ export default function Layout() {
             <span className="avatar" aria-hidden="true">{initials(user.name)}</span>
             <div style={{ minWidth: 0 }}><b>{user.name}</b><small>{user.role_name}{domains}</small></div>
           </Link>
+          <div className="sb-theme" role="group" aria-label="Colour theme">
+            {THEMES.map(([k, label]) => {
+              const Icon = THEME_ICON[k];
+              return (
+                <button key={k} type="button" aria-pressed={theme === k} onClick={() => pickTheme(k)} title={`${label} theme`}>
+                  <Icon size={14} aria-hidden="true" /><span>{label === 'High contrast' ? 'Contrast' : label}</span>
+                </button>
+              );
+            })}
+          </div>
           <div className="sb-actions">
             <button type="button" className="sb-btn collapse-btn" onClick={toggle} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
               {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}<span>Collapse</span>

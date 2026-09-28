@@ -3,7 +3,7 @@ import { api } from '../../api.js';
 import { useAuth } from '../../auth.jsx';
 import { useApi } from '../../hooks.js';
 import { ErrorNote, Loading, SheetHead } from '../../components/ui.jsx';
-import { addDays, computeTasks, daysBetween, fmtShort, phaseSpans, todayYmd } from '../../schedule.js';
+import { addDays, computeTasks, daysBetween, fmtShort, phaseColor, phaseSpans, todayYmd } from '../../schedule.js';
 import { Badge, DomainTag, StatusSelect, useToolkit } from './common.jsx';
 import TaskModal, { STATUSES } from './TaskModal.jsx';
 
@@ -44,9 +44,9 @@ function Gantt({ settings, phases, tasks, onOpen, collapsed, toggle, canStatus, 
         </div>
         {phases.filter((p) => p.tasks.length).map((p) => (
           <Fragment key={p.code}>
-            <div className="g-row phase" style={{ '--pc': p.dark }}>
+            <div className="g-row phase" style={{ '--pc': phaseColor(p) }}>
               <div className="g-lbl"><button type="button" className="btn sm" style={{ minHeight: 20, padding: '0 6px', background: 'rgba(255,255,255,.92)', color: '#0F172A', borderColor: 'transparent', borderRadius: 6 }} onClick={() => toggle(p.code)} aria-expanded={!collapsed[p.code]}>{collapsed[p.code] ? '+' : '−'}</button><span>{p.label}</span></div>
-              <div className="g-track">{bar({ ...p, start: p.start, end: p.end, type: 'Phase' }, p.dark, true)}</div>
+              <div className="g-track">{bar({ ...p, start: p.start, end: p.end, type: 'Phase' }, phaseColor(p), true)}</div>
             </div>
             {!collapsed[p.code] && p.tasks.map((t) => (
               <div className={`g-row${t.type === 'Milestone' ? ' ms' : ''}`} key={t.id}>
@@ -58,7 +58,7 @@ function Gantt({ settings, phases, tasks, onOpen, collapsed, toggle, canStatus, 
                     ? <StatusSelect value={t.status} options={STATUSES} onChange={(v) => setStat(t, v)} label={`Status of ${t.code}`} />
                     : <Badge v={t.status} />)}
                 </div>
-                <div className="g-track">{bar(t, p.dark)}</div>
+                <div className="g-track">{bar(t, phaseColor(p))}</div>
               </div>
             ))}
           </Fragment>
@@ -131,9 +131,9 @@ export default function Schedule() {
             <span><i className="g-ms" style={{ position: 'static', display: 'inline-block', transform: 'rotate(45deg) scale(.7)' }} /> Milestone / gate</span>
             <span><i style={{ display: 'inline-block', width: 3, height: 16, background: 'var(--bad)' }} /> Today</span>
             <span><i style={{ display: 'inline-block', width: 0, height: 16, borderLeft: '2px dashed var(--ink)' }} /> Anchor (Pre-work · BRD · Go-Live)</span>
-            <span><i className="g-bar done" style={{ position: 'static', display: 'inline-block', width: 26, '--pc': '#1F4E79' }} /> Complete</span>
+            <span><i className="g-bar done" style={{ position: 'static', display: 'inline-block', width: 26, '--pc': 'var(--ph-AWB1)' }} /> Complete</span>
             <span><i className="g-bar blk" style={{ position: 'static', display: 'inline-block', width: 26 }} /> Blackout</span>
-            {meta.phases.map((p) => <span key={p.code}><i className="swatch" style={{ '--c': p.dark }} />{p.code}</span>)}
+            {meta.phases.map((p) => <span key={p.code}><i className="swatch" style={{ '--c': phaseColor(p) }} />{p.code}</span>)}
           </div>
         </>
       ) : (
@@ -143,7 +143,7 @@ export default function Schedule() {
             <tbody>
               {spans.filter((p) => p.tasks.length).map((p) => (
                 <Fragment key={p.code}>
-                  <tr className="grp" style={{ '--c': p.dark }}><td colSpan={9}>{p.label} · {fmtShort(p.start)} → {fmtShort(p.end)}</td></tr>
+                  <tr className="grp" style={{ '--c': phaseColor(p) }}><td colSpan={9}>{p.label} · {fmtShort(p.start)} → {fmtShort(p.end)}</td></tr>
                   {p.tasks.map((t) => {
                     const ed = canStatus(t);
                     return (

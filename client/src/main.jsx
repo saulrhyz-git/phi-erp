@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import '@fontsource-variable/inter';
 import './styles.css';
+import { applyTheme } from './theme.js';
+
+applyTheme();
 import { AuthProvider } from './auth.jsx';
 import App from './App.jsx';
 

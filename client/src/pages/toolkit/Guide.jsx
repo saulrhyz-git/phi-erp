@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../auth.jsx';
 import { useApi } from '../../hooks.js';
 import { Loading } from '../../components/ui.jsx';
-import { computeTasks, daysBetween, fmtShort, phaseSpans, todayYmd } from '../../schedule.js';
+import { computeTasks, daysBetween, fmtShort, phaseSpans, todayYmd, phaseColor } from '../../schedule.js';
 import { Badge, useToolkit } from './common.jsx';
 
 const CONFIRM = [
@@ -58,7 +58,7 @@ export default function Guide() {
               <div className="tablewrap"><table className="t">
                 <thead><tr><th>Stage</th><th>Dates</th></tr></thead>
                 <tbody>{spans.map((p) => (
-                  <tr key={p.code}><td><i className="swatch" style={{ '--c': p.dark }} /> {p.label}</td><td style={{ whiteSpace: 'nowrap' }}>{fmtShort(p.start)} → {fmtShort(p.end)}</td></tr>
+                  <tr key={p.code}><td><i className="swatch" style={{ '--c': phaseColor(p) }} /> {p.label}</td><td style={{ whiteSpace: 'nowrap' }}>{fmtShort(p.start)} → {fmtShort(p.end)}</td></tr>
                 ))}</tbody>
               </table></div>
             </div>
