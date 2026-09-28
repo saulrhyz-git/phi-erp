@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 
 export const useToolkit = () => useOutletContext();
@@ -26,4 +27,20 @@ export function allowedDomains(user, level, domains) {
   if (level === 'all') return [{ id: '', name: 'Project-wide (no domain)' }, ...domains];
   if (level === 'own') return domains.filter((d) => user.domains.includes(d.id));
   return [];
+}
+
+// Compact status dropdown styled like a badge. Saves on change.
+export function StatusSelect({ value, options, onChange, label, disabled }) {
+  const [busy, setBusy] = useState(false);
+  const change = async (e) => {
+    const v = e.target.value;
+    setBusy(true);
+    try { await onChange(v); } finally { setBusy(false); }
+  };
+  return (
+    <select className={`status-select ${tone(value) || 'neutral'}`} value={value ?? ''} onChange={change} aria-label={label}
+      disabled={disabled || busy} title="Change status">
+      {options.map((o) => <option key={o} value={o}>{o || '—'}</option>)}
+    </select>
+  );
 }

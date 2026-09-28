@@ -13,8 +13,8 @@ export const ErrorNote = ({ error }) => (error ? <div className="notice error">{
 export function SheetHead({ code, title, children, actions }) {
   return (
     <div className="sheet-head">
-      {code && <div className="sheet-code">{code}</div>}
       <div>
+        {code && <div className="eyebrow">{code}</div>}
         <h2>{title}</h2>
         {children && <p>{children}</p>}
       </div>

@@ -26,6 +26,20 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
 - **Audit log** — immutable, hash-chained record of every change (see below).
 
+**Updating status**
+
+Anyone whose role has *Update status* can change a toolkit record's status straight from the list — the coloured status pill in the Gantt, the schedule table, and each register — or from the record's dialog. Other fields stay read-only.
+
+- **Status fields covered:**
+  - Schedule tasks and milestones.
+  - Milestones, comms, RAID, change requests, process inventory, defects and cutover status.
+  - Data-migration mock results.
+  - UAT round results.
+  - Go/No-Go RAG.
+- **Status fields not covered:** sign-offs and CCB decisions still need full *Edit* rights.
+- **What "Own" means here:** the user's own domain(s) **plus** project-wide records, so the whole team can keep shared items current. Process Owners get this by default (migration `004_status_permission.sql`).
+- **Audit:** every status change is logged with the old and new value.
+
 **Roles and permissions (RBAC)**
 
 Each user has one role, and optionally one or more **domains** (SR Sales & Reservation, BC Billing & Collection, AF Accounting & Finance, IP Inventory & Project Management, IT IT & Data) and assigned **processes**. For every module a role grants View, Add, Edit and Delete at one of three levels: **All**, **Own** (records in the user's domains, or processes assigned to them) or **No**. The server enforces every check; the UI only hides what a role can't do.

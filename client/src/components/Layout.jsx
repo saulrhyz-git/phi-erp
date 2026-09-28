@@ -1,53 +1,99 @@
-import { NavLink, Link, Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import {
+  Map, Layers, GitBranch, Table2, Database, ListChecks, Sparkles, FileSignature, FolderOpen,
+  Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X,
+} from 'lucide-react';
 import { useAuth } from '../auth.jsx';
+
+const BLUEPRINT = [
+  ['/', 'S-0', 'World map', 'dashboard', Map, true],
+  ['/processes', 'S-1', 'SIPOC', 'processes', Layers],
+  ['/diagrams', 'S-2', 'Swimlanes', 'diagrams', GitBranch],
+  ['/matrix', 'S-3', 'Data matrix', 'matrix', Table2],
+  ['/master-data', 'S-4', 'Master data & Lot', 'master_data', Database],
+  ['/open-items', 'S-5', 'Open items', 'open_items', ListChecks],
+  ['/reengineering', 'S-6', 'Re-engineering', 'reengineering', Sparkles],
+  ['/sow', 'S-7', 'SOW & vendor', 'sow', FileSignature],
+  ['/documents', 'S-8', 'Documents', 'documents', FolderOpen],
+];
+const PROJECT = [['/toolkit', '', 'Project toolkit', 'toolkit_guide', Briefcase]];
+const ADMIN = [
+  ['/activity', '', 'Activity', 'activity', Activity],
+  ['/audit', '', 'Audit log', 'audit_log', ShieldCheck],
+  ['/users', '', 'Users', 'users', Users],
+  ['/roles', '', 'Roles', 'roles', KeyRound],
+];
+const ALL = [...BLUEPRINT, ...PROJECT, ...ADMIN];
+
+const initials = (n = '') => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
+const readPref = () => { try { return localStorage.getItem('phi.sidebar') === 'collapsed'; } catch { return false; } };
 
 export default function Layout() {
   const { user, logout, can } = useAuth();
-  const blueprint = [
-    ['/', 'S-0', 'World map', 'dashboard', true],
-    ['/processes', 'S-1', 'SIPOC', 'processes'],
-    ['/diagrams', 'S-2', 'Swimlanes', 'diagrams'],
-    ['/matrix', 'S-3', 'Data matrix', 'matrix'],
-    ['/master-data', 'S-4', 'Master data & Lot', 'master_data'],
-    ['/open-items', 'S-5', 'Open items', 'open_items'],
-    ['/reengineering', 'S-6', 'Re-engineering', 'reengineering'],
-    ['/sow', 'S-7', 'SOW & vendor', 'sow'],
-    ['/documents', 'S-8', 'Documents', 'documents'],
-  ].filter((l) => can(l[3]));
-  const other = [
-    ['/toolkit', 'T', 'Project toolkit', 'toolkit_guide'],
-    ['/activity', '', 'Activity', 'activity'],
-    ['/audit', '', 'Audit log', 'audit_log'],
-    ['/users', '', 'Users', 'users'],
-    ['/roles', '', 'Roles', 'roles'],
-  ].filter((l) => can(l[3]));
+  const loc = useLocation();
+  const [collapsed, setCollapsed] = useState(readPref);
+  const [open, setOpen] = useState(false);
+  useEffect(() => { setOpen(false); window.scrollTo(0, 0); }, [loc.pathname]);
+  const toggle = () => setCollapsed((c) => { try { localStorage.setItem('phi.sidebar', c ? 'open' : 'collapsed'); } catch { /* storage unavailable */ } return !c; });
+
+  const section = (title, items) => {
+    const list = items.filter((l) => can(l[3]));
+    if (!list.length) return null;
+    return (
+      <>
+        <div className="sb-group">{title}</div>
+        {list.map(([to, code, label, , Icon, end]) => (
+          <NavLink key={to} to={to} end={end} className="sb-link" title={collapsed ? `${code ? `${code} · ` : ''}${label}` : undefined}>
+            <Icon size={18} strokeWidth={1.9} aria-hidden="true" /><span>{label}</span>{code && <em className="code">{code}</em>}
+          </NavLink>
+        ))}
+      </>
+    );
+  };
+  const current = ALL.find(([to, , , , , end]) => (end ? loc.pathname === to : loc.pathname.startsWith(to)));
   const domains = user.domains?.length ? ` · ${user.domains.join(', ')}` : '';
+
   return (
-    <div className="shell">
-      <header className="topbar">
-        <Link to={can('dashboard') ? '/' : '/toolkit'} className="brand">
-          <b>PHI Process Blueprint</b>
-          <small>Odoo 19 implementation · blueprint & project toolkit</small>
+    <div className={`app${collapsed ? ' collapsed' : ''}${open ? ' open' : ''}`}>
+      <aside className="sidebar" aria-label="Main navigation">
+        <Link to={can('dashboard') ? '/' : '/toolkit'} className="sb-brand">
+          <span className="sb-logo" aria-hidden="true">PHI</span>
+          <div><b>Process Blueprint</b><small>Odoo 19 · blueprint & toolkit</small></div>
         </Link>
-        <div className="spacer" />
-        <div className="userbox">
-          <Link to="/account" style={{ textDecoration: 'none' }}>
-            {user.name}
-            <small>{user.role_name}{domains}</small>
+        <nav className="sb-scroll">
+          {section('Process blueprint', BLUEPRINT)}
+          {section('Project', PROJECT)}
+          {section('Administration', ADMIN)}
+        </nav>
+        <div className="sb-foot">
+          <Link to="/account" className="sb-user" title={collapsed ? user.name : undefined}>
+            <span className="avatar" aria-hidden="true">{initials(user.name)}</span>
+            <div style={{ minWidth: 0 }}><b>{user.name}</b><small>{user.role_name}{domains}</small></div>
           </Link>
-          <button className="btn sm ghost" onClick={logout}>Sign out</button>
+          <div className="sb-actions">
+            <button type="button" className="sb-btn collapse-btn" onClick={toggle} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
+              {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}<span>Collapse</span>
+            </button>
+            <button type="button" className="sb-btn" onClick={logout} aria-label="Sign out"><LogOut size={16} /><span>Sign out</span></button>
+          </div>
         </div>
-      </header>
-      <nav className="nav" aria-label="Sheets">
-        {blueprint.map(([to, code, label, , end]) => (
-          <NavLink key={to} to={to} end={end}>{code && <span>{code}</span>}{label}</NavLink>
-        ))}
-        {blueprint.length > 0 && other.length > 0 && <i className="sep" aria-hidden="true" />}
-        {other.map(([to, code, label]) => (
-          <NavLink key={to} to={to}>{code && <span>{code}</span>}{label}</NavLink>
-        ))}
-      </nav>
-      <Outlet />
+      </aside>
+      <div className="scrim" onClick={() => setOpen(false)} aria-hidden="true" />
+      <div className="main">
+        <header className="topbar">
+          <button type="button" className="icon-btn menu-btn" onClick={() => setOpen((o) => !o)} aria-label={open ? 'Close menu' : 'Open menu'}>
+            {open ? <X size={18} /> : <Menu size={18} />}
+          </button>
+          <div className="crumbs">
+            PHI · Odoo 19 rollout{current && <> / <b>{current[2]}</b></>}
+          </div>
+          <div className="spacer" />
+        </header>
+        <main className="content" id="main">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

@@ -110,7 +110,7 @@ export default function ProcessDetail() {
 
   return (
     <>
-      <section className="sheet" style={{ borderLeft: `8px solid var(--${p.color})` }}>
+      <section className="sheet">
         <SheetHead code={p.id} title={editing ? 'Edit process' : p.name}
           actions={canEdit && !editing ? <button className="btn" onClick={startEdit}>Edit SIPOC</button> : null}>
           {p.group_name} · {p.stage_name || 'Cross-cutting'}{p.from_reference ? ' · numbered in reference flow' : ''}

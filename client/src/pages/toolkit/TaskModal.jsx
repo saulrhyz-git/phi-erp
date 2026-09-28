@@ -17,6 +17,7 @@ export default function TaskModal({ task, meta, settings, onClose, onSaved }) {
   useEffect(() => { if (task) { setF({ ...BLANK, phase: meta.phases[0].code, ...task, domain_id: task.domain_id || '' }); setErr(null); } }, [task]); // eslint-disable-line
   if (!task || !f) return <Modal open={false} onClose={onClose} />;
   const editable = isNew ? can('schedule', 'add') : can('schedule', 'edit', { domain: task.domain_id });
+  const statusOnly = !isNew && !editable && can('schedule', 'status', { domain: task.domain_id });
   const doms = allowedDomains(user, level('schedule', isNew ? 'add' : 'edit'), meta.domains);
   const set = (k) => (e) => setF({ ...f, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value });
   const start = settings ? addDays(settings.anchors[f.anchor], Number(f.offset_days) || 0) : '';
@@ -25,6 +26,7 @@ export default function TaskModal({ task, meta, settings, onClose, onSaved }) {
 
   const save = async () => {
     try {
+      if (statusOnly) { await api(`/toolkit/tasks/${task.id}`, { method: 'PUT', body: { status: f.status } }); onSaved(); return; }
       const body = { ...f, offset_days: Number(f.offset_days), duration_days: Number(f.duration_days), domain_id: f.domain_id || null };
       ['id', 'sort', 'updated_at', 'updated_by', 'updated_by_name', 'domain_name', 'comment_count', 'start', 'end', 'duration', 'weeks'].forEach((k) => delete body[k]);
       if (isNew) await api('/toolkit/tasks', { method: 'POST', body });
@@ -43,11 +45,13 @@ export default function TaskModal({ task, meta, settings, onClose, onSaved }) {
       footer={<>
         {!isNew && can('schedule', 'delete', { domain: task.domain_id }) && <button className="btn danger" onClick={del}>Delete</button>}
         <span style={{ flex: 1 }} />
-        <button className="btn ghost" onClick={onClose}>{editable ? 'Cancel' : 'Close'}</button>
-        {editable && <button className="btn primary" onClick={save}>{isNew ? 'Add' : 'Save changes'}</button>}
+        <button className="btn ghost" onClick={onClose}>{editable || statusOnly ? 'Cancel' : 'Close'}</button>
+        {(editable || statusOnly) && <button className="btn primary" onClick={save}>{isNew ? 'Add' : statusOnly ? 'Update status' : 'Save changes'}</button>}
       </>}>
       <ErrorNote error={err} />
-      {!editable && <div className="notice">Read-only for your role{task.domain_id ? ` (this item belongs to ${task.domain_id})` : ' (project-wide item)'}.</div>}
+      {!editable && (statusOnly
+        ? <div className="notice">You can update the status of this {task.domain_id ? `${task.domain_id}` : 'project-wide'} item. Other fields are read-only for your role.</div>
+        : <div className="notice">Read-only for your role{task.domain_id ? ` (this item belongs to ${task.domain_id})` : ' (project-wide item)'}.</div>)}
       <div className="kpis" style={{ gridTemplateColumns: 'repeat(3,1fr)' }}>
         <div><b>{fmtD(start)}</b><span>Start</span></div>
         <div><b>{fmtD(end)}</b><span>End</span></div>
@@ -58,7 +62,7 @@ export default function TaskModal({ task, meta, settings, onClose, onSaved }) {
         <label className="field"><span>Phase</span><select {...p('phase')}>{meta.phases.map((x) => <option key={x.code} value={x.code}>{x.label}</option>)}</select></label>
         <label className="field" style={{ gridColumn: '1/-1' }}><span>Task / milestone</span><input type="text" {...p('name')} /></label>
         <label className="field"><span>Type</span><select {...p('type')}>{TYPES.map((x) => <option key={x}>{x}</option>)}</select></label>
-        <label className="field"><span>Status</span><select {...p('status')}><option value="">—</option>{STATUSES.map((x) => <option key={x}>{x}</option>)}</select></label>
+        <label className="field"><span>Status</span><select {...p('status')} disabled={!editable && !statusOnly}><option value="">—</option>{STATUSES.map((x) => <option key={x}>{x}</option>)}</select></label>
         <label className="field"><span>Owner</span><input type="text" {...p('owner')} /></label>
         <label className="field"><span>Domain</span>
           {editable ? <select {...p('domain_id')}>{doms.map((d) => <option key={d.id} value={d.id}>{d.id ? `${d.id} — ${d.name}` : d.name}</option>)}</select> : <div><DomainTag id={task.domain_id} user={user} /></div>}

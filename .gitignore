@@ -5,3 +5,6 @@ client/dist/
 logs/
 .DS_Store
 backups/
+
+# Project documents (SOW, vendor letters, workbooks) are confidential: load them with `npm run import-docs`, never commit them
+phi-documents/

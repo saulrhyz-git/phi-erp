@@ -4,13 +4,13 @@ import { useAuth } from '../../auth.jsx';
 import { useApi } from '../../hooks.js';
 import { ErrorNote, Loading, SheetHead } from '../../components/ui.jsx';
 import { addDays, computeTasks, daysBetween, fmtShort, phaseSpans, todayYmd } from '../../schedule.js';
-import { Badge, DomainTag, useToolkit } from './common.jsx';
+import { Badge, DomainTag, StatusSelect, useToolkit } from './common.jsx';
 import TaskModal, { STATUSES } from './TaskModal.jsx';
 
 const WK = 22;          // px per week
-const LBL = 360;        // label column width
+const LBL = 420;        // label column width (code, name, domain, status)
 
-function Gantt({ settings, phases, tasks, onOpen, collapsed, toggle }) {
+function Gantt({ settings, phases, tasks, onOpen, collapsed, toggle, canStatus, setStat }) {
   const start = settings.gantt_start;
   const weeks = Math.ceil((daysBetween(start, settings.gantt_end) + 1) / 7);
   const W = weeks * WK;
@@ -45,7 +45,7 @@ function Gantt({ settings, phases, tasks, onOpen, collapsed, toggle }) {
         {phases.filter((p) => p.tasks.length).map((p) => (
           <Fragment key={p.code}>
             <div className="g-row phase" style={{ '--pc': p.dark }}>
-              <div className="g-lbl"><button type="button" className="btn sm" style={{ minHeight: 22, padding: '0 6px', background: '#fff', color: '#0B1220' }} onClick={() => toggle(p.code)} aria-expanded={!collapsed[p.code]}>{collapsed[p.code] ? '+' : '−'}</button><span>{p.label}</span></div>
+              <div className="g-lbl"><button type="button" className="btn sm" style={{ minHeight: 20, padding: '0 6px', background: 'rgba(255,255,255,.92)', color: '#0F172A', borderColor: 'transparent', borderRadius: 6 }} onClick={() => toggle(p.code)} aria-expanded={!collapsed[p.code]}>{collapsed[p.code] ? '+' : '−'}</button><span>{p.label}</span></div>
               <div className="g-track">{bar({ ...p, start: p.start, end: p.end, type: 'Phase' }, p.dark, true)}</div>
             </div>
             {!collapsed[p.code] && p.tasks.map((t) => (
@@ -54,6 +54,9 @@ function Gantt({ settings, phases, tasks, onOpen, collapsed, toggle }) {
                   <span className="code">{t.code}</span>
                   <button type="button" onClick={() => onOpen(t)} style={{ all: 'unset', cursor: 'pointer', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1, color: t.type === 'Blackout' ? 'var(--bad)' : undefined }}>{t.name}</button>
                   {t.domain_id && <span className="domain">{t.domain_id}</span>}
+                  {t.type !== 'Blackout' && t.type !== 'Workstream' && (canStatus(t)
+                    ? <StatusSelect value={t.status} options={STATUSES} onChange={(v) => setStat(t, v)} label={`Status of ${t.code}`} />
+                    : <Badge v={t.status} />)}
                 </div>
                 <div className="g-track">{bar(t, p.dark)}</div>
               </div>
@@ -97,6 +100,7 @@ export default function Schedule() {
   const setStat = async (t, s) => {
     try { await api(`/toolkit/tasks/${t.id}`, { method: 'PUT', body: { status: s } }); tasks.reload(); setErr(null); } catch (e) { setErr(e); }
   };
+  const canStatus = (t) => can('schedule', 'edit', { domain: t.domain_id }) || can('schedule', 'status', { domain: t.domain_id });
   const done = computed.filter((t) => ['Task', 'Milestone'].includes(t.type) && t.status === 'Complete').length;
   const total = computed.filter((t) => ['Task', 'Milestone'].includes(t.type)).length;
 
@@ -104,7 +108,7 @@ export default function Schedule() {
     <section className="sheet">
       <SheetHead title="Master schedule"
         actions={<>
-          <div className="tabs" role="tablist" style={{ margin: 0, border: '2px solid var(--ink)' }}>
+          <div className="tabs" role="tablist">
             {[['gantt', 'Gantt'], ['table', 'Table']].map(([k, l]) => <button key={k} role="tab" aria-selected={view === k} onClick={() => setView(k)}>{l}</button>)}
           </div>
           {can('schedule', 'add') && <button className="btn primary" onClick={() => setOpen({ anchor: 'BRD', phase: phase || meta.phases[0].code })}>Add item</button>}
@@ -122,7 +126,7 @@ export default function Schedule() {
       <ErrorNote error={err} />
       {view === 'gantt' ? (
         <>
-          <Gantt settings={settings.data} phases={spans} tasks={list} onOpen={setOpen} collapsed={collapsed} toggle={(c) => setCollapsed((x) => ({ ...x, [c]: !x[c] }))} />
+          <Gantt settings={settings.data} phases={spans} tasks={list} onOpen={setOpen} collapsed={collapsed} toggle={(c) => setCollapsed((x) => ({ ...x, [c]: !x[c] }))} canStatus={canStatus} setStat={setStat} />
           <div className="legend">
             <span><i className="g-ms" style={{ position: 'static', display: 'inline-block', transform: 'rotate(45deg) scale(.7)' }} /> Milestone / gate</span>
             <span><i style={{ display: 'inline-block', width: 3, height: 16, background: 'var(--bad)' }} /> Today</span>
@@ -141,7 +145,7 @@ export default function Schedule() {
                 <Fragment key={p.code}>
                   <tr className="grp" style={{ '--c': p.dark }}><td colSpan={9}>{p.label} · {fmtShort(p.start)} → {fmtShort(p.end)}</td></tr>
                   {p.tasks.map((t) => {
-                    const ed = can('schedule', 'edit', { domain: t.domain_id });
+                    const ed = canStatus(t);
                     return (
                       <tr key={t.id}>
                         <td className="ref">{t.code}</td>
@@ -152,7 +156,7 @@ export default function Schedule() {
                         <td style={{ whiteSpace: 'nowrap' }}>{t.type === 'Milestone' ? '◆' : fmtShort(t.end)}</td>
                         <td>{t.weeks || ''}</td>
                         <td>{t.type === 'Blackout' ? <span className="badge bad">Blackout</span> : ed ? (
-                          <select value={t.status} onChange={(e) => setStat(t, e.target.value)} aria-label={`Status of ${t.code}`} style={{ minWidth: 120 }}>{STATUSES.map((s) => <option key={s}>{s}</option>)}</select>
+                          <StatusSelect value={t.status} options={STATUSES} onChange={(v) => setStat(t, v)} label={`Status of ${t.code}`} />
                         ) : <Badge v={t.status} />}</td>
                         <td className="w-lg small">{t.notes}</td>
                       </tr>

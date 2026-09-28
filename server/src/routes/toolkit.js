@@ -5,7 +5,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
 import { parse, notFound, logActivity } from '../lib/util.js';
-import { TOOLKIT_PHASES, TOOLKIT_REGISTERS, assertCan, requireView } from '../lib/permissions.js';
+import { TASK_STATUSES, TOOLKIT_PHASES, TOOLKIT_REGISTERS, assertCan, can, requireView } from '../lib/permissions.js';
 
 const r = Router();
 const REG = Object.fromEntries(TOOLKIT_REGISTERS.map((x) => [x.key, x]));
@@ -66,7 +66,7 @@ const Task = z.object({
   duration_days: z.number().int().min(0).max(1000),
   use_hypercare: z.boolean().default(false),
   notes: z.string().trim().max(2000).default(''),
-  status: z.string().trim().max(30).default('Not Started'),
+  status: z.enum(['', ...TASK_STATUSES]).default('Not Started'),
 });
 
 const TASK_SQL = `SELECT t.*, d.name AS domain_name, u.name AS updated_by_name,
@@ -101,7 +101,12 @@ r.post('/tasks', async (req, res) => {
 r.put('/tasks/:id', async (req, res) => {
   const t = await getTask(req.params.id);
   const b = parse(Task.partial(), req.body);
-  assertCan(req.user, 'schedule', 'edit', { domain: t.domain_id });
+  const keys = Object.keys(b).filter((k) => b[k] !== undefined);
+  const statusOnly = keys.length > 0 && keys.every((k) => k === 'status');
+  // Changing only the status needs 'status' rights; anything else needs 'edit'.
+  if (!(statusOnly && can(req.user, 'schedule', 'edit', { domain: t.domain_id }))) {
+    assertCan(req.user, 'schedule', statusOnly ? 'status' : 'edit', { domain: t.domain_id });
+  }
   if (b.domain_id !== undefined && b.domain_id !== t.domain_id) assertCan(req.user, 'schedule', 'edit', { domain: b.domain_id });
   const next = { ...t, ...Object.fromEntries(Object.entries(b).filter(([, v]) => v !== undefined)) };
   if (next.type === 'Milestone') next.duration_days = 0;
@@ -112,7 +117,7 @@ r.put('/tasks/:id', async (req, res) => {
       [next.code, next.phase, next.name, next.type, next.owner, next.domain_id, next.anchor, next.offset_days, next.duration_days,
         next.use_hypercare, next.notes, next.status, req.user.id, t.id]);
     await logActivity(c, req.user.id, 'updated', 'tk_task', next.code,
-      Object.keys(b).length === 1 && b.status ? `Status → ${b.status}` : `Edited ${Object.keys(b).join(', ')}`);
+      statusOnly ? `Status: ${t.status || '—'} → ${b.status || '—'}` : `Edited ${keys.join(', ')}`);
   });
   res.json({ ok: true });
 });
@@ -200,16 +205,22 @@ r.put('/r/:register/:id', async (req, res) => {
   const reg = register(req.params.register);
   const cur = await getRecord(reg, req.params.id);
   const b = parse(RecordBody.partial(), req.body);
-  assertCan(req.user, reg.key, 'edit', { domain: cur.domain_id });
   const domain = b.domain_id === undefined ? cur.domain_id : b.domain_id;
-  if (domain !== cur.domain_id) assertCan(req.user, reg.key, 'edit', { domain });
   const data = cleanData(reg, { ...cur.data, ...(b.data || {}) });
-  const changed = reg.columns.filter((c) => (cur.data[c.key] ?? '') !== data[c.key]).map((c) => c.label);
+  const changedCols = reg.columns.filter((c) => (cur.data[c.key] ?? '') !== data[c.key]);
+  const changed = changedCols.map((c) => c.label);
+  const statusOnly = domain === cur.domain_id && changedCols.length > 0 && changedCols.every((c) => reg.statusFields.includes(c.key));
+  if (!(statusOnly && can(req.user, reg.key, 'edit', { domain: cur.domain_id }))) {
+    assertCan(req.user, reg.key, statusOnly ? 'status' : 'edit', { domain: cur.domain_id });
+  }
+  if (domain !== cur.domain_id) assertCan(req.user, reg.key, 'edit', { domain });
   await tx(async (c) => {
     await c.query('UPDATE tk_records SET data=$1, domain_id=$2, updated_at=now(), updated_by=$3 WHERE id=$4',
       [JSON.stringify(data), domain, req.user.id, cur.id]);
-    await logActivity(c, req.user.id, 'updated', `tk_${reg.key}`, cur.id,
-      `${label(reg, data)} — ${changed.length ? changed.join(', ') : 'domain'}`);
+    const summary = statusOnly
+      ? changedCols.map((col) => `${col.label}: ${cur.data[col.key] || '—'} → ${data[col.key] || '—'}`).join('; ')
+      : changed.length ? changed.join(', ') : 'domain';
+    await logActivity(c, req.user.id, 'updated', `tk_${reg.key}`, cur.id, `${label(reg, data)} — ${summary}`);
   });
   res.json({ ok: true });
 });

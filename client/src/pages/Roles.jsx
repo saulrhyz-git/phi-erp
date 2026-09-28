@@ -12,12 +12,14 @@ function Level({ v, na }) {
   return <span className={`lvl ${v}`}>{v === 'all' ? 'All' : v === 'own' ? 'Own' : 'No'}</span>;
 }
 
+const ACTION_LABEL = { view: 'View', add: 'Add', edit: 'Edit', status: 'Update status', delete: 'Delete' };
+
 // Read-only or editable matrix of modules × actions for one role.
 function Matrix({ groups, actions, perms, editable, onChange }) {
   return (
     <div className="tablewrap" style={{ maxHeight: '60vh' }}>
       <table className="perm">
-        <thead><tr><th>Module</th>{actions.map((a) => <th key={a} style={{ textTransform: 'capitalize' }}>{a}</th>)}</tr></thead>
+        <thead><tr><th>Module</th>{actions.map((a) => <th key={a} title={a === 'status' ? "Own = the user's domain(s) plus project-wide records" : undefined}>{ACTION_LABEL[a] || a}</th>)}</tr></thead>
         <tbody>
           {groups.map((g) => (
             <Fragment key={g.key}>
@@ -44,6 +46,7 @@ function Matrix({ groups, actions, perms, editable, onChange }) {
           ))}
         </tbody>
       </table>
+      <p className="small muted" style={{ padding: '8px 12px', margin: 0 }}>Update status changes only a record's status fields. "Own" covers the user's domain(s) plus shared project-wide records; sign-offs and CCB decisions still need Edit.</p>
     </div>
   );
 }

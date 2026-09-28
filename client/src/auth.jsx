@@ -13,6 +13,8 @@ export function canUser(user, module, action, ctx = {}) {
   if (PROCESS_SCOPED.includes(module)) {
     return 'processId' in ctx ? user.process_ids.includes(ctx.processId) : user.process_ids.length > 0;
   }
+  // Status updates with 'own': the user's domain(s) plus shared, project-wide records.
+  if (action === 'status') return 'domain' in ctx ? !ctx.domain || user.domains.includes(ctx.domain) : true;
   return 'domain' in ctx ? !!ctx.domain && user.domains.includes(ctx.domain) : user.domains.length > 0;
 }
 

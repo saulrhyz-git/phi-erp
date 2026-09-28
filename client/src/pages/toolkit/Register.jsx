@@ -5,7 +5,7 @@ import { useAuth } from '../../auth.jsx';
 import { useApi } from '../../hooks.js';
 import { Comments, ErrorNote, Loading, Modal, SheetHead } from '../../components/ui.jsx';
 import { computeTasks, daysBetween, fmtShort, todayYmd } from '../../schedule.js';
-import { Badge, DomainTag, allowedDomains, useToolkit } from './common.jsx';
+import { Badge, DomainTag, StatusSelect, allowedDomains, useToolkit } from './common.jsx';
 
 function Field({ col, value, onChange, disabled }) {
   const p = { value: value ?? '', disabled, onChange: (e) => onChange(e.target.value), 'aria-label': col.label };
@@ -79,6 +79,12 @@ export default function Register() {
   const canAddAny = can(key, 'add');
   const canEdit = (r) => can(key, 'edit', { domain: r.domain_id });
   const canDel = (r) => can(key, 'delete', { domain: r.domain_id });
+  const statusFields = reg.statusFields || [];
+  const canStatus = (r) => canEdit(r) || (statusFields.length > 0 && can(key, 'status', { domain: r.domain_id }));
+  const setStatus = async (r, field, v) => {
+    try { await api(`/toolkit/r/${key}/${r.id}`, { method: 'PUT', body: { data: { [field]: v } } }); reload(); reloadSummary(); }
+    catch (e) { alert(e.message); }
+  };
   const today = todayYmd();
 
   let rows = (data || []).map((r) => ({ ...r, task: isMs ? taskByCode[r.data.task_code] : null }));
@@ -97,11 +103,13 @@ export default function Register() {
     setErr(null);
     setOpen({ mode: 'new', form: { ...blank(), ...(prefill || {}) }, domain: addLevel === 'own' ? (opts[0]?.id ?? '') : '' });
   };
-  const startOpen = (r) => { setErr(null); setOpen({ mode: canEdit(r) ? 'edit' : 'view', rec: r, form: { ...blank(), ...r.data }, domain: r.domain_id || '' }); };
+  const startOpen = (r) => { setErr(null); setOpen({ mode: canEdit(r) ? 'edit' : canStatus(r) ? 'status' : 'view', rec: r, form: { ...blank(), ...r.data }, domain: r.domain_id || '' }); };
   const save = async () => {
     setBusy(true);
     try {
-      const body = { data: open.form, domain_id: open.domain || null };
+      const body = open.mode === 'status'
+        ? { data: Object.fromEntries(statusFields.map((k) => [k, open.form[k]])) }
+        : { data: open.form, domain_id: open.domain || null };
       if (open.mode === 'new') await api(`/toolkit/r/${key}`, { method: 'POST', body });
       else await api(`/toolkit/r/${key}/${open.rec.id}`, { method: 'PUT', body });
       setOpen(null); reload(); reloadSummary();
@@ -118,7 +126,8 @@ export default function Register() {
     download(`PHI_${reg.key}_${today}.csv`, [head, ...body]);
   };
 
-  const editable = open && open.mode !== 'view';
+  const editable = open && (open.mode === 'new' || open.mode === 'edit');
+  const statusMode = open?.mode === 'status';
   const domainOptions = open ? allowedDomains(user, level(key, open.mode === 'new' ? 'add' : 'edit'), meta.domains) : [];
   const setF = (k, v) => setOpen((o) => ({ ...o, form: { ...o.form, [k]: v } }));
 
@@ -141,8 +150,10 @@ export default function Register() {
           {meta.domains.map((d) => <option key={d.id} value={d.id}>{d.id} — {d.name}</option>)}
         </select>
         <span className="small"><b>{rows.length}</b> of {data?.length ?? 0}</span>
-        {level(key, 'edit') === 'own' && <span className="lock">You can change records tagged {user.domains.join(', ') || '(no domain assigned — ask the PM)'}</span>}
-        {level(key, 'edit') === 'none' && <span className="lock">Read-only for your role</span>}
+        {level(key, 'edit') === 'own' && <span className="lock">You can change records tagged {user.domains.join(', ') || '(no domain assigned — ask the PM)'}{statusFields.length > 0 && level(key, 'status') !== 'none' ? ', and update the status of project-wide records' : ''}</span>}
+        {level(key, 'edit') === 'none' && (statusFields.length > 0 && level(key, 'status') !== 'none'
+          ? <span className="lock">You can update status; other fields are read-only</span>
+          : <span className="lock">Read-only for your role</span>)}
       </div>
       <ErrorNote error={error} />
       {loading && !data ? <Loading /> : (
@@ -164,9 +175,13 @@ export default function Register() {
                     <td style={{ whiteSpace: 'nowrap' }}>{fmtShort(r.task?.start)}</td>
                     <td>{r.task ? daysBetween(today, r.task.start) : ''}</td>
                   </>}
-                  {listCols.map((c) => <td key={c.key} className={c.wide ? 'wide' : undefined}><Cell col={c} v={r.data[c.key]} /></td>)}
+                  {listCols.map((c) => <td key={c.key} className={c.wide ? 'wide' : undefined}>
+                    {statusFields.includes(c.key) && canStatus(r)
+                      ? <StatusSelect value={r.data[c.key]} options={c.options} onChange={(v) => setStatus(r, c.key, v)} label={`${c.label} of ${r.data[reg.titleField] || r.id}`} />
+                      : <Cell col={c} v={r.data[c.key]} />}
+                  </td>)}
                   <td style={{ whiteSpace: 'nowrap' }}>
-                    <button className="btn sm ghost" onClick={() => startOpen(r)}>{canEdit(r) ? 'Edit' : 'Open'}{r.comment_count ? ` (${r.comment_count})` : ''}</button>{' '}
+                    <button className="btn sm ghost" onClick={() => startOpen(r)}>{canEdit(r) ? 'Edit' : canStatus(r) ? 'Update' : 'Open'}{r.comment_count ? ` (${r.comment_count})` : ''}</button>{' '}
                     {key === 'status_reports' && canAddAny && <button className="btn sm ghost" onClick={() => startNew({ ...r.data, week_ending: '' })}>Duplicate</button>}{' '}
                     {canDel(r) && <button className="btn sm danger" onClick={() => del(r)}>Delete</button>}
                   </td>
@@ -183,12 +198,13 @@ export default function Register() {
         footer={<>
           {open?.rec && canDel(open.rec) && <button className="btn danger" onClick={() => del(open.rec)}>Delete</button>}
           <span style={{ flex: 1 }} />
-          <button className="btn ghost" onClick={() => setOpen(null)}>{editable ? 'Cancel' : 'Close'}</button>
-          {editable && <button className="btn primary" onClick={save} disabled={busy}>{open.mode === 'new' ? 'Add record' : 'Save changes'}</button>}
+          <button className="btn ghost" onClick={() => setOpen(null)}>{editable || statusMode ? 'Cancel' : 'Close'}</button>
+          {(editable || statusMode) && <button className="btn primary" onClick={save} disabled={busy}>{open.mode === 'new' ? 'Add record' : statusMode ? 'Update status' : 'Save changes'}</button>}
         </>}>
         {open && (
           <>
             <ErrorNote error={err} />
+            {statusMode && <div className="notice">You can update the status of this record. Other fields are read-only for your role.</div>}
             {open.mode === 'view' && <div className="notice">Read-only: {open.rec.domain_id ? `this record belongs to ${open.rec.domain_id}` : 'this is a project-wide record'} and your role can't change it.</div>}
             <label className="field"><span>Domain</span>
               {editable ? (
@@ -202,7 +218,7 @@ export default function Register() {
               {reg.columns.map((c) => (
                 <label key={c.key} className="field" style={c.type === 'textarea' ? { gridColumn: '1 / -1' } : undefined}>
                   <span>{c.label}{reg.codeField === c.key && reg.codePrefix && open.mode === 'new' ? ' (leave blank to number automatically)' : ''}</span>
-                  <Field col={c} value={open.form[c.key]} onChange={(v) => setF(c.key, v)} disabled={!editable} />
+                  <Field col={c} value={open.form[c.key]} onChange={(v) => setF(c.key, v)} disabled={!(editable || (statusMode && statusFields.includes(c.key)))} />
                 </label>
               ))}
             </div>
