@@ -3,7 +3,7 @@
 The living master blueprint for PHI's Odoo 19 implementation. The team reviews and validates it in the browser:
 
 - **S-0 World map** — Level 0 value chain with validation progress per process.
-- **S-1 SIPOC** — one SIPOC per Level 1 process. Admins and assigned owners can edit it.
+- **S-1 COPIS** — one COPIS per Level 1 process, read customer-first (Customers → Outputs → Process → Inputs → Suppliers) so every process is designed from the result backwards. Admins and assigned owners can edit it.
 - **S-2 Swimlanes** — seven BPMN 2.0 collaboration diagrams. They are viewed and edited in the browser with bpmn-js; every save becomes a new version, older versions can be restored, and each can be downloaded as `.bpmn`.
 - **S-3 Data & interconnection matrix** — for each hand-off step: trigger, data fields, system hand-off, exceptions and fit. Process owners approve each step, approve it with changes, or send it back for rework.
 - **S-4 Master data & Lot** — shared records, plus the vendor-proposed Lot master model and which fields each process needs on it.
@@ -86,7 +86,7 @@ One Node process serves both the API (`/api/*`) and the built React app, so ther
 ```
 phi-blueprint/
 ├── client/                React app (Vite)
-│   └── src/pages/         World map, SIPOC, matrix, diagrams, open items, users…
+│   └── src/pages/         World map, COPIS, matrix, diagrams, open items, users…
 ├── server/
 │   ├── migrations/        SQL migrations, applied in filename order
 │   ├── seed/              blueprint.json + the 7 baseline .bpmn files

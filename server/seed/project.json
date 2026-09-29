@@ -2452,7 +2452,7 @@
    "sow_coverage": "In SOW",
    "rating": "Covered",
    "gaps": "Blueprint processes: 11, 15, 19",
-   "action": "Add portal as a channel in SIPOC for 11 and 15",
+   "action": "Add portal as a channel in COPIS for 11 and 15",
    "priority": "Low",
    "steps_affected": "",
    "status": "Open",

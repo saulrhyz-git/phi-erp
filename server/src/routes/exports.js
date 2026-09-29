@@ -57,7 +57,7 @@ r.get('/xlsx', async (req, res) => {
     [],
     ['Exported', new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' })],
     ['Exported by', req.user.name],
-    ['Contents', 'Process Catalogue · SIPOC · Data Matrix (with validation status) · Master Data · Lot Touchpoints · Open Items · Re-engineering · SOW Gap Analysis · SOW Observations · SOW Appendix A-B'],
+    ['Contents', 'Process Catalogue · COPIS · Data Matrix (with validation status) · Master Data · Lot Touchpoints · Open Items · Re-engineering · SOW Gap Analysis · SOW Observations · SOW Appendix A-B'],
     ['Key decisions', 'Vendor proposes the Lot as the master model. TORC = taxes and other related charges.'],
     ['Note', 'This is a snapshot of the live blueprint. Make changes in the web app so validation history is kept.'],
   ]);
@@ -67,9 +67,9 @@ r.get('/xlsx', async (req, res) => {
     [['Proc ID', 'id', 8], ['Process', 'name', 38], ['Stage', 'stage', 18], ['Domain', 'group', 26], ['Accountable owner', 'owner_dept', 28],
       ['Assigned owners', 'owners', 26], ['Indicative Odoo 19 home', 'odoo_home', 55], ['Fit', 'fit', 11], ['In reference flow', 'ref', 12]],
     procs.rows.map((p) => ({ ...p, stage: p.stage_name || 'Cross-cutting', group: p.group_name, ref: p.from_reference ? 'Yes' : 'Proposed' })));
-  addSheet(wb, 'SIPOC',
-    [['Proc ID', 'id', 8], ['Process', 'name', 28], ['Suppliers', 's', 32], ['Inputs', 'i', 36], ['Process steps', 'p', 44], ['Outputs', 'o', 34], ['Customers', 'c', 30]],
-    procs.rows.map((p) => ({ id: p.id, name: p.name, s: bullets(p.suppliers), i: bullets(p.inputs), p: numbered(p.steps), o: bullets(p.outputs), c: bullets(p.customers) })));
+  addSheet(wb, 'COPIS',
+    [['Proc ID', 'id', 8], ['Process', 'name', 28], ['Customers', 'c', 30], ['Outputs', 'o', 34], ['Process steps', 'p', 44], ['Inputs', 'i', 36], ['Suppliers', 's', 32]],
+    procs.rows.map((p) => ({ id: p.id, name: p.name, c: bullets(p.customers), o: bullets(p.outputs), p: numbered(p.steps), i: bullets(p.inputs), s: bullets(p.suppliers) })));
   addSheet(wb, 'Data Matrix',
     [['Ref', 'ref', 7], ['Proc ID', 'process_id', 8], ['Process', 'process_name', 26], ['Step', 'step', 26], ['a. Trigger event', 'trigger_event', 30],
       ['b. Inputs & data fields', 'data_fields', 50], ['c. System hand-off', 'handoff', 46], ['d. Exceptions / edge cases', 'exceptions', 46], ['Fit', 'fit', 11],

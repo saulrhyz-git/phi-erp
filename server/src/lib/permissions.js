@@ -25,7 +25,7 @@ export const LEVELS = ['none', 'own', 'all'];
 // actions: the actions this module actually supports
 const BLUEPRINT = [
   { key: 'dashboard', label: 'World map & dashboard', actions: ['view'] },
-  { key: 'processes', label: 'S-1 SIPOC & processes', scope: 'process', actions: ['view', 'edit'] },
+  { key: 'processes', label: 'S-1 COPIS & processes', scope: 'process', actions: ['view', 'edit'] },
   { key: 'diagrams', label: 'S-2 Swimlane diagrams', actions: ['view', 'edit'] },
   { key: 'matrix', label: 'S-3 Data matrix steps & validation', scope: 'process', actions: ['view', 'add', 'edit', 'delete'] },
   { key: 'master_data', label: 'S-4 Master data & Lot (structure)', actions: ['view', 'add', 'edit', 'delete'] },

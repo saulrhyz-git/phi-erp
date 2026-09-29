@@ -6,8 +6,8 @@ export default function Processes() {
   const { data, error, loading } = useApi('/processes');
   return (
     <section className="sheet">
-      <SheetHead code="S-1" title="SIPOC architecture">
-        One SIPOC per Level 1 process. Open a process to review or edit its SIPOC and validate its hand-off steps.
+      <SheetHead code="S-1" title="COPIS architecture">
+        One COPIS per Level 1 process — begin with the end in mind: who the process serves and what they receive, then how it is produced, what it needs and who supplies it. Open a process to review or edit its COPIS and validate its hand-off steps.
       </SheetHead>
       {loading && <Loading />}
       <ErrorNote error={error} />

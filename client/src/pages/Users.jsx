@@ -37,7 +37,7 @@ export default function Users() {
   return (
     <section className="sheet">
       <SheetHead title="Users" actions={can('users', 'add') && <button className="btn primary" onClick={() => { setErr(null); setForm({ ...BLANK, role_id: roleList.find((r) => r.name === 'Process Owner')?.id ?? '' }); }}>Add user</button>}>
-        Each user has one role. Domains decide which toolkit records a domain-scoped role can change; processes decide which SIPOCs and steps they validate.
+        Each user has one role. Domains decide which toolkit records a domain-scoped role can change; processes decide which COPIS and steps they validate.
         {can('roles') && <> Permissions are set per role on the <Link to="/roles">Roles</Link> page.</>}
       </SheetHead>
       <ErrorNote error={error} />
@@ -92,7 +92,7 @@ export default function Users() {
               </div>
             </div>
             <div className="field">
-              <span className="small"><b>Processes</b> — SIPOCs and hand-off steps this user validates when their role grants “own”</span>
+              <span className="small"><b>Processes</b> — COPIS and hand-off steps this user validates when their role grants “own”</span>
               <div className="checks">
                 {procs.data?.map((p) => (
                   <label key={p.id}><input type="checkbox" checked={form.process_ids.includes(p.id)} onChange={() => toggle('process_ids', p.id)} /> {p.id} {p.name}</label>

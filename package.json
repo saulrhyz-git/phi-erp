@@ -2,7 +2,7 @@
   "name": "phi-blueprint",
   "version": "1.0.0",
   "private": true,
-  "description": "PHI Enterprise Process Blueprint \u2014 SIPOC, BPMN 2.0 swimlanes and data matrix for the Odoo 19 implementation",
+  "description": "PHI Enterprise Process Blueprint \u2014 COPIS, BPMN 2.0 swimlanes and data matrix for the Odoo 19 implementation",
   "workspaces": [
     "server",
     "client"

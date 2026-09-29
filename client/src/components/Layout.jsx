@@ -11,7 +11,7 @@ import { useAuth } from '../auth.jsx';
 
 const BLUEPRINT = [
   ['/', 'S-0', 'World map', 'dashboard', Map, true],
-  ['/processes', 'S-1', 'SIPOC', 'processes', Layers],
+  ['/processes', 'S-1', 'COPIS', 'processes', Layers],
   ['/diagrams', 'S-2', 'Swimlanes', 'diagrams', GitBranch],
   ['/matrix', 'S-3', 'Data matrix', 'matrix', Table2],
   ['/master-data', 'S-4', 'Master data & Lot', 'master_data', Database],

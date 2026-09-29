@@ -5,7 +5,8 @@ import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
 import { Comments, ErrorNote, Fit, Loading, SheetHead, Status, STATUS_LABEL } from '../components/ui.jsx';
 
-const SIPOC = [['suppliers', 'S', 'Suppliers'], ['inputs', 'I', 'Inputs'], ['steps', 'P', 'Process'], ['outputs', 'O', 'Outputs'], ['customers', 'C', 'Customers']];
+// COPIS: read customer-first — begin with the end in mind.
+const COPIS = [['customers', 'C', 'Customers'], ['outputs', 'O', 'Outputs'], ['steps', 'P', 'Process'], ['inputs', 'I', 'Inputs'], ['suppliers', 'S', 'Suppliers']];
 const toText = (a) => (a || []).join('\n');
 const toList = (t) => t.split('\n').map((s) => s.trim()).filter(Boolean);
 
@@ -92,13 +93,13 @@ export default function ProcessDetail() {
 
   const startEdit = () => {
     setForm({ name: p.name, owner_dept: p.owner_dept, odoo_home: p.odoo_home, fit: p.fit,
-      ...Object.fromEntries(SIPOC.map(([k]) => [k, toText(p[k])])) });
+      ...Object.fromEntries(COPIS.map(([k]) => [k, toText(p[k])])) });
     setEditing(true);
   };
   const save = async () => {
     try {
       const body = { name: form.name, owner_dept: form.owner_dept, odoo_home: form.odoo_home, fit: form.fit,
-        ...Object.fromEntries(SIPOC.map(([k]) => [k, toList(form[k])])) };
+        ...Object.fromEntries(COPIS.map(([k]) => [k, toList(form[k])])) };
       await api(`/processes/${id}`, { method: 'PUT', body });
       setEditing(false); setSaveErr(null); reload();
     } catch (e) { setSaveErr(e); }
@@ -112,7 +113,7 @@ export default function ProcessDetail() {
     <>
       <section className="sheet">
         <SheetHead code={p.id} title={editing ? 'Edit process' : p.name}
-          actions={canEdit && !editing ? <button className="btn" onClick={startEdit}>Edit SIPOC</button> : null}>
+          actions={canEdit && !editing ? <button className="btn" onClick={startEdit}>Edit COPIS</button> : null}>
           {p.group_name} · {p.stage_name || 'Cross-cutting'}{p.from_reference ? ' · numbered in reference flow' : ''}
         </SheetHead>
         <ErrorNote error={saveErr} />
@@ -135,8 +136,9 @@ export default function ProcessDetail() {
             <dt>Last updated</dt><dd>{fmtDateTime(p.updated_at)}{p.updated_by_name && ` by ${p.updated_by_name}`}</dd>
           </dl>
         )}
+        <p className="small muted" style={{ margin: '0 0 8px' }}>Begin with the end in mind: start from who this process serves and what they must receive, then work back to the steps, inputs and suppliers.</p>
         <div className="sgrid">
-          {SIPOC.map(([k, letter, label]) => (
+          {COPIS.map(([k, letter, label]) => (
             <div key={k}>
               <h4><em>{letter}</em>{label}</h4>
               {editing ? <textarea {...f(k)} aria-label={`${label}, one per line`} /> :
@@ -149,7 +151,7 @@ export default function ProcessDetail() {
             <span className="muted small">One item per line.</span>
             <span style={{ flex: 1 }} />
             <button className="btn ghost" onClick={() => setEditing(false)}>Cancel</button>
-            <button className="btn primary" onClick={save}>Save SIPOC</button>
+            <button className="btn primary" onClick={save}>Save COPIS</button>
           </div>
         )}
       </section>
