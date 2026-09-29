@@ -39,7 +39,16 @@ r.get('/:id', async (req, res) => {
 });
 
 const list = z.array(z.string().trim().min(1).max(500)).max(40);
+const CustomerRequirement = z.object({
+  customer: z.string().trim().min(1, 'Each requirement needs a customer').max(200),
+  requirement: z.string().trim().min(1, 'Describe what the customer requires').max(600),
+  measure: z.string().trim().max(300).default(''),
+  target: z.string().trim().max(200).default(''),
+  status: z.enum(['Draft', 'Validated']).default('Draft'),
+  source: z.string().trim().max(60).default(''),
+});
 const ProcessUpdate = z.object({
+  customer_requirements: z.array(CustomerRequirement).max(30).optional(),
   name: z.string().trim().min(1).max(200).optional(),
   owner_dept: z.string().trim().max(200).optional(),
   odoo_home: z.string().trim().max(1000).optional(),
@@ -50,7 +59,7 @@ const ProcessUpdate = z.object({
 r.put('/:id', async (req, res) => {
   assertCan(req.user, 'processes', 'edit', { processId: req.params.id });
   const body = parse(ProcessUpdate, req.body);
-  const { sets, values } = buildUpdate(body, 1, ['suppliers', 'inputs', 'steps', 'outputs', 'customers']);
+  const { sets, values } = buildUpdate(body, 1, ['suppliers', 'inputs', 'steps', 'outputs', 'customers', 'customer_requirements']);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });
   await tx(async (c) => {
     values.push(req.user.id, req.params.id);

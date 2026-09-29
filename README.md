@@ -3,7 +3,7 @@
 The living master blueprint for PHI's Odoo 19 implementation. The team reviews and validates it in the browser:
 
 - **S-0 World map** — Level 0 value chain with validation progress per process.
-- **S-1 COPIS** — one COPIS per Level 1 process, read customer-first (Customers → Outputs → Process → Inputs → Suppliers) so every process is designed from the result backwards. Admins and assigned owners can edit it.
+- **S-1 COPIS** — one COPIS per Level 1 process, read customer-first (Customers → Outputs → Process → Inputs → Suppliers) so every process is designed from the result backwards. Admins and assigned owners can edit it. Each process starts with **Customer requirements**: what each customer needs from the outputs, with a measure, a target and a Draft/Validated status. Twelve processes come with draft requirements taken from the re-engineering KPIs, which process owners confirm with their customers.
 - **S-2 Swimlanes** — seven BPMN 2.0 collaboration diagrams. They are viewed and edited in the browser with bpmn-js; every save becomes a new version, older versions can be restored, and each can be downloaded as `.bpmn`.
 - **S-3 Data & interconnection matrix** — for each hand-off step: trigger, data fields, system hand-off, exceptions and fit. Process owners approve each step, approve it with changes, or send it back for rework.
 - **S-4 Master data & Lot** — shared records, plus the vendor-proposed Lot master model and which fields each process needs on it.

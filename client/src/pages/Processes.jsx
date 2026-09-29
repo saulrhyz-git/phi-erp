@@ -14,7 +14,7 @@ export default function Processes() {
       {data && (
         <div className="tablewrap">
           <table className="t">
-            <thead><tr><th>ID</th><th>Process</th><th>Stage</th><th>Accountable owner</th><th>Assigned owners</th><th>Fit</th><th>Validation</th></tr></thead>
+            <thead><tr><th>ID</th><th>Process</th><th>Stage</th><th>Accountable owner</th><th>Assigned owners</th><th>Customer requirements</th><th>Fit</th><th>Validation</th></tr></thead>
             <tbody>
               {data.map((p) => (
                 <tr key={p.id}>
@@ -23,6 +23,8 @@ export default function Processes() {
                   <td>{p.stage_name || 'Cross-cutting'}</td>
                   <td>{p.owner_dept}</td>
                   <td>{p.owners.length ? p.owners.map((o) => o.name).join(', ') : <span className="muted">Not assigned</span>}</td>
+                  <td className="small">{(() => { const r = p.customer_requirements || []; const v = r.filter((x) => x.status === 'Validated').length;
+                    return r.length ? <><b>{r.length}</b> · {v} validated</> : <span className="muted">None yet</span>; })()}</td>
                   <td><Fit fit={p.fit} /></td>
                   <td style={{ minWidth: 130 }}>{p.approved_count}/{p.step_count} approved<Progress approved={p.approved_count} flagged={p.flagged_count} total={p.step_count} /></td>
                 </tr>

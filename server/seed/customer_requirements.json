@@ -1,0 +1,16 @@
+{
+ "_note": "Draft customer requirements derived from the re-engineering KPIs. Process owners validate them with the customer.",
+ "01": [{"customer": "Department heads", "requirement": "Know whether budget is available before committing spend", "measure": "% of POs budget-checked at request", "target": "100%", "status": "Draft", "source": "RE-01"}],
+ "04": [{"customer": "ManCom", "requirement": "A quick, comparable go/no-go decision on each land deal", "measure": "Working days from opportunity logged to go/no-go", "target": "≤ 15 working days", "status": "Draft", "source": "RE-03"}],
+ "05": [{"customer": "Sales", "requirement": "Only sell units that are legally sellable", "measure": "Reservations made before License to Sell", "target": "Zero", "status": "Draft", "source": "RE-05"}],
+ "06": [{"customer": "Contractors / Accounts payable", "requirement": "Progress billing verified and approved promptly", "measure": "Days from cut-off to approved progress billing", "target": "≤ 7 days", "status": "Draft", "source": "RE-07"}],
+ "09": [{"customer": "Buyer", "requirement": "A correct Contract to Sell, ready to sign quickly", "measure": "Days from reservation to notarized CTS", "target": "≤ 30 days", "status": "Draft", "source": "RE-09"},
+        {"customer": "Buyer", "requirement": "Submit documents only once", "measure": "% of documents complete at reservation", "target": "≥ 80%", "status": "Draft", "source": "RE-09"}],
+ "11": [{"customer": "Buyer", "requirement": "An accurate, current statement of account", "measure": "Posting lag after payment", "target": "≤ 1 working day", "status": "Draft", "source": "RE-10"}],
+ "12": [{"customer": "Sales / inventory", "requirement": "Cancelled units back on sale quickly", "measure": "Days from effective cancellation to re-listing", "target": "≤ 5 working days", "status": "Draft", "source": "RE-12"}],
+ "13": [{"customer": "Buyer / Treasury", "requirement": "Loan proceeds released without delay", "measure": "Days from equity fully paid to loan release", "target": "≤ 60 days", "status": "Draft", "source": "RE-13"}],
+ "16": [{"customer": "Suppliers", "requirement": "Paid on a predictable schedule, with BIR 2307", "measure": "Ad hoc payment runs per month", "target": "≤ 2", "status": "Draft", "source": "RE-15"}],
+ "17": [{"customer": "Brokers and agents", "requirement": "Commission paid on time, with a clear statement", "measure": "Days from release trigger to payout", "target": "≤ 10 days", "status": "Draft", "source": "RE-14"}],
+ "19": [{"customer": "Buyer", "requirement": "Title delivered promptly after full payment", "measure": "Days from full payment to title delivery", "target": "Set after baseline", "status": "Draft", "source": "RE-18"}],
+ "X2": [{"customer": "ManCom", "requirement": "One consistent management pack, early each month", "measure": "Working days to close", "target": "≤ 5 at go-live; ≤ 3 after hypercare", "status": "Draft", "source": "RE-20"}]
+}

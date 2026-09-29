@@ -4,6 +4,7 @@ import { api, fmtDateTime } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
 import { Comments, ErrorNote, Fit, Loading, SheetHead, Status, STATUS_LABEL } from '../components/ui.jsx';
+import CustomerRequirements from '../components/CustomerRequirements.jsx';
 
 // COPIS: read customer-first — begin with the end in mind.
 const COPIS = [['customers', 'C', 'Customers'], ['outputs', 'O', 'Outputs'], ['steps', 'P', 'Process'], ['inputs', 'I', 'Inputs'], ['suppliers', 'S', 'Suppliers']];
@@ -136,6 +137,8 @@ export default function ProcessDetail() {
             <dt>Last updated</dt><dd>{fmtDateTime(p.updated_at)}{p.updated_by_name && ` by ${p.updated_by_name}`}</dd>
           </dl>
         )}
+        {!editing && <CustomerRequirements process={p} canEdit={canEdit} onSaved={reload} />}
+        <h3>COPIS</h3>
         <p className="small muted" style={{ margin: '0 0 8px' }}>Begin with the end in mind: start from who this process serves and what they must receive, then work back to the steps, inputs and suppliers.</p>
         <div className="sgrid">
           {COPIS.map(([k, letter, label]) => (

@@ -547,3 +547,12 @@ table.diff pre{margin:0; white-space:pre-wrap; word-break:break-word; font-famil
 [data-theme="contrast"] .sb-link.active{color:#000}
 [data-theme="contrast"] .sb-link.active svg{color:#000}
 [data-theme="contrast"] a{text-decoration-thickness:2px}
+
+/* COPIS customer requirements */
+.creq{margin:4px 0 8px}
+.creq-edit{border:1px solid var(--rule-2); border-radius:var(--radius); padding:14px; background:var(--lane)}
+.creq-row{display:grid; grid-template-columns:minmax(140px,1fr) minmax(220px,2fr) minmax(160px,1.3fr) minmax(110px,.8fr) 120px 40px; gap:10px; align-items:end;
+  padding-bottom:10px; margin-bottom:10px; border-bottom:1px dashed var(--rule)}
+.creq-row label.field{margin:0}
+.creq-row .btn{margin-bottom:4px}
+@media (max-width:1000px){.creq-row{grid-template-columns:1fr 1fr}.creq-row .wide{grid-column:1/-1}}

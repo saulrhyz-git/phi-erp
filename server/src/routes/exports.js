@@ -68,8 +68,8 @@ r.get('/xlsx', async (req, res) => {
       ['Assigned owners', 'owners', 26], ['Indicative Odoo 19 home', 'odoo_home', 55], ['Fit', 'fit', 11], ['In reference flow', 'ref', 12]],
     procs.rows.map((p) => ({ ...p, stage: p.stage_name || 'Cross-cutting', group: p.group_name, ref: p.from_reference ? 'Yes' : 'Proposed' })));
   addSheet(wb, 'COPIS',
-    [['Proc ID', 'id', 8], ['Process', 'name', 28], ['Customers', 'c', 30], ['Outputs', 'o', 34], ['Process steps', 'p', 44], ['Inputs', 'i', 36], ['Suppliers', 's', 32]],
-    procs.rows.map((p) => ({ id: p.id, name: p.name, c: bullets(p.customers), o: bullets(p.outputs), p: numbered(p.steps), i: bullets(p.inputs), s: bullets(p.suppliers) })));
+    [['Proc ID', 'id', 8], ['Process', 'name', 28], ['Customer requirements', 'cr', 48], ['Customers', 'c', 30], ['Outputs', 'o', 34], ['Process steps', 'p', 44], ['Inputs', 'i', 36], ['Suppliers', 's', 32]],
+    procs.rows.map((p) => ({ id: p.id, name: p.name, cr: (p.customer_requirements || []).map((r) => `• ${r.customer}: ${r.requirement}${r.measure ? ` — ${r.measure}` : ''}${r.target ? ` (${r.target})` : ''} [${r.status}]`).join('\n'), c: bullets(p.customers), o: bullets(p.outputs), p: numbered(p.steps), i: bullets(p.inputs), s: bullets(p.suppliers) })));
   addSheet(wb, 'Data Matrix',
     [['Ref', 'ref', 7], ['Proc ID', 'process_id', 8], ['Process', 'process_name', 26], ['Step', 'step', 26], ['a. Trigger event', 'trigger_event', 30],
       ['b. Inputs & data fields', 'data_fields', 50], ['c. System hand-off', 'handoff', 46], ['d. Exceptions / edge cases', 'exceptions', 46], ['Fit', 'fit', 11],

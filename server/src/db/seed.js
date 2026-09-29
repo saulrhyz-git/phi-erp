@@ -103,6 +103,26 @@ async function seedProject() {
   console.log(done.length ? `Seeded ${done.join('; ')}.` : 'Project workspace data already present — skipping.');
 }
 
+// Draft customer requirements (COPIS), loaded once. A marker stops them coming back if people clear them.
+async function seedCustomerRequirements() {
+  const marker = await pool.query("SELECT 1 FROM sow_meta WHERE key='seed_customer_requirements'");
+  if (marker.rowCount && !force) return;
+  const data = JSON.parse(readFileSync(join(config.seedDir, 'customer_requirements.json'), 'utf8'));
+  let n = 0;
+  await tx(async (c) => {
+    for (const [id, reqs] of Object.entries(data)) {
+      if (id.startsWith('_')) continue;
+      const r = await c.query(
+        "UPDATE processes SET customer_requirements=$1 WHERE id=$2 AND (customer_requirements='[]'::jsonb OR $3)",
+        [JSON.stringify(reqs), id, force]);
+      n += r.rowCount;
+    }
+    await c.query(`INSERT INTO sow_meta(key,value) VALUES ('seed_customer_requirements', to_jsonb(now()::text))
+                   ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value`);
+  });
+  console.log(`Seeded draft customer requirements for ${n} processes.`);
+}
+
 async function seedAdmin() {
   const { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_NAME } = process.env;
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
@@ -147,4 +167,4 @@ async function seedToolkit() {
   console.log(done.length ? `Seeded toolkit: ${done.join('; ')}.` : 'Toolkit data already present — skipping.');
 }
 
-seedContent().then(seedProject).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });
+seedContent().then(seedProject).then(seedCustomerRequirements).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });
