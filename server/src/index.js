@@ -26,6 +26,8 @@ import documentRoutes from './routes/documents.js';
 import roleRoutes from './routes/roles.js';
 import auditRoutes from './routes/audit.js';
 import toolkitRoutes from './routes/toolkit.js';
+import toolkitConfigRoutes from './routes/toolkitConfig.js';
+import { ensureDefaults, refresh } from './lib/registry.js';
 
 const app = express();
 app.set('trust proxy', 1); // behind Nginx
@@ -61,6 +63,8 @@ api.get('/health', async (req, res) => {
   await pool.query('SELECT 1');
   res.json({ ok: true, env: config.env, time: new Date().toISOString() });
 });
+// Pick up toolkit configuration changes made through the other server instance.
+api.use(async (req, res, next) => { await refresh(); next(); });
 api.use('/auth', authRoutes);
 api.use(requireAuth, requirePasswordFresh);
 api.use(metaRoutes);
@@ -78,6 +82,7 @@ api.use('/documents', requireView('documents'), documentRoutes);
 api.use('/users', userRoutes);
 api.use('/roles', roleRoutes);
 api.use('/audit', auditRoutes);
+api.use('/toolkit/config', toolkitConfigRoutes);
 api.use('/toolkit', toolkitRoutes);
 api.use((req, res) => res.status(404).json({ error: 'Not found.' }));
 app.use('/api', api);
@@ -109,6 +114,10 @@ app.use((err, req, res, next) => {
   if (status >= 500) console.error(err);
   res.status(status).json({ error: status >= 500 ? 'Something went wrong on the server. Check the logs.' : err.message });
 });
+
+// Load toolkit configuration (and its defaults on first start) before taking requests.
+await ensureDefaults();
+await refresh(true);
 
 const server = app.listen(config.port, config.host, () => {
   console.log(`PHI Blueprint listening on http://${config.host}:${config.port} (${config.env})`);

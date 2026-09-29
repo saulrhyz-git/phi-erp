@@ -5,19 +5,9 @@ import { Loading } from '../../components/ui.jsx';
 import { computeTasks, daysBetween, fmtShort, phaseSpans, todayYmd, phaseColor } from '../../schedule.js';
 import { Badge, useToolkit } from './common.jsx';
 
-const CONFIRM = [
-  'The stretched timeline (about 32 weeks vs the SOW\u2019s 20) — effect on AWB fees, resourcing and billing milestones (RAID R-01, task 0.3).',
-  'AWB billing / payment milestones from SOW S343096 — add them to Milestones.',
-  'Onsite days in Cebu (SOW: mainly remote from Manila; onsite for kickoff, key workshops, UAT, training, go-live).',
-  'The Go-Live date and cutover over the 30-Aug-2027 National Heroes Day holiday (RAID R-10).',
-  '2027 holiday dates against the official Proclamation and Cebu local declarations.',
-];
-const FOLDERS = ['00_Governance — charter, SteerCo decks & minutes, sign-offs, contract & SOW', '01_Plan — status reports and exports', '02_As-Is — process maps, pain point log, Shadow IT samples',
-  '03_BRD — Pre-BRD Dossier, BRD drafts & signed version, fit-gap', '04_Design — FDDs, To-Be maps, change requests', '05_Data — cleansing reports, migration templates, mock results, reconciliations',
-  '06_Testing — SIT/UAT scripts, evidence, defect exports', '07_Training — materials, attendance, assessments, SOPs', '08_Cutover — runbook, Go/No-Go, final reconciliation', '09_Hypercare — ticket reports, exit review, lessons learned'];
-
 export default function Guide() {
   const { meta, summary } = useToolkit();
+  const g = meta.guide;
   const { user, can, level } = useAuth();
   const settings = useApi(can('key_dates') ? '/toolkit/settings' : null);
   const tasks = useApi(can('schedule') ? '/toolkit/tasks' : null);
@@ -32,9 +22,9 @@ export default function Guide() {
   return (
     <section className="sheet">
       <div className="sheet-head">
-        <div className="sheet-code">T</div>
-        <div><h2>Project toolkit — Odoo 19 program</h2>
-          <p>Pre-BRD work + AWB implementation (SOW S343096) → Go-Live → 90-day hypercare. Everything the project team needs to plan, track and sign off, in one place.</p></div>
+        <div><div className="eyebrow">Toolkit</div><h2>Project toolkit — Odoo 19 program</h2>
+          <p>{g.intro}</p></div>
+        {can('toolkit_config', 'edit') && <div className="actions"><Link className="btn" to="/toolkit/configure?tab=guide">Edit guide</Link></div>}
       </div>
 
       <div className="notice">
@@ -79,9 +69,7 @@ export default function Guide() {
 
       <h3>The three rules</h3>
       <ol className="lede" style={{ fontWeight: 600 }}>
-        <li>Fix the process before you touch the software.</li>
-        <li>Over-communicate the “why” — then do it again.</li>
-        <li>Protect the people raising hand-flags. Raising a real issue early is never blamed; the RAID log is open to everyone.</li>
+        {g.rules.map((x) => <li key={x}>{x}</li>)}
       </ol>
 
       <h3>Registers</h3>
@@ -100,16 +88,14 @@ export default function Guide() {
       <div className="grid2" style={{ alignItems: 'start' }}>
         <div>
           <h3>Must confirm with AWB / management</h3>
-          <ul>{CONFIRM.map((c) => <li key={c}>{c}</li>)}</ul>
+          <ul>{g.confirm.map((c) => <li key={c}>{c}</li>)}</ul>
           <h3>How this schedule was built</h3>
-          <p className="small">AWB's SOW S343096 defines six phases over 20 weeks plus 90 days of hypercare. Phase names, module waves and overlaps are kept; durations are stretched to reach a September 2027 Go-Live.
-            The extra weeks go where ERP projects usually fail: finance year-end around BRD, Holy Week, three mock migrations, two SIT and two UAT rounds, a parallel billing run and a buffer before Go/No-Go.
-            Go-Live on 1-Sep-2027 starts Odoo on a clean accounting period.</p>
+          <p className="small">{g.schedule_note}</p>
         </div>
         <div>
           <h3>Project folders (SharePoint / Drive)</h3>
-          <ul className="small">{FOLDERS.map((x) => <li key={x}>{x}</li>)}</ul>
-          <p className="small"><b>Naming:</b> &lt;Folder#&gt;_&lt;Document&gt;_&lt;v#&gt;_&lt;YYYY-MM-DD&gt;, e.g. 03_BRD_OrderToCash_v2_2027-02-26.docx. Signed finals get _SIGNED. Share links, not attachments. Files that need version control and the audit trail belong in S-8 Documents.</p>
+          <ul className="small">{g.folders.map((x) => <li key={x}>{x}</li>)}</ul>
+          <p className="small"><b>Naming:</b> {g.naming}</p>
         </div>
       </div>
     </section>

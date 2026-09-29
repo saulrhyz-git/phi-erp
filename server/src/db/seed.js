@@ -167,4 +167,4 @@ async function seedToolkit() {
   console.log(done.length ? `Seeded toolkit: ${done.join('; ')}.` : 'Toolkit data already present — skipping.');
 }
 
-seedContent().then(seedProject).then(seedCustomerRequirements).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });
+import('../lib/registry.js').then((m) => m.ensureDefaults()).then(seedContent).then(seedProject).then(seedCustomerRequirements).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });

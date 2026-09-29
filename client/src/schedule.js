@@ -36,4 +36,4 @@ export const todayYmd = () => {
 };
 
 // Theme-aware phase colour, falling back to the colour in the register definition.
-export const phaseColor = (p) => `var(--ph-${p.code}, ${p.dark})`;
+export const phaseColor = (p) => (p.custom ? p.dark : `var(--ph-${p.code}, ${p.dark})`);

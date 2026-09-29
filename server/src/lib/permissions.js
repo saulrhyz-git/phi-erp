@@ -13,10 +13,6 @@
 // System roles (Executive, Project Manager) are defined here and cannot be edited, so nobody
 // can lock the project out of its own settings. Custom roles are stored in the roles table.
 
-import { createRequire } from 'node:module';
-
-const require = createRequire(import.meta.url);
-const REGS = require('./registers.json');
 
 export const ACTIONS = ['view', 'add', 'edit', 'status', 'delete'];
 export const LEVELS = ['none', 'own', 'all'];
@@ -40,23 +36,17 @@ const BLUEPRINT = [
   { key: 'exports', label: 'Excel & BPMN exports', actions: ['view'] },
 ];
 
-// Status-like columns that people update as work progresses. Sign-offs and CCB decisions are
-// deliberately excluded: those need full edit rights.
-const STATUS_KEYS = {
-  milestones: ['status'], comms: ['status'], raid: ['status'], change_requests: ['status'], process_inventory: ['status'],
-  data_migration: ['mock_1_result', 'mock_2_result', 'mock_3_result'], uat: ['round_1', 'round_2'], defects: ['status'],
-  cutover: ['status'], go_no_go: ['rag'],
-};
 export const TASK_STATUSES = ['Not Started', 'In Progress', 'Complete', 'At Risk', 'Blocked'];
-const REGISTERS = REGS.registers.map((r) => ({ ...r, statusFields: (STATUS_KEYS[r.key] || []).filter((k) => r.columns.some((c) => c.key === k)) }));
 
-const TOOLKIT = [
+// Toolkit modules are rebuilt whenever the register configuration changes (see registry.js).
+const TOOLKIT_FIXED = [
   { key: 'toolkit_guide', label: 'Toolkit guide', actions: ['view'] },
+  { key: 'toolkit_config', label: 'Toolkit configuration (registers, phases, domains, guide)', actions: ['view', 'edit'] },
   { key: 'key_dates', label: 'Key dates & anchors', actions: ['view', 'edit'] },
   { key: 'schedule', label: 'Master schedule & Gantt', scope: 'domain', actions: ['view', 'add', 'edit', 'status', 'delete'] },
-  ...REGISTERS.map((r) => ({ key: r.key, label: r.label, scope: 'domain',
-    actions: r.statusFields.length ? ['view', 'add', 'edit', 'status', 'delete'] : ['view', 'add', 'edit', 'delete'] })),
 ];
+const registerModules = (regs) => regs.filter((r) => !r.archived).map((r) => ({ key: r.key, label: r.label, scope: 'domain',
+  actions: r.statusFields.length ? ['view', 'add', 'edit', 'status', 'delete'] : ['view', 'add', 'edit', 'delete'] }));
 
 const ADMIN = [
   { key: 'activity', label: 'Activity feed', actions: ['view'] },
@@ -65,21 +55,30 @@ const ADMIN = [
   { key: 'roles', label: 'Roles & permissions', actions: ['view', 'add', 'edit', 'delete'] },
 ];
 
-export const MODULE_GROUPS = [
-  { key: 'blueprint', label: 'Process blueprint', modules: BLUEPRINT },
-  { key: 'toolkit', label: 'Project toolkit', modules: TOOLKIT },
-  { key: 'admin', label: 'Administration', modules: ADMIN },
-];
-export const MODULES = Object.fromEntries(MODULE_GROUPS.flatMap((g) => g.modules.map((m) => [m.key, { ...m, group: g.key }])));
-export const TOOLKIT_REGISTERS = REGISTERS;
-export const TOOLKIT_PHASES = REGS.phases;
+// Live bindings: importers always see the current configuration.
+export let MODULE_GROUPS = [];
+export let MODULES = {};
+export let TOOLKIT_REGISTERS = [];
+export let TOOLKIT_PHASES = [];
+export function setRegistry(registers, phases) {
+  TOOLKIT_REGISTERS = registers.filter((r) => !r.archived);
+  TOOLKIT_PHASES = phases;
+  MODULE_GROUPS = [
+    { key: 'blueprint', label: 'Process blueprint', modules: BLUEPRINT },
+    { key: 'toolkit', label: 'Project toolkit', modules: [...TOOLKIT_FIXED, ...registerModules(registers)] },
+    { key: 'admin', label: 'Administration', modules: ADMIN },
+  ];
+  MODULES = Object.fromEntries(MODULE_GROUPS.flatMap((g) => g.modules.map((m) => [m.key, { ...m, group: g.key }])));
+}
+setRegistry([], []);
 
 const allOf = (level) => Object.fromEntries(Object.values(MODULES).map((m) => [m.key,
   Object.fromEntries(ACTIONS.map((a) => [a, m.actions.includes(a) ? (a === 'view' ? 'all' : level) : 'none']))]));
 
+// System roles are computed from the current module list, so new registers are covered automatically.
 export const SYSTEM_ROLES = {
-  executive: allOf('none'),         // sees everything, changes nothing
-  project_manager: allOf('all'),    // sees and changes everything
+  get executive() { return allOf('none'); },        // sees everything, changes nothing
+  get project_manager() { return allOf('all'); },   // sees and changes everything
 };
 
 // Turns stored JSON (which may use "*" and "group:<key>" defaults) into a complete, valid map.

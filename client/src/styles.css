@@ -556,3 +556,28 @@ table.diff pre{margin:0; white-space:pre-wrap; word-break:break-word; font-famil
 .creq-row label.field{margin:0}
 .creq-row .btn{margin-bottom:4px}
 @media (max-width:1000px){.creq-row{grid-template-columns:1fr 1fr}.creq-row .wide{grid-column:1/-1}}
+
+/* Toolkit configuration */
+.cfg{display:grid; grid-template-columns:260px minmax(0,1fr); gap:22px; align-items:start}
+.cfg-list{position:sticky; top:72px; max-height:calc(100vh - 100px); overflow:auto; border:1px solid var(--rule-2); border-radius:var(--radius); background:var(--sheet); padding:8px}
+.cfg-item{display:flex; align-items:center; gap:2px; border-radius:8px}
+.cfg-item.on{background:var(--brand-50)}
+.cfg-item.arch{opacity:.55}
+.cfg-pick{flex:1; min-width:0; text-align:left; border:none; background:none; padding:7px 8px; cursor:pointer; border-radius:8px; color:var(--ink)}
+.cfg-pick:hover{background:var(--lane)}
+.cfg-pick b{display:block; font-size:.86rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.cfg-item.on .cfg-pick b{color:var(--brand)}
+.cfg-pick small{display:block; font-size:.72rem; color:var(--ink-3)}
+.cfg-move{display:flex; flex-direction:column}
+.cfg-move .btn{min-height:20px; padding:0 5px}
+.cfg-main{min-width:0}
+table.cfg-cols td{vertical-align:middle}
+table.cfg-cols td input[type=checkbox]{display:block; margin:auto}
+.cfg-form{border:1px solid var(--rule-2); border-radius:10px; padding:12px; margin:0 0 10px; background:var(--lane)}
+.cfg-save{position:sticky; bottom:0; padding:12px 0; margin-top:14px; background:linear-gradient(transparent,var(--paper) 35%); display:flex; justify-content:flex-end}
+.cfg-color{width:44px; height:32px; padding:2px; border:1px solid var(--rule); border-radius:8px; background:var(--field); vertical-align:middle}
+@media (max-width:1000px){.cfg{grid-template-columns:1fr}.cfg-list{position:static; max-height:260px}}
+.tk.tk-full{grid-template-columns:1fr; gap:10px}
+.tk.tk-full > .tk-side{display:none}
+table.cfg-cols select{min-width:130px}
+table.cfg-cols td:nth-child(2){min-width:200px}

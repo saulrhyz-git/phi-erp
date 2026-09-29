@@ -5,14 +5,14 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
 import { parse, notFound, logActivity } from '../lib/util.js';
-import { TASK_STATUSES, TOOLKIT_PHASES, TOOLKIT_REGISTERS, assertCan, can, requireView } from '../lib/permissions.js';
+import { TASK_STATUSES, assertCan, can, requireView } from '../lib/permissions.js';
+import { getGuide, getPhases, getRegister, getRegisters } from '../lib/registry.js';
 
 const r = Router();
-const REG = Object.fromEntries(TOOLKIT_REGISTERS.map((x) => [x.key, x]));
 
 r.get('/meta', async (req, res) => {
   const domains = await q('SELECT * FROM domains ORDER BY sort');
-  res.json({ registers: TOOLKIT_REGISTERS, phases: TOOLKIT_PHASES, domains: domains.rows });
+  res.json({ registers: getRegisters(), phases: getPhases(), guide: getGuide(), domains: domains.rows });
 });
 
 r.get('/summary', async (req, res) => {
@@ -53,10 +53,9 @@ r.put('/settings', async (req, res) => {
 });
 
 // ---------------------------------------------------------------- schedule
-const PHASE_CODES = TOOLKIT_PHASES.map((p) => p.code);
 const Task = z.object({
   code: z.string().trim().min(1).max(20),
-  phase: z.enum(PHASE_CODES),
+  phase: z.string().trim().min(1).max(12).refine((v) => getPhases().some((p) => p.code === v), 'Unknown phase'),
   name: z.string().trim().min(1).max(300),
   type: z.enum(['Task', 'Milestone', 'Workstream', 'Blackout']),
   owner: z.string().trim().max(200).default(''),
@@ -134,21 +133,26 @@ r.delete('/tasks/:id', async (req, res) => {
 
 // ---------------------------------------------------------------- registers
 function register(key) {
-  const reg = REG[key];
+  const reg = getRegister(key);
   if (!reg) throw notFound('Register');
   return reg;
 }
 
-function cleanData(reg, raw) {
+// Keeps values of archived columns and pick-list values that were valid when entered,
+// so changing a register's configuration never silently drops data.
+function cleanData(reg, raw, cur = {}) {
   const out = {};
   for (const col of reg.columns) {
+    if (col.archived) { out[col.key] = cur[col.key] ?? ''; continue; }
     let v = raw?.[col.key];
     if (v === undefined || v === null) v = '';
     v = String(v).trim().slice(0, 8000);
-    if (col.type === 'date' && v && !/^\d{4}-\d{2}-\d{2}$/.test(v)) { const e = new Error(`${col.label}: use YYYY-MM-DD`); e.status = 400; throw e; }
-    if (col.type === 'select' && v && !col.options.includes(v)) { const e = new Error(`${col.label}: "${v}" is not one of the allowed values`); e.status = 400; throw e; }
+    const unchanged = v === (cur[col.key] ?? '');
+    if (col.type === 'date' && v && !unchanged && !/^\d{4}-\d{2}-\d{2}$/.test(v)) { const e = new Error(`${col.label}: use YYYY-MM-DD`); e.status = 400; throw e; }
+    if (col.type === 'select' && v && !unchanged && !(col.options || []).includes(v)) { const e = new Error(`${col.label}: "${v}" is not one of the allowed values`); e.status = 400; throw e; }
     out[col.key] = v;
   }
+  for (const [k, v] of Object.entries(cur)) if (!(k in out)) out[k] = v;   // columns removed from config
   return out;
 }
 
@@ -206,8 +210,8 @@ r.put('/r/:register/:id', async (req, res) => {
   const cur = await getRecord(reg, req.params.id);
   const b = parse(RecordBody.partial(), req.body);
   const domain = b.domain_id === undefined ? cur.domain_id : b.domain_id;
-  const data = cleanData(reg, { ...cur.data, ...(b.data || {}) });
-  const changedCols = reg.columns.filter((c) => (cur.data[c.key] ?? '') !== data[c.key]);
+  const data = cleanData(reg, { ...cur.data, ...(b.data || {}) }, cur.data);
+  const changedCols = reg.columns.filter((c) => !c.archived && (cur.data[c.key] ?? '') !== data[c.key]);
   const changed = changedCols.map((c) => c.label);
   const statusOnly = domain === cur.domain_id && changedCols.length > 0 && changedCols.every((c) => reg.statusFields.includes(c.key));
   if (!(statusOnly && can(req.user, reg.key, 'edit', { domain: cur.domain_id }))) {

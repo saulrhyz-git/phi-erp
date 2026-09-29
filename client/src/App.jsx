@@ -25,6 +25,7 @@ import ToolkitGuide from './pages/toolkit/Guide.jsx';
 import KeyDates from './pages/toolkit/KeyDates.jsx';
 import Schedule from './pages/toolkit/Schedule.jsx';
 import Register from './pages/toolkit/Register.jsx';
+import ToolkitConfig from './pages/toolkit/Config.jsx';
 
 function Protected({ children }) {
   const { user } = useAuth();
@@ -66,6 +67,7 @@ export default function App() {
           <Route index element={gate('toolkit_guide', <ToolkitGuide />)} />
           <Route path="key-dates" element={gate('key_dates', <KeyDates />)} />
           <Route path="schedule" element={gate('schedule', <Schedule />)} />
+          <Route path="configure" element={gate('toolkit_config', <ToolkitConfig />)} />
           <Route path=":register" element={<Register />} />
         </Route>
         <Route path="account" element={<Account />} />

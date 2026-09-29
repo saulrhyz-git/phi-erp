@@ -26,6 +26,24 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
 - **Audit log** — immutable, hash-chained record of every change (see below).
 
+**Configuring the toolkit in the app**
+
+Toolkit → **Configure toolkit** (Project Manager by default; permission *Toolkit configuration*) changes the toolkit without code or a redeploy:
+
+- **Registers:**
+  - Rename a register, regroup it in the menu, reorder, archive or restore it, and edit its description and how-to notes.
+  - Add, rename, reorder or remove columns. Column types are short text, long text, date or pick-list.
+  - Edit pick-list options, and choose which columns show in the list, show as badges, or count as **status** columns for quick updates.
+  - Set the auto-numbered ID prefix and edit the printable sign-off forms.
+  - Create new registers. Custom roles get the same access as a register you pick.
+- **Schedule phases:** names, colours and order. Add new phases. A phase can't be removed while schedule items use it.
+- **Domains:** add or rename them. A domain can only be deleted when nothing uses it.
+- **Guide page:** introduction, rules, items to confirm, schedule note, project folders and naming convention.
+
+**How data is protected.** Removing a column only archives it, and records keep their values. A pick-list value that was valid when entered stays valid after the option list changes.
+
+**Audit and sync.** Every change goes to the audit log. Both PM2 instances pick up changes within a few seconds. The shipped definitions in `server/src/lib/registers.json` are used only to set up a new database.
+
 **Colour themes**
 
 Pick a theme at the bottom of the sidebar; the choice is remembered per browser.
