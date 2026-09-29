@@ -27,7 +27,8 @@ r.get('/overview', async (req, res) => {
 r.get('/items', async (req, res) => {
   const { rows } = await q(
     `SELECT i.*, i.dev_days::float AS dev_days,
-            COALESCE((SELECT json_agg(r.id ORDER BY r.id) FROM reengineering r WHERE r.sow_items @> to_jsonb(i.no)), '[]') AS reengineering
+            COALESCE((SELECT json_agg(r.id ORDER BY r.id) FROM reengineering r WHERE r.sow_items @> to_jsonb(i.no)), '[]') AS reengineering,
+            COALESCE((SELECT json_agg(json_build_object('ref', m.ref, 'process_id', m.process_id) ORDER BY m.sort) FROM matrix_steps m WHERE m.sow_items @> to_jsonb(i.no)), '[]') AS steps
        FROM sow_items i ORDER BY i.no`);
   res.json(rows);
 });

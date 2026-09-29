@@ -14,13 +14,14 @@ export default function Processes() {
       {data && (
         <div className="tablewrap">
           <table className="t">
-            <thead><tr><th>ID</th><th>Process</th><th>Stage</th><th>Accountable owner</th><th>Assigned owners</th><th>Customer requirements</th><th>Fit</th><th>Validation</th></tr></thead>
+            <thead><tr><th>ID</th><th>Process</th><th>Stage</th><th>Domain</th><th>Accountable owner</th><th>Assigned owners</th><th>Customer requirements</th><th>Fit</th><th>Validation</th></tr></thead>
             <tbody>
               {data.map((p) => (
                 <tr key={p.id}>
                   <td className="ref" style={{ borderLeft: `6px solid var(--${p.color})` }}>{p.id}</td>
                   <td className="w-md"><Link to={`/processes/${p.id}`}>{p.name}</Link>{p.from_reference && <div className="muted small">Numbered in reference flow</div>}</td>
                   <td>{p.stage_name || 'Cross-cutting'}</td>
+                  <td>{p.domain_id ? <span className="domain">{p.domain_id}</span> : <span className="muted small">—</span>}</td>
                   <td>{p.owner_dept}</td>
                   <td>{p.owners.length ? p.owners.map((o) => o.name).join(', ') : <span className="muted">Not assigned</span>}</td>
                   <td className="small">{(() => { const r = p.customer_requirements || []; const v = r.filter((x) => x.status === 'Validated').length;

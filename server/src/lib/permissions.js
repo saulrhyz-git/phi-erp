@@ -7,8 +7,8 @@
 //                      (e.g. Not Started → In Progress). 'own' here means the user's own domain(s)
 //                      PLUS project-wide records, so the whole team can keep shared items current
 //                      without being able to rewrite them.
-// 'own' means: records in the user's own domain(s) (toolkit modules), or processes assigned
-// to the user (blueprint modules scoped by process). Project-wide records (no domain) need 'all'.
+// 'own' means: records in the user's own domain(s) (toolkit modules), or — for blueprint modules
+// scoped by process — processes assigned to the user or belonging to one of the user's domains. Project-wide records (no domain) need 'all'.
 //
 // System roles (Executive, Project Manager) are defined here and cannot be edited, so nobody
 // can lock the project out of its own settings. Custom roles are stored in the roles table.
@@ -21,7 +21,7 @@ export const LEVELS = ['none', 'own', 'all'];
 // actions: the actions this module actually supports
 const BLUEPRINT = [
   { key: 'dashboard', label: 'World map & dashboard', actions: ['view'] },
-  { key: 'processes', label: 'S-1 COPIS & processes', scope: 'process', actions: ['view', 'edit'] },
+  { key: 'processes', label: 'S-1 COPIS & processes (add/delete world-map processes: Project Manager & Superadmin only)', scope: 'process', actions: ['view', 'add', 'edit', 'delete'] },
   { key: 'diagrams', label: 'S-2 Swimlane diagrams', actions: ['view', 'edit'] },
   { key: 'matrix', label: 'S-3 Data matrix steps & validation', scope: 'process', actions: ['view', 'add', 'edit', 'delete'] },
   { key: 'master_data', label: 'S-4 Master data & Lot (structure)', actions: ['view', 'add', 'edit', 'delete'] },
@@ -77,10 +77,13 @@ const allOf = (level) => Object.fromEntries(Object.values(MODULES).map((m) => [m
 
 // Actions no role can be given except Superadmin (enforced here, not configurable on the Roles page).
 export const SUPERADMIN_ONLY = { users: ['add', 'delete'] };
-const withoutSuperadminOnly = (perms) => {
-  for (const [m, acts] of Object.entries(SUPERADMIN_ONLY)) if (perms[m]) for (const a of acts) perms[m][a] = 'none';
+// Actions only the built-in Project Manager and Superadmin roles have (never custom roles).
+export const PM_ONLY = { processes: ['add', 'delete'] };
+const strip = (perms, map) => {
+  for (const [m, acts] of Object.entries(map)) if (perms[m]) for (const a of acts) perms[m][a] = 'none';
   return perms;
 };
+const withoutSuperadminOnly = (perms) => strip(perms, SUPERADMIN_ONLY);
 
 // System roles are computed from the current module list, so new registers are covered automatically.
 export const SYSTEM_ROLES = {
@@ -106,7 +109,7 @@ export function normalizePermissions(raw = {}) {
     if (p.view === 'none' && ['add', 'edit', 'delete'].some((a) => p[a] !== 'none')) p.view = 'all';
     out[m.key] = p;
   }
-  return withoutSuperadminOnly(out);
+  return strip(withoutSuperadminOnly(out), PM_ONLY);
 }
 
 export function effectivePermissions(role) {
@@ -148,7 +151,7 @@ export function assertCan(user, module, action, ctx = {}, message) {
       const level = user?.permissions?.[module]?.[action];
       if (action === 'status') msg = `Your role can't update the status of ${label} records${ctx.domain ? ` in ${ctx.domain}` : ''}.`;
       else if (level === 'own' && 'domain' in ctx) msg = ctx.domain ? `You can only ${action} ${label} records in your own domain.` : `Only a Project Manager can ${action} project-wide ${label} records.`;
-      else if (level === 'own' && 'processId' in ctx) msg = `You can only ${action} processes assigned to you (${ctx.processId} is not).`;
+      else if (level === 'own' && 'processId' in ctx) msg = `You can only ${module === 'matrix' ? `${action} hand-off steps for` : action} processes assigned to you or in your domain(s) — ${ctx.processId} is not.`;
       else msg = `Your role doesn't allow you to ${action} ${label}.`;
     }
     throw forbidden(msg);

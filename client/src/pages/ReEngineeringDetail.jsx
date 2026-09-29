@@ -98,6 +98,10 @@ export default function ReEngineeringDetail() {
           <dt>Flex category if not in base</dt><dd>{r.flex_category}</dd>
           <dt>Risk if not addressed</dt><dd>{r.risk}</dd>
         </dl>
+        {r.steps?.length > 0 && (
+          <p className="small"><b>Hand-off steps mapped here:</b>{' '}
+            {r.steps.map((st) => <Link key={st.id} className="pill" to={`/processes/${st.process_id}#step-${st.ref}`}>{st.ref} {st.step}</Link>)}</p>
+        )}
         {r.items.length > 0 && (
           <div className="tablewrap">
             <table className="t"><thead><tr><th>#</th><th>SOW section</th><th>Feature</th><th>Dev man-days</th></tr></thead>

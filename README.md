@@ -26,6 +26,22 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
 - **Audit log** — immutable, hash-chained record of every change (see below).
 
+**Adding to the world map, COPIS and hand-off steps in the app**
+
+| Who | Can do |
+|---|---|
+| Project Manager and Superadmin only | **Add process** on the world map: ID, name, stage (or cross-cutting), colour group, domain, customers and outputs, plus links. Move a process between stages, change its domain, or remove a process that was added in the app. Blueprint processes can't be removed. |
+| Domain owners (e.g. Process Owner with domain SR) | Edit the COPIS and customer requirements of processes **in their domain** (not only processes assigned to them). Add hand-off steps to those processes and map them. |
+
+These rules are enforced on the server, and custom roles can't be given the add/remove-process right.
+
+**Everything stays tied together:**
+- **Process links:** each process maps to swimlane diagrams, re-engineering opportunities and AWB SOW items. Use *Edit placement & mapping* on the process page. SOW-item and re-engineering pages list the processes and steps linked to them.
+- **Step links:** each hand-off step maps to the same three.
+- **New processes** get a "Not assessed" row in the SOW gap analysis. They appear on the world map, in the COPIS list, the data matrix, the dashboards and the Excel export.
+- **Step numbering:** a new step is numbered automatically (e.g. `09.4`) unless you give a reference.
+- **Default domains:** migration `009` gives each blueprint process a default domain (AF, IP, SR, BC). Review them on each process page.
+
 **Superadmin**
 
 Superadmin is a built-in, locked role with full access. It is the **only** role that can add or delete users, reset a Superadmin's password, change a Superadmin account, or grant or remove Superadmin. These rights can't be given to any other role on the Roles page.

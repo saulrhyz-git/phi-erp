@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
 import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
+import { assertLinkTargets } from '../lib/links.js';
 
 const r = Router();
 
@@ -25,7 +26,11 @@ r.get('/', async (req, res) => {
 
 const text = z.string().trim().max(4000);
 const StepBody = z.object({
-  ref: z.string().trim().min(1).max(20),
+  ref: z.string().trim().max(20).optional(),          // blank = next number for the process, e.g. 09.4
+  // Links that tie the step to the rest of the blueprint.
+  sow_items: z.array(z.number().int().positive()).max(60).default([]),
+  reengineering: z.array(z.string().max(10)).max(30).default([]),
+  diagrams: z.array(z.string().max(10)).max(20).default([]),
   process_id: z.string().trim().min(1).max(10),
   step: z.string().trim().min(1).max(300),
   trigger_event: text.default(''), data_fields: text.default(''), handoff: text.default(''), exceptions: text.default(''),
@@ -42,11 +47,23 @@ r.post('/', async (req, res) => {
   const b = parse(StepBody, req.body);
   assertCan(req.user, 'matrix', 'add', { processId: b.process_id });
   const row = await tx(async (c) => {
+    if (!(await c.query('SELECT 1 FROM processes WHERE id=$1', [b.process_id])).rowCount) throw notFound('Process');
+    await assertLinkTargets(c, b);
+    let ref = b.ref;
+    if (!ref) {   // next free number within the process
+      const { rows } = await c.query(
+        `SELECT COALESCE(max(NULLIF(substring(ref from '\\.([0-9]+)$'), '')::int), 0) + 1 AS n FROM matrix_steps WHERE process_id=$1`, [b.process_id]);
+      ref = `${b.process_id}.${rows[0].n}`;
+    }
+    // Sits after the process's last step, before the next process's steps.
+    const sort = (await c.query(`SELECT COALESCE(max(sort), (SELECT COALESCE(max(sort),0) FROM matrix_steps)) + 1 AS n FROM matrix_steps WHERE process_id=$1`, [b.process_id])).rows[0].n;
+    await c.query('UPDATE matrix_steps SET sort = sort + 1 WHERE sort >= $1', [sort]);
     const { rows } = await c.query(
-      `INSERT INTO matrix_steps(ref,process_id,step,trigger_event,data_fields,handoff,exceptions,fit,sort,updated_by)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,(SELECT COALESCE(max(sort),0)+1 FROM matrix_steps),$9) RETURNING *`,
-      [b.ref, b.process_id, b.step, b.trigger_event, b.data_fields, b.handoff, b.exceptions, b.fit, req.user.id]);
-    await logActivity(c, req.user.id, 'created', 'step', b.ref, b.step);
+      `INSERT INTO matrix_steps(ref,process_id,step,trigger_event,data_fields,handoff,exceptions,fit,sort,updated_by,sow_items,reengineering,diagrams,source)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'manual') RETURNING *`,
+      [ref, b.process_id, b.step, b.trigger_event, b.data_fields, b.handoff, b.exceptions, b.fit, sort, req.user.id,
+        JSON.stringify(b.sow_items), JSON.stringify(b.reengineering), JSON.stringify(b.diagrams)]);
+    await logActivity(c, req.user.id, 'created', 'step', ref, b.step);
     return rows[0];
   });
   res.status(201).json(row);
@@ -56,9 +73,11 @@ r.put('/:id', async (req, res) => {
   const step = await getStep(req.params.id);
   assertCan(req.user, 'matrix', 'edit', { processId: step.process_id });
   const b = parse(StepBody.omit({ process_id: true }).partial(), req.body);
-  const { sets, values } = buildUpdate(b);
+  if (b.ref !== undefined && !b.ref) delete b.ref;
+  const { sets, values } = buildUpdate(b, 1, ['sow_items', 'reengineering', 'diagrams']);
   if (!sets.length) return res.status(400).json({ error: 'Nothing to update.' });
   await tx(async (c) => {
+    await assertLinkTargets(c, b);
     values.push(req.user.id, step.id);
     await c.query(`UPDATE matrix_steps SET ${sets.join(', ')}, updated_at=now(), updated_by=$${values.length - 1} WHERE id=$${values.length}`, values);
     await logActivity(c, req.user.id, 'updated', 'step', step.ref, `Edited ${Object.keys(b).join(', ')}`);

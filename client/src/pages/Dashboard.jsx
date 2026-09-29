@@ -2,18 +2,23 @@ import { Link } from 'react-router-dom';
 import { useApi } from '../hooks.js';
 import { Loading, ErrorNote, Progress, SheetHead } from '../components/ui.jsx';
 import { fmtDateTime } from '../api.js';
+import { useState } from 'react';
+import { useAuth } from '../auth.jsx';
+import { AddProcessModal } from '../components/ProcessForm.jsx';
 
 function Chip({ p }) {
   return (
     <Link className="chip" to={`/processes/${p.id}`} style={{ '--c': `var(--${p.color})` }}>
       <span className="num">{p.id}</span>{p.name}
-      <small>{p.owner_dept} · {p.approved_count}/{p.step_count} validated</small>
+      <small>{p.owner_dept}{p.domain_id ? ` · ${p.domain_id}` : ''} · {p.approved_count}/{p.step_count} validated{p.source === 'manual' ? ' · added in app' : ''}</small>
       <Progress approved={p.approved_count} flagged={p.flagged_count} total={p.step_count} />
     </Link>
   );
 }
 
 export default function Dashboard() {
+  const { can } = useAuth();
+  const [adding, setAdding] = useState(false);
   const procs = useApi('/processes');
   const meta = useApi('/meta');
   const dash = useApi('/dashboard');
@@ -28,6 +33,7 @@ export default function Dashboard() {
       <section className="sheet">
         <SheetHead code="S-0" title="Level 0 world map"
           actions={<>
+            {can('processes', 'add') && <button className="btn primary" onClick={() => setAdding(true)}>Add process</button>}
             <a className="btn" href="/api/export/xlsx">Export Excel</a>
             <a className="btn" href="/api/export/bpmn.zip">Export BPMN (.zip)</a>
           </>}>
@@ -45,6 +51,7 @@ export default function Dashboard() {
           <div className="stat"><b>{d.sowGaps.open_high}</b><span>High-priority SOW gaps still open</span></div>
           <div className="stat"><b>{d.observations.open}/{d.observations.total}</b><span><Link to="/sow?tab=observations">Commercial observations unresolved</Link> · <Link to="/documents">{d.documents} documents</Link></span></div>
         </div>
+        <AddProcessModal open={adding} onClose={() => setAdding(false)} />
         <div className="map">
           <div className="map-fc">Forecasts (X1)</div>
           <div className="map-body">

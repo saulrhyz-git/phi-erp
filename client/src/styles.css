@@ -590,3 +590,17 @@ table.cfg-cols td:nth-child(2){min-width:200px}
 .sp-tag{display:inline-flex; font-size:.7rem; font-weight:650; padding:0 7px; border-radius:6px; background:var(--info-bg); color:var(--info-fg)}
 .spin{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Link pickers and step links */
+.linkgrid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px}
+@media (max-width:1000px){.linkgrid{grid-template-columns:1fr}}
+.linkpick{border:1px solid var(--rule); border-radius:10px; background:var(--sheet); padding:8px; min-width:0}
+.linkpick-head{display:flex; justify-content:space-between; font-size:.8rem; font-weight:600; margin:0 0 6px}
+.linkpick input[type=search]{min-height:32px; font-size:.84rem; margin-bottom:6px}
+.linkpick-list{overflow:auto; display:flex; flex-direction:column; gap:1px}
+.linkpick-list label{display:flex; gap:7px; align-items:flex-start; font-size:.82rem; padding:4px 6px; border-radius:6px; cursor:pointer}
+.linkpick-list label:hover{background:var(--lane)}
+.linkpick-list label.on{background:var(--brand-50)}
+.linkpick-list small{color:var(--ink-3)}
+.steplinks{display:flex; flex-wrap:wrap; gap:4px; align-items:center; padding:8px 16px; border-top:1px solid var(--rule-2)}
+.steplinks > span{margin-right:4px}

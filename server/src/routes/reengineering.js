@@ -30,7 +30,8 @@ r.get('/:id', async (req, res) => {
   const appendix = rows[0].appendix_ref && rows[0].appendix_ref !== '—'
     ? (await q('SELECT code, title, status FROM sow_appendix WHERE code = ANY($1::text[]) ORDER BY sort',
       [rows[0].appendix_ref.split(',').map((s) => s.trim())])).rows : [];
-  res.json({ ...rows[0], items, processes, appendix });
+  const steps = (await q(`SELECT id, ref, step, process_id FROM matrix_steps WHERE reengineering ? $1 ORDER BY sort`, [rows[0].id])).rows;
+  res.json({ ...rows[0], items, processes, appendix, steps });
 });
 
 const txt = z.string().trim().max(4000);

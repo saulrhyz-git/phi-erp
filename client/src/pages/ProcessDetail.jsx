@@ -5,13 +5,15 @@ import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
 import { Comments, ErrorNote, Fit, Loading, SheetHead, Status, STATUS_LABEL } from '../components/ui.jsx';
 import CustomerRequirements from '../components/CustomerRequirements.jsx';
+import { MappingPanel, StepModal } from '../components/ProcessForm.jsx';
+import { useNavigate } from 'react-router-dom';
 
 // COPIS: read customer-first — begin with the end in mind.
 const COPIS = [['customers', 'C', 'Customers'], ['outputs', 'O', 'Outputs'], ['steps', 'P', 'Process'], ['inputs', 'I', 'Inputs'], ['suppliers', 'S', 'Suppliers']];
 const toText = (a) => (a || []).join('\n');
 const toList = (t) => t.split('\n').map((s) => s.trim()).filter(Boolean);
 
-function StepCard({ s, color, canEdit, onSaved }) {
+function StepCard({ s, color, canEdit, onSaved, onEditLinks }) {
   const [status, setStatus] = useState(s.validation_status);
   const [comment, setComment] = useState(s.validation_comment);
   const [editing, setEditing] = useState(false);
@@ -45,7 +47,8 @@ function StepCard({ s, color, canEdit, onSaved }) {
             <select {...f('fit')} style={{ width: 'auto' }}>{['Standard', 'Configure', 'Extend'].map((x) => <option key={x}>{x}</option>)}</select>
           ) : <Fit fit={s.fit} />}
           <Status s={s.validation_status} />
-          {canEdit && !editing && <button className="btn sm ghost" onClick={() => setEditing(true)}>Edit step</button>}
+          {s.source === 'manual' && <span className="badge info">Added in app</span>}
+          {canEdit && !editing && <button className="btn sm ghost" onClick={() => onEditLinks(s)}>Edit step & links</button>}
         </span>
       </header>
       <div className="cols">
@@ -53,6 +56,14 @@ function StepCard({ s, color, canEdit, onSaved }) {
           <div key={k}><h5>{label}</h5>{editing ? <textarea {...f(k)} /> : s[k]}</div>
         ))}
       </div>
+      {(s.diagrams?.length > 0 || s.reengineering?.length > 0 || s.sow_items?.length > 0) && (
+        <div className="steplinks">
+          <span className="small muted">Mapped to</span>
+          {s.diagrams.map((d) => <Link key={d} className="pill" to={`/diagrams/${d}`}>Swimlane {d}</Link>)}
+          {s.reengineering.map((r) => <Link key={r} className="pill" to={`/reengineering/${r}`}>{r}</Link>)}
+          {s.sow_items.map((n) => <Link key={n} className="pill" to="/sow?tab=items">SOW #{n}</Link>)}
+        </div>
+      )}
       {editing && (
         <div className="validate" style={{ gridTemplateColumns: '1fr auto' }}>
           <span className="muted small">Content edits are logged. Validation status is kept.</span>
@@ -91,6 +102,13 @@ export default function ProcessDetail() {
   const [saveErr, setSaveErr] = useState(null);
   const canEdit = can('processes', 'edit', { processId: id });
   const canValidate = can('matrix', 'edit', { processId: id });
+  const canAddStep = can('matrix', 'add', { processId: id });
+  const nav = useNavigate();
+  const [stepModal, setStepModal] = useState(null);   // null | 'new' | step
+  const removeProcess = async () => {
+    if (!window.confirm(`Remove ${p.id} ${p.name} from the world map? Its links and SOW gap row are removed too.`)) return;
+    try { await api(`/processes/${id}`, { method: 'DELETE' }); nav('/'); } catch (e) { setSaveErr(e); }
+  };
 
   const startEdit = () => {
     setForm({ name: p.name, owner_dept: p.owner_dept, odoo_home: p.odoo_home, fit: p.fit,
@@ -114,8 +132,11 @@ export default function ProcessDetail() {
     <>
       <section className="sheet">
         <SheetHead code={p.id} title={editing ? 'Edit process' : p.name}
-          actions={canEdit && !editing ? <button className="btn" onClick={startEdit}>Edit COPIS</button> : null}>
-          {p.group_name} · {p.stage_name || 'Cross-cutting'}{p.from_reference ? ' · numbered in reference flow' : ''}
+          actions={!editing ? <>
+            {canEdit && <button className="btn" onClick={startEdit}>Edit COPIS</button>}
+            {p.can_manage && p.source === 'manual' && <button className="btn danger" onClick={removeProcess}>Remove process</button>}
+          </> : null}>
+          {p.group_name} · {p.stage_name || 'Cross-cutting'}{p.domain_id ? ` · domain ${p.domain_id} (${p.domain_name})` : ' · no domain'}{p.source === 'manual' ? ' · added in the app' : ''}{p.from_reference ? ' · numbered in reference flow' : ''}
         </SheetHead>
         <ErrorNote error={saveErr} />
         {editing ? (
@@ -134,9 +155,11 @@ export default function ProcessDetail() {
             {p.diagrams.length > 0 && <><dt>Swimlanes</dt><dd>{p.diagrams.map((d, i) => <span key={d.id}>{i > 0 && ' · '}<Link to={`/diagrams/${d.id}`}>{d.id}. {d.title}</Link></span>)}</dd></>}
             {p.sow_gap && <><dt>AWB SOW coverage</dt><dd><Link to="/sow?tab=gaps"><span className={`rating ${p.sow_gap.rating}`}>{p.sow_gap.rating}</span></Link> <span className="small muted">{p.sow_gap.status}{p.sow_gap.rating !== 'Covered' ? ` · ${p.sow_gap.gaps}` : ''}</span></dd></>}
             {p.reengineering.length > 0 && <><dt>Re-engineering</dt><dd>{p.reengineering.map((r) => <Link key={r.id} className="pill" to={`/reengineering/${r.id}`}>{r.id} {r.title}{r.phi_decision ? ` · ${r.phi_decision}` : ''}</Link>)}</dd></>}
+            {p.sow_items.length > 0 && <><dt>AWB SOW items</dt><dd>{p.sow_items.map((i) => <Link key={i.no} className="pill" to="/sow?tab=items" title={i.section}>#{i.no} {i.feature}</Link>)}</dd></>}
             <dt>Last updated</dt><dd>{fmtDateTime(p.updated_at)}{p.updated_by_name && ` by ${p.updated_by_name}`}</dd>
           </dl>
         )}
+        {!editing && <MappingPanel p={p} canManage={p.can_manage} canEdit={canEdit} onSaved={reload} />}
         {!editing && <CustomerRequirements process={p} canEdit={canEdit} onSaved={reload} />}
         <h3>COPIS</h3>
         <p className="small muted" style={{ margin: '0 0 8px' }}>Begin with the end in mind: start from who this process serves and what they must receive, then work back to the steps, inputs and suppliers.</p>
@@ -159,12 +182,14 @@ export default function ProcessDetail() {
         )}
       </section>
       <section className="sheet">
-        <h3 style={{ marginTop: 0 }}>Hand-off steps ({p.matrix.length})</h3>
+        <div className="row"><h3 style={{ margin: 0 }}>Hand-off steps ({p.matrix.length})</h3><span style={{ flex: 1 }} />
+          {canAddStep && <button className="btn primary" onClick={() => setStepModal('new')}>Add hand-off step</button>}</div>
         <p className="lede small">{canValidate
           ? 'You can validate this process. For each step, approve it, approve it with changes, or send it back for rework with a note.'
           : 'Only the Project Manager or an owner assigned to this process can validate these steps. Use the discussion thread for questions.'}</p>
         {p.matrix.length === 0 && <div className="empty">No hand-off steps for this process yet.</div>}
-        {p.matrix.map((s) => <StepCard key={s.id} s={s} color={p.color} canEdit={canValidate} onSaved={reload} />)}
+        {p.matrix.map((s) => <StepCard key={s.id} s={s} color={p.color} canEdit={canValidate} onSaved={reload} onEditLinks={setStepModal} />)}
+        <StepModal open={!!stepModal} step={stepModal === 'new' ? null : stepModal} processId={p.id} onClose={() => setStepModal(null)} onSaved={reload} />
         <Comments type="process" id={p.id} />
       </section>
     </>

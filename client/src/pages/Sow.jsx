@@ -214,11 +214,12 @@ function Items() {
         <span className="muted small">{rows.length} items · {rows.reduce((a, i) => a + i.dev_days, 0).toFixed(2)} dev-days</span>
       </div>
       <div className="tablewrap"><table className="t">
-        <thead><tr><th>#</th><th>Section</th><th>Feature</th><th>Dev-days</th><th>Blueprint process</th><th>Re-engineering</th></tr></thead>
+        <thead><tr><th>#</th><th>Section</th><th>Feature</th><th>Dev-days</th><th>Blueprint process</th><th>Re-engineering</th><th>Hand-off steps</th></tr></thead>
         <tbody>{rows.map((i) => (
           <tr key={i.no}><td className="ref">#{i.no}</td><td className="small">{i.section}</td><td>{i.feature}</td><td>{i.dev_days.toFixed(2)}</td>
             <td>{i.process_refs.split(',').map((p) => <Link key={p} className="pill" to={`/processes/${p.trim()}`}>{p.trim()}</Link>)}</td>
-            <td>{i.reengineering.map((r) => <Link key={r} className="pill" to={`/reengineering/${r}`}>{r}</Link>)}</td></tr>))}</tbody>
+            <td>{i.reengineering.map((r) => <Link key={r} className="pill" to={`/reengineering/${r}`}>{r}</Link>)}</td>
+            <td>{(i.steps || []).map((st) => <Link key={st.ref} className="pill" to={`/processes/${st.process_id}#step-${st.ref}`}>{st.ref}</Link>)}</td></tr>))}</tbody>
       </table></div>
       <h3>Section subtotal check</h3>
       <div className="tablewrap"><table className="t"><thead><tr><th>Section</th><th>SOW stated</th><th>Sum of items</th><th>Difference</th></tr></thead>
