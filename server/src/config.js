@@ -19,6 +19,19 @@ export const config = {
   clientDist: resolve(ROOT, 'client/dist'),
   seedDir: resolve(ROOT, 'server/seed'),
   migrationsDir: resolve(ROOT, 'server/migrations'),
+  // Document storage in SharePoint / OneDrive via Microsoft Graph (app-only). See README "SharePoint storage".
+  sharepoint: {
+    enabled: process.env.SP_ENABLED === 'true',
+    tenantId: process.env.MS_TENANT_ID || '',
+    clientId: process.env.MS_CLIENT_ID || '',
+    clientSecret: process.env.MS_CLIENT_SECRET || '',
+    siteUrl: process.env.SP_SITE_URL || '',             // e.g. https://primaryhomes.sharepoint.com/sites/ERPProject
+    driveId: process.env.SP_DRIVE_ID || '',             // optional: use a specific library / OneDrive drive directly
+    library: process.env.SP_LIBRARY || 'Documents',     // library name on the site (ignored if SP_DRIVE_ID is set)
+    folder: (process.env.SP_FOLDER || 'PHI Blueprint Documents').replace(/^\/+|\/+$/g, ''),
+    graphBase: process.env.MS_GRAPH_BASE || 'https://graph.microsoft.com/v1.0',
+    loginBase: process.env.MS_LOGIN_BASE || 'https://login.microsoftonline.com',
+  },
 };
 
 if (config.isProd && (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32 || process.env.JWT_SECRET.startsWith('CHANGE_ME'))) {

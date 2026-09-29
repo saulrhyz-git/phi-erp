@@ -10,7 +10,9 @@
     "seed": "node src/db/seed.js",
     "create-admin": "node src/db/createAdmin.js",
     "import-docs": "node src/db/importDocs.js",
-    "set-role": "node src/db/setRole.js"
+    "set-role": "node src/db/setRole.js",
+    "docs:to-sharepoint": "node src/db/docsToSharePoint.js",
+    "sharepoint:check": "node -e \"import('./src/storage/sharepoint.js').then(async m=>{console.log(await m.status());process.exit(0)})\""
   },
   "dependencies": {
     "archiver": "^7.0.1",

@@ -4,6 +4,8 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { basename, extname, join } from 'node:path';
 import { pool, tx } from './pool.js';
+import * as sp from '../storage/sharepoint.js';
+import { storeFile } from '../storage/docsync.js';
 
 const MIME = {
   '.pdf': 'application/pdf', '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -39,9 +41,17 @@ for (const f of readdirSync(folder)) {
   if (exists.rowCount) { console.log(`Skipped ${f} (already in library)`); continue; }
   const title = basename(f, extname(f)).replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
   await tx(async (c) => {
-    const d = await c.query('INSERT INTO documents(title,category,created_by,current_version) VALUES ($1,$2,$3,1) RETURNING id', [title, forced || guessCategory(f), admin]);
-    await c.query('INSERT INTO document_files(document_id,version,file_name,mime,size_bytes,data,note,uploaded_by) VALUES ($1,1,$2,$3,$4,$5,$6,$7)',
-      [d.rows[0].id, f, MIME[extname(f).toLowerCase()] || 'application/octet-stream', size, readFileSync(p), 'Imported', admin]);
+    const d = await c.query('INSERT INTO documents(title,category,created_by,current_version) VALUES ($1,$2,$3,1) RETURNING *', [title, forced || guessCategory(f), admin]);
+    const mime = MIME[extname(f).toLowerCase()] || 'application/octet-stream';
+    if (sp.isEnabled()) {   // straight into SharePoint
+      const up = await storeFile(d.rows[0], f, readFileSync(p));
+      await c.query(`INSERT INTO document_files(document_id,version,file_name,mime,size_bytes,note,uploaded_by,storage,sp_drive_id,sp_item_id,sp_version_id,sp_web_url,sp_etag)
+                     VALUES ($1,1,$2,$3,$4,'Imported',$5,'sharepoint',$6,$7,$8,$9,$10)`,
+        [d.rows[0].id, f, mime, size, admin, up.driveId, up.itemId, up.versionId, up.webUrl, up.eTag]);
+    } else {
+      await c.query('INSERT INTO document_files(document_id,version,file_name,mime,size_bytes,data,note,uploaded_by) VALUES ($1,1,$2,$3,$4,$5,$6,$7)',
+        [d.rows[0].id, f, mime, size, readFileSync(p), 'Imported', admin]);
+    }
   });
   console.log(`Imported ${f}`); added++;
 }

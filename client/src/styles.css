@@ -581,3 +581,12 @@ table.cfg-cols td input[type=checkbox]{display:block; margin:auto}
 .tk.tk-full > .tk-side{display:none}
 table.cfg-cols select{min-width:130px}
 table.cfg-cols td:nth-child(2){min-width:200px}
+
+/* SharePoint storage bar */
+.storagebar{display:flex; gap:10px; align-items:center; flex-wrap:wrap; border:1px solid var(--rule-2); border-radius:10px; padding:10px 14px; margin:0 0 16px;
+  background:var(--lane); font-size:.88rem}
+.storagebar.ok{background:color-mix(in srgb,var(--info-bg) 55%,var(--sheet)); border-color:color-mix(in srgb,var(--info) 25%,var(--rule))}
+.storagebar.bad{background:color-mix(in srgb,var(--bad-bg) 60%,var(--sheet)); border-color:color-mix(in srgb,var(--bad) 30%,var(--rule))}
+.sp-tag{display:inline-flex; font-size:.7rem; font-weight:650; padding:0 7px; border-radius:6px; background:var(--info-bg); color:var(--info-fg)}
+.spin{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}

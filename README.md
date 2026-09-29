@@ -279,6 +279,28 @@ REVOKE UPDATE, DELETE, TRUNCATE ON audit_log FROM phi_app;
 
 Set `DATABASE_URL` in `.env` to `phi_app` for the running app, and run `npm run migrate` / `npm run seed` with the owner's URL (for example `DATABASE_URL=postgres://phi:…@localhost:5432/phi_blueprint npm run migrate`).
 
+## SharePoint storage (optional)
+
+With `SP_ENABLED=true`, document files live in a SharePoint document library instead of the database:
+
+| What happens | In the app | In SharePoint |
+|---|---|---|
+| Upload | Goes straight to SharePoint. | Filed under `<SP_FOLDER>/<Category>/<id> - <title>.<ext>`. Confidential documents go under `<SP_FOLDER>/_Confidential/…`. |
+| New version | Recorded as the next version. | Overwrites the same file, so SharePoint's version history matches the app's. |
+| View or download | Always pulls the file from SharePoint. Older versions come from SharePoint's version history. | — |
+| Rename, change category or confidentiality | — | The file is renamed or moved to match. |
+| Delete | The document is removed. | The file goes to the SharePoint recycle bin. |
+| File edited in SharePoint or Office Online | Recorded as a new version, e.g. "Edited in SharePoint by …". | — |
+| File added directly to the folder | Imported as a new document; the subfolder decides the category. | — |
+
+The last two rows happen on **Sync with SharePoint** (Documents page), and automatically every `SP_SYNC_MINUTES`.
+
+**Setup:** register an app in Microsoft Entra ID with the Microsoft Graph application permission `Sites.Selected`, and grant it *write* on the one site (steps in the deployment notes). Then set the `SP_*` / `MS_*` values in `.env`.
+
+**Commands:**
+- `npm run sharepoint:check` tests the connection.
+- `npm run docs:to-sharepoint`, or **Move files to SharePoint** on the Documents page, moves files already in the database.
+
 ## Everyday operations
 
 | Task | Command |

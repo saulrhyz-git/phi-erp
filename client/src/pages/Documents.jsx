@@ -3,6 +3,7 @@ import { api, fmtBytes, fmtDateTime, uploadFile } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
 import { Comments, ErrorNote, Loading, Modal, SheetHead } from '../components/ui.jsx';
+import StorageBar from '../components/StorageBar.jsx';
 
 function FilePicker({ file, setFile }) {
   const input = useRef(null);
@@ -67,6 +68,7 @@ export default function Documents() {
       <SheetHead code="S-8" title="Project documents" actions={canAdd && <button className="btn primary" onClick={openNew}>Upload document</button>}>
         One library for the SOW, correspondence with AWB, analysis workbooks and diagrams. Every upload is versioned; older versions stay downloadable.
       </SheetHead>
+      <StorageBar onChanged={reload} />
       <div className="toolbar">
         <input type="search" placeholder="Search documents…" value={qText} onChange={(e) => setQ(e.target.value)} aria-label="Search documents" />
         <select value={cat} onChange={(e) => setCat(e.target.value)} aria-label="Category"><option value="">All categories</option>{data.categories.map((c) => <option key={c}>{c}</option>)}</select>
@@ -81,12 +83,13 @@ export default function Documents() {
             <tbody>{docs.filter((d) => d.category === g).map((d) => (
               <tr key={d.id}>
                 <td className="w-md"><b>{d.title}</b>{d.confidential && <span className="pill" style={{ marginLeft: 6 }}>Confidential</span>}{d.description && <div className="small muted">{d.description}</div>}</td>
-                <td className="small">{d.file_name}<div className="muted">{fmtBytes(d.size_bytes)}</div></td>
+                <td className="small">{d.file_name}<div className="muted">{fmtBytes(d.size_bytes)} · {d.storage === 'sharepoint' ? <span className="sp-tag">SharePoint</span> : 'In app'}</div></td>
                 <td>v{d.current_version}</td>
                 <td className="small">{fmtDateTime(d.uploaded_at)}<div className="muted">{d.uploaded_by_name}</div></td>
                 <td style={{ whiteSpace: 'nowrap' }}>
                   <a className="btn sm" href={`/api/documents/${d.id}/download`}>Download</a>{' '}
                   {isPdf(d.mime) && <><a className="btn sm ghost" href={`/api/documents/${d.id}/download?inline=1`} target="_blank" rel="noreferrer">Open</a>{' '}</>}
+                  {d.sp_web_url && <><a className="btn sm ghost" href={d.sp_web_url} target="_blank" rel="noreferrer" title="Opens in SharePoint — needs access to the SharePoint site">Open in SharePoint</a>{' '}</>}
                   {isEditor && <><button className="btn sm ghost" onClick={() => openVersion(d)}>New version</button>{' '}</>}
                   <button className="btn sm ghost" onClick={() => openDetail(d)}>Details{d.comment_count ? ` (${d.comment_count})` : ''}</button>
                 </td>

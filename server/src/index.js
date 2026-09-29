@@ -119,6 +119,17 @@ app.use((err, req, res, next) => {
 await ensureDefaults();
 await refresh(true);
 
+// Optional background sync with SharePoint (files added or edited there). A database lock makes sure
+// only one server instance runs it at a time.
+const syncMinutes = Number(process.env.SP_SYNC_MINUTES || 0);
+if (config.sharepoint.enabled && syncMinutes > 0) {
+  const { syncFromSharePoint } = await import('./storage/docsync.js');
+  setInterval(() => {
+    syncFromSharePoint().then((r) => { if (r.imported || r.updated) console.log(`SharePoint sync: ${r.imported} new, ${r.updated} updated`); })
+      .catch((e) => console.error('SharePoint sync failed:', e.message));
+  }, syncMinutes * 60_000).unref();
+}
+
 const server = app.listen(config.port, config.host, () => {
   console.log(`PHI Blueprint listening on http://${config.host}:${config.port} (${config.env})`);
 });
