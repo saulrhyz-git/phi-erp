@@ -14,7 +14,9 @@ export async function migrate() {
     if (done.has(file)) continue;
     const sql = readFileSync(join(config.migrationsDir, file), 'utf8');
     await tx(async (c) => {
-      await c.query(sql);
+      const onNotice = (n) => console.log(`  ${n.message}`);
+      c.on('notice', onNotice);
+      try { await c.query(sql); } finally { c.off('notice', onNotice); }
       await c.query('INSERT INTO schema_migrations(name) VALUES ($1)', [file]);
     });
     console.log(`Applied ${file}`);

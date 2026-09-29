@@ -26,6 +26,18 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
 - **Audit log** — immutable, hash-chained record of every change (see below).
 
+**Superadmin**
+
+Superadmin is a built-in, locked role with full access. It is the **only** role that can add or delete users, reset a Superadmin's password, change a Superadmin account, or grant or remove Superadmin. These rights can't be given to any other role on the Roles page.
+
+- **Project Manager** keeps everything else, and can still edit non-Superadmin users: name, role, domains, processes and password resets.
+- **Always one left:** the app keeps at least one active Superadmin, and at least one active Project Manager or Superadmin.
+- **Deleting a user** keeps their work. References to them become empty, and the audit log keeps their name and email. Deactivating is still the reversible option.
+- **Existing accounts:** migration `007_superadmin.sql` makes the accounts named **scradmin** (by name or by email before the @) and **Blueprint Admin** Superadmins. The migration prints who was assigned.
+- **Recovery:**
+  - `npm run set-role -- <email> superadmin` assigns the role from the server.
+  - `npm run create-admin` now creates a Superadmin.
+
 **Configuring the toolkit in the app**
 
 Toolkit → **Configure toolkit** (Project Manager by default; permission *Toolkit configuration*) changes the toolkit without code or a redeploy:

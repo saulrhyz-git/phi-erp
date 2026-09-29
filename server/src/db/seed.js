@@ -133,9 +133,9 @@ async function seedAdmin() {
   if (rows.length) { console.log(`Admin ${ADMIN_EMAIL} already exists.`); return; }
   const hash = await bcrypt.hash(ADMIN_PASSWORD, 12);
   await pool.query(
-    "INSERT INTO users(email,name,password_hash,role_id,must_change_password) VALUES ($1,$2,$3,(SELECT id FROM roles WHERE key='project_manager'),TRUE)",
+    "INSERT INTO users(email,name,password_hash,role_id,must_change_password) VALUES ($1,$2,$3,(SELECT id FROM roles WHERE key='superadmin'),TRUE)",
     [ADMIN_EMAIL, ADMIN_NAME || 'Blueprint Admin', hash]);
-  console.log(`Created Project Manager ${ADMIN_EMAIL} — they'll be asked to change the password on first sign-in.`);
+  console.log(`Created Superadmin ${ADMIN_EMAIL} — they'll be asked to change the password on first sign-in.`);
 }
 
 async function seedToolkit() {

@@ -10,8 +10,8 @@ if (!email || !name || !password || password.length < 10) {
 const hash = await bcrypt.hash(password, 12);
 await pool.query(
   `INSERT INTO users(email,name,password_hash,role_id,must_change_password)
-     VALUES ($1,$2,$3,(SELECT id FROM roles WHERE key='project_manager'),TRUE)
+     VALUES ($1,$2,$3,(SELECT id FROM roles WHERE key='superadmin'),TRUE)
    ON CONFLICT (email) DO UPDATE SET password_hash=EXCLUDED.password_hash, role_id=EXCLUDED.role_id, active=TRUE, must_change_password=TRUE`,
   [email, name, hash]);
-console.log(`Project Manager ${email} is ready. They must change the password on first sign-in.`);
+console.log(`Superadmin ${email} is ready. They must change the password on first sign-in.`);
 await pool.end();

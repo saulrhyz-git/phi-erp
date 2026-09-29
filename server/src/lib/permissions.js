@@ -51,7 +51,7 @@ const registerModules = (regs) => regs.filter((r) => !r.archived).map((r) => ({ 
 const ADMIN = [
   { key: 'activity', label: 'Activity feed', actions: ['view'] },
   { key: 'audit_log', label: 'Audit log (read-only, immutable)', actions: ['view'] },
-  { key: 'users', label: 'Users', actions: ['view', 'add', 'edit'] },
+  { key: 'users', label: 'Users (add & delete: Superadmin only)', actions: ['view', 'add', 'edit', 'delete'] },
   { key: 'roles', label: 'Roles & permissions', actions: ['view', 'add', 'edit', 'delete'] },
 ];
 
@@ -75,10 +75,18 @@ setRegistry([], []);
 const allOf = (level) => Object.fromEntries(Object.values(MODULES).map((m) => [m.key,
   Object.fromEntries(ACTIONS.map((a) => [a, m.actions.includes(a) ? (a === 'view' ? 'all' : level) : 'none']))]));
 
+// Actions no role can be given except Superadmin (enforced here, not configurable on the Roles page).
+export const SUPERADMIN_ONLY = { users: ['add', 'delete'] };
+const withoutSuperadminOnly = (perms) => {
+  for (const [m, acts] of Object.entries(SUPERADMIN_ONLY)) if (perms[m]) for (const a of acts) perms[m][a] = 'none';
+  return perms;
+};
+
 // System roles are computed from the current module list, so new registers are covered automatically.
 export const SYSTEM_ROLES = {
-  get executive() { return allOf('none'); },        // sees everything, changes nothing
-  get project_manager() { return allOf('all'); },   // sees and changes everything
+  get superadmin() { return allOf('all'); },                              // everything, including adding/deleting users
+  get project_manager() { return withoutSuperadminOnly(allOf('all')); },  // everything except adding/deleting users
+  get executive() { return allOf('none'); },                              // sees everything, changes nothing
 };
 
 // Turns stored JSON (which may use "*" and "group:<key>" defaults) into a complete, valid map.
@@ -98,7 +106,7 @@ export function normalizePermissions(raw = {}) {
     if (p.view === 'none' && ['add', 'edit', 'delete'].some((a) => p[a] !== 'none')) p.view = 'all';
     out[m.key] = p;
   }
-  return out;
+  return withoutSuperadminOnly(out);
 }
 
 export function effectivePermissions(role) {

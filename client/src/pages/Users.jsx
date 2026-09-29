@@ -16,7 +16,15 @@ export default function Users() {
   const [form, setForm] = useState(null);
   const [reset, setReset] = useState(null);
   const [err, setErr] = useState(null);
-  const roleList = roles.data || (data ? [...new Map(data.map((u) => [u.role_id, { id: u.role_id, name: u.role_name }])).values()] : []);
+  const allRoles = roles.data || (data ? [...new Map(data.map((u) => [u.role_id, { id: u.role_id, name: u.role_name, key: u.role_key }])).values()] : []);
+  const iAmSuper = me.role_key === 'superadmin';
+  // Only a Superadmin can grant Superadmin or change a Superadmin account.
+  const roleList = allRoles.filter((r) => r.key !== 'superadmin' || iAmSuper || String(r.id) === String(form?.role_id));
+  const canTouch = (u) => u.role_key !== 'superadmin' || iAmSuper;
+  const del = async (u) => {
+    if (!window.confirm(`Delete ${u.name} <${u.email}>?\n\nTheir past work stays in the app and the audit log keeps their name. Deactivating is usually the better choice — it can be undone; deleting can't.`)) return;
+    try { await api(`/users/${u.id}`, { method: 'DELETE' }); reload(); } catch (e) { alert(e.message); }
+  };
 
   const save = async () => {
     try {
@@ -38,6 +46,7 @@ export default function Users() {
     <section className="sheet">
       <SheetHead title="Users" actions={can('users', 'add') && <button className="btn primary" onClick={() => { setErr(null); setForm({ ...BLANK, role_id: roleList.find((r) => r.name === 'Process Owner')?.id ?? '' }); }}>Add user</button>}>
         Each user has one role. Domains decide which toolkit records a domain-scoped role can change; processes decide which COPIS and steps they validate.
+        {' '}Only a <b>Superadmin</b> can add or delete users{iAmSuper ? '' : ' — ask one if you need a new account'}.
         {can('roles') && <> Permissions are set per role on the <Link to="/roles">Roles</Link> page.</>}
       </SheetHead>
       <ErrorNote error={error} />
@@ -50,15 +59,17 @@ export default function Users() {
                 <tr key={u.id}>
                   <td><b>{u.name}</b>{!u.active && <div><span className="badge bad">Deactivated</span></div>}{u.must_change_password && <div className="small">Temporary password</div>}</td>
                   <td>{u.email}</td>
-                  <td><b>{u.role_name}</b></td>
+                  <td><b>{u.role_name}</b>{u.role_key === 'superadmin' && <div><span className="badge warn">Superadmin</span></div>}</td>
                   <td>{u.domains.length ? <div className="chips-row">{u.domains.map((d) => <span key={d} className="domain">{d}</span>)}</div> : <span className="muted">—</span>}</td>
                   <td className="w-md">{u.process_ids.join(', ') || <span className="muted">—</span>}</td>
                   <td>{fmtDateTime(u.last_login_at) || <span className="muted">Never</span>}</td>
                   <td style={{ whiteSpace: 'nowrap' }}>
-                    {can('users', 'edit') && <>
+                    {can('users', 'edit') && canTouch(u) && <>
                       <button className="btn sm ghost" onClick={() => { setErr(null); setForm({ ...u, role_id: String(u.role_id) }); }}>Edit</button>{' '}
                       <button className="btn sm ghost" onClick={() => { setErr(null); setReset({ id: u.id, name: u.name, password: '' }); }}>Reset password</button>
-                    </>}
+                    </>}{' '}
+                    {can('users', 'delete') && u.id !== me.id && <button className="btn sm danger" onClick={() => del(u)}>Delete</button>}
+                    {!canTouch(u) && <span className="small muted">Superadmin only</span>}
                   </td>
                 </tr>
               ))}

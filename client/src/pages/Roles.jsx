@@ -92,7 +92,7 @@ export default function Roles() {
         actions={can('roles', 'add') && data && <button className="btn primary" onClick={() => { setErr(null); setForm({ name: '', description: '', permissions: data.find((r) => r.key === 'executive').permissions }); }}>New role</button>}>
         Each user has one role. For every module a role grants View, Add, Edit and Delete at one of three levels:
         <b> All</b> records, <b>Own</b> (records in the user's own domain, or processes assigned to them), or <b>No</b>.
-        The two built-in roles are locked so the project can never lose its Project Manager access.
+        The built-in roles — Superadmin, Project Manager and Executive — are locked so the project can never lose admin access. Adding and deleting users is reserved for Superadmin and can't be given to any other role.
       </SheetHead>
       <ErrorNote error={error || mods.error} />
       {(loading && !data) || !mods.data ? <Loading /> : (

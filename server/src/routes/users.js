@@ -32,15 +32,24 @@ async function setLinks(c, userId, processIds, domains) {
   }
 }
 
-// Never leave the project without an active Project Manager.
+const fail = (status, msg) => { const e = new Error(msg); e.status = status; return e; };
+const isSuper = (user) => user.role_key === 'superadmin';
+
+// Never leave the project without an active Superadmin (who manages users) and someone who can manage it.
+async function assertSuperadminRemains(c, excludingUserId) {
+  const { rows } = await c.query(
+    `SELECT count(*)::int AS n FROM users u JOIN roles r ON r.id=u.role_id WHERE r.key='superadmin' AND u.active AND u.id<>$1`, [excludingUserId]);
+  if (!rows[0].n) throw fail(400, 'At least one active Superadmin is required.');
+}
 async function assertPmRemains(c, excludingUserId) {
   const { rows } = await c.query(
-    `SELECT count(*)::int AS n FROM users u JOIN roles r ON r.id=u.role_id WHERE r.key='project_manager' AND u.active AND u.id<>$1`, [excludingUserId]);
-  if (!rows[0].n) { const e = new Error('At least one active Project Manager is required.'); e.status = 400; throw e; }
+    `SELECT count(*)::int AS n FROM users u JOIN roles r ON r.id=u.role_id
+      WHERE r.key IN ('project_manager','superadmin') AND u.active AND u.id<>$1`, [excludingUserId]);
+  if (!rows[0].n) throw fail(400, 'At least one active Project Manager or Superadmin is required.');
 }
 
 r.post('/', async (req, res) => {
-  assertCan(req.user, 'users', 'add');
+  assertCan(req.user, 'users', 'add', {}, 'Only a Superadmin can add users.');
   const b = parse(z.object({
     email: z.string().trim().email(), name: z.string().trim().min(1).max(120), role_id: z.number().int(),
     password: z.string().min(10, 'Temporary password must be at least 10 characters'),
@@ -49,8 +58,9 @@ r.post('/', async (req, res) => {
   const exists = await q('SELECT 1 FROM users WHERE lower(email)=lower($1)', [b.email]);
   if (exists.rowCount) return res.status(409).json({ error: 'A user with that email already exists.' });
   const user = await tx(async (c) => {
-    const role = await c.query('SELECT name FROM roles WHERE id=$1', [b.role_id]);
+    const role = await c.query('SELECT name, key FROM roles WHERE id=$1', [b.role_id]);
     if (!role.rowCount) throw notFound('Role');
+    if (role.rows[0].key === 'superadmin' && !isSuper(req.user)) throw fail(403, 'Only a Superadmin can grant the Superadmin role.');
     const { rows } = await c.query(
       `INSERT INTO users(email,name,password_hash,role_id,must_change_password) VALUES ($1,$2,$3,$4,TRUE) RETURNING id, email, name`,
       [b.email, b.name, await bcrypt.hash(b.password, 12), b.role_id]);
@@ -74,12 +84,19 @@ r.put('/:id', async (req, res) => {
   await tx(async (c) => {
     const cur = await c.query('SELECT u.name, r.key FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=$1', [id]);
     if (!cur.rowCount) throw notFound('User');
+    const curKey = cur.rows[0].key;
+    // Superadmin accounts can only be changed by a Superadmin (stops anyone else taking them over).
+    if (curKey === 'superadmin' && !isSuper(req.user)) throw fail(403, 'Only a Superadmin can change a Superadmin account.');
     if (b.role_id) {
       const role = await c.query('SELECT key FROM roles WHERE id=$1', [b.role_id]);
       if (!role.rowCount) throw notFound('Role');
-      if (cur.rows[0].key === 'project_manager' && role.rows[0].key !== 'project_manager') await assertPmRemains(c, id);
+      const newKey = role.rows[0].key;
+      if (newKey === 'superadmin' && curKey !== 'superadmin' && !isSuper(req.user)) throw fail(403, 'Only a Superadmin can grant the Superadmin role.');
+      if (curKey === 'superadmin' && newKey !== 'superadmin') await assertSuperadminRemains(c, id);
+      if (['project_manager', 'superadmin'].includes(curKey) && !['project_manager', 'superadmin'].includes(newKey)) await assertPmRemains(c, id);
     }
-    if (b.active === false && cur.rows[0].key === 'project_manager') await assertPmRemains(c, id);
+    if (b.active === false && curKey === 'superadmin') await assertSuperadminRemains(c, id);
+    if (b.active === false && ['project_manager', 'superadmin'].includes(curKey)) await assertPmRemains(c, id);
     await c.query('UPDATE users SET name=COALESCE($1,name), role_id=COALESCE($2,role_id), active=COALESCE($3,active) WHERE id=$4',
       [b.name ?? null, b.role_id ?? null, b.active ?? null, id]);
     await setLinks(c, id, b.process_ids, b.domains);
@@ -90,11 +107,30 @@ r.put('/:id', async (req, res) => {
 
 r.post('/:id/password', async (req, res) => {
   assertCan(req.user, 'users', 'edit');
+  const target = await q('SELECT r.key FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=$1', [req.params.id]);
+  if (target.rows[0]?.key === 'superadmin' && !isSuper(req.user)) throw fail(403, "Only a Superadmin can reset a Superadmin's password.");
   const b = parse(z.object({ password: z.string().min(10, 'Temporary password must be at least 10 characters') }), req.body);
   const u = await q('UPDATE users SET password_hash=$1, must_change_password=TRUE WHERE id=$2 RETURNING name',
     [await bcrypt.hash(b.password, 12), req.params.id]);
   if (!u.rowCount) throw notFound('User');
   await logActivity({ query: q }, req.user.id, 'reset_password', 'user', req.params.id, `Reset password for ${u.rows[0].name}`);
+  res.json({ ok: true });
+});
+
+// Delete a user (Superadmin only). Their past work stays; references to them become empty and the
+// audit log keeps their name and email. Deactivating is usually the better choice.
+r.delete('/:id', async (req, res) => {
+  assertCan(req.user, 'users', 'delete', {}, 'Only a Superadmin can delete users.');
+  const id = Number(req.params.id);
+  if (id === req.user.id) throw fail(400, "You can't delete your own account.");
+  await tx(async (c) => {
+    const cur = await c.query('SELECT u.name, u.email, r.key FROM users u JOIN roles r ON r.id=u.role_id WHERE u.id=$1', [id]);
+    if (!cur.rowCount) throw notFound('User');
+    if (cur.rows[0].key === 'superadmin') await assertSuperadminRemains(c, id);
+    if (['project_manager', 'superadmin'].includes(cur.rows[0].key)) await assertPmRemains(c, id);
+    await c.query('DELETE FROM users WHERE id=$1', [id]);
+    await logActivity(c, req.user.id, 'deleted', 'user', id, `Deleted ${cur.rows[0].name} <${cur.rows[0].email}>`);
+  });
   res.json({ ok: true });
 });
 

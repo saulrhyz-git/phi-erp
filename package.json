@@ -19,6 +19,7 @@
     "seed": "npm run seed -w server",
     "seed:force": "npm run seed -w server -- --force",
     "create-admin": "npm run create-admin -w server",
-    "import-docs": "npm run import-docs -w server --"
+    "import-docs": "npm run import-docs -w server --",
+    "set-role": "npm run set-role -w server --"
   }
 }
