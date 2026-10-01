@@ -14,6 +14,7 @@ import OpenItems from './pages/OpenItems.jsx';
 import Activity from './pages/Activity.jsx';
 import Users from './pages/Users.jsx';
 import Account from './pages/Account.jsx';
+import UserGuide from './pages/UserGuide.jsx';
 import ReEngineering from './pages/ReEngineering.jsx';
 import ReEngineeringDetail from './pages/ReEngineeringDetail.jsx';
 import Sow from './pages/Sow.jsx';
@@ -71,6 +72,7 @@ export default function App() {
           <Route path=":register" element={<Register />} />
         </Route>
         <Route path="account" element={<Account />} />
+        <Route path="guide" element={<UserGuide />} />
         <Route path="*" element={<div className="sheet"><h2>Page not found</h2><p>Use the sheet index above to find your way back.</p></div>} />
       </Route>
     </Routes>

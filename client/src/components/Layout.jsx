@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Map, Layers, GitBranch, Table2, Database, ListChecks, Sparkles, FileSignature, FolderOpen,
-  Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X, Monitor, Leaf, Contrast, Moon,
+  Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X, Monitor, Leaf, Contrast, Moon, LifeBuoy,
 } from 'lucide-react';
 import { THEMES, getTheme, setTheme } from '../theme.js';
 
@@ -27,7 +27,8 @@ const ADMIN = [
   ['/users', '', 'Users', 'users', Users],
   ['/roles', '', 'Roles', 'roles', KeyRound],
 ];
-const ALL = [...BLUEPRINT, ...PROJECT, ...ADMIN];
+const HELP = [['/guide', '', 'User guide', null, LifeBuoy]];
+const ALL = [...BLUEPRINT, ...PROJECT, ...ADMIN, ...HELP];
 
 const initials = (n = '') => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('');
 const readPref = () => { try { return localStorage.getItem('phi.sidebar') === 'collapsed'; } catch { return false; } };
@@ -43,7 +44,7 @@ export default function Layout() {
   const toggle = () => setCollapsed((c) => { try { localStorage.setItem('phi.sidebar', c ? 'open' : 'collapsed'); } catch { /* storage unavailable */ } return !c; });
 
   const section = (title, items) => {
-    const list = items.filter((l) => can(l[3]));
+    const list = items.filter((l) => !l[3] || can(l[3]));
     if (!list.length) return null;
     return (
       <>
@@ -70,6 +71,7 @@ export default function Layout() {
           {section('Process blueprint', BLUEPRINT)}
           {section('Project', PROJECT)}
           {section('Administration', ADMIN)}
+          {section('Help', HELP)}
         </nav>
         <div className="sb-foot">
           <Link to="/account" className="sb-user" title={collapsed ? user.name : undefined}>

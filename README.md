@@ -26,6 +26,16 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 - **T Project toolkit** — the ERP program toolkit: key dates, a master schedule with a Gantt chart (pre-work + the AWB SOW phases to Go-Live and hypercare), milestones and gates, and 20 registers (RAID, decision log, change requests, status reports, process inventory, pain points, Shadow IT, data migration, fit-gap, UAT scripts, defects, training, cutover runbook, Go/No-Go, sign-offs with printable forms, and more). Every record belongs to a domain or is project-wide.
 - **Audit log** — immutable, hash-chained record of every change (see below).
 
+**User guide**
+
+**Help → User guide** is open to every user.
+
+- **Sections:** one for everyone, one per user type (Superadmin, Project Manager, Executive, Process Owner, Viewer), and an FAQ and glossary.
+- **Your own section:** the user's role section is starred and one click away.
+- **Live access panel:** "What your account can do" is built from the account's real permissions.
+- **Printing:** each section can be printed.
+- **Keeping it current:** the content is in `client/src/pages/UserGuide.jsx`. Update it when features change.
+
 **Adding to the world map, COPIS and hand-off steps in the app**
 
 | Who | Can do |
