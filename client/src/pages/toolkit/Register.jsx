@@ -1,13 +1,26 @@
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { api, fmtDateTime } from '../../api.js';
 import { useAuth } from '../../auth.jsx';
 import { useApi } from '../../hooks.js';
 import { Comments, ErrorNote, Loading, Modal, SheetHead } from '../../components/ui.jsx';
+import LinkPicker from '../../components/LinkPicker.jsx';
 import { computeTasks, daysBetween, fmtShort, todayYmd } from '../../schedule.js';
 import { Badge, DomainTag, StatusSelect, allowedDomains, useToolkit } from './common.jsx';
 
-function Field({ col, value, onChange, disabled }) {
+const splitRefs = (s) => [...new Set(String(s || '').split(',').map((x) => x.trim()).filter(Boolean))];
+const PROCESS_REG = 'process_inventory';
+const regPath = (key) => `/toolkit/${key.replace(/_/g, '-')}`;
+
+function Field({ col, value, onChange, disabled, processes }) {
+  if (col.type === 'process') {
+    const opts = (processes || []).map((p) => ({ value: p.code, label: p.name, hint: p.domain_id || 'Project' }));
+    const sel = splitRefs(value);
+    // Keep IDs that are no longer in the inventory visible so nobody loses them unnoticed.
+    for (const v of sel) if (!opts.some((o) => o.value === v)) opts.push({ value: v, label: '(not in the Process inventory)' });
+    return <LinkPicker label={`Process inventory${col.required ? ' — pick at least one' : ''}`} options={opts} value={sel}
+      onChange={(next) => onChange(next.join(', '))} disabled={disabled} height={200} />;
+  }
   const p = { value: value ?? '', disabled, onChange: (e) => onChange(e.target.value), 'aria-label': col.label };
   if (col.type === 'textarea') return <textarea {...p} />;
   if (col.type === 'select') return <select {...p}>{col.options.map((o) => <option key={o} value={o}>{o || '—'}</option>)}</select>;
@@ -15,7 +28,18 @@ function Field({ col, value, onChange, disabled }) {
   return <input type="text" {...p} />;
 }
 
-function Cell({ col, v }) {
+function ProcessRefs({ v, processes, regKey }) {
+  const refs = splitRefs(v);
+  if (!refs.length) return <span className="muted">—</span>;
+  const name = (c) => processes?.find((p) => p.code === c)?.name;
+  return <div className="chips-row">{refs.map((c) => (
+    <Link key={c} className="domain proc-ref" to={`${regPath(regKey)}?process=${encodeURIComponent(c)}`} replace
+      title={name(c) || 'Not in the Process inventory'} style={name(c) ? undefined : { textDecoration: 'line-through' }}>{c}</Link>
+  ))}</div>;
+}
+
+function Cell({ col, v, processes, regKey }) {
+  if (col.type === 'process') return <ProcessRefs v={v} processes={processes} regKey={regKey} />;
   if (col.badge || col.short) return <Badge v={v} />;
   if (col.type === 'date') return <span style={{ whiteSpace: 'nowrap' }}>{fmtShort(v)}</span>;
   if (!v) return <span className="muted">—</span>;
@@ -60,6 +84,12 @@ export default function Register() {
   const isMs = reg?.special === 'milestones';
   const tasks = useApi(isMs ? '/toolkit/tasks' : null);
   const settings = useApi(isMs ? '/toolkit/settings' : null);
+  const procCols = (reg?.columns || []).filter((c) => c.type === 'process' && !c.archived);
+  const processes = useApi(allowed && procCols.length ? '/toolkit/process-options' : null);
+  const links = useApi(allowed && key === PROCESS_REG ? '/toolkit/process-links' : null);
+  const [params, setParams] = useSearchParams();
+  const procFilter = procCols.length ? params.get('process') || '' : '';
+  const setProcFilter = (v) => setParams(v ? { process: v } : {}, { replace: true });
   const [search, setSearch] = useState('');
   const [dom, setDom] = useState('');
   const [open, setOpen] = useState(null);    // { rec, form, domain, mode: 'new'|'edit'|'view' }
@@ -86,12 +116,15 @@ export default function Register() {
     catch (e) { alert(e.message); }
   };
   const today = todayYmd();
+  const linkRegs = key === PROCESS_REG ? links.data?.registers || [] : [];
+  const linkedTo = (r, regKey) => (links.data?.links?.[r.data[reg.codeField]] || []).filter((l) => l.register === regKey);
 
   let rows = (data || []).map((r) => ({ ...r, task: isMs ? taskByCode[r.data.task_code] : null }));
   if (isMs) rows.sort((a, b) => (a.task?.start || '9').localeCompare(b.task?.start || '9'));
   if (dom === 'mine') rows = rows.filter((r) => user.domains.includes(r.domain_id));
   else if (dom === 'project') rows = rows.filter((r) => !r.domain_id);
   else if (dom) rows = rows.filter((r) => r.domain_id === dom);
+  if (procFilter) rows = rows.filter((r) => procCols.some((c) => splitRefs(r.data[c.key]).includes(procFilter)));
   if (search.trim()) {
     const s = search.toLowerCase();
     rows = rows.filter((r) => Object.values(r.data).some((v) => String(v).toLowerCase().includes(s)) || (r.task?.name || '').toLowerCase().includes(s));
@@ -130,6 +163,12 @@ export default function Register() {
   const statusMode = open?.mode === 'status';
   const domainOptions = open ? allowedDomains(user, level(key, open.mode === 'new' ? 'add' : 'edit'), meta.domains) : [];
   const setF = (k, v) => setOpen((o) => ({ ...o, form: { ...o.form, [k]: v } }));
+  // Linking the first process to a new record suggests that process's domain, when the user may use it.
+  const setProcesses = (k, v) => setOpen((o) => {
+    const first = processes.data?.find((p) => p.code === splitRefs(v)[0]);
+    const suggest = o.mode === 'new' && !splitRefs(o.form[k]).length && first?.domain_id && domainOptions.some((d) => d.id === first.domain_id);
+    return { ...o, form: { ...o.form, [k]: v }, ...(suggest ? { domain: first.domain_id } : {}) };
+  });
 
   return (
     <section className="sheet">
@@ -149,6 +188,13 @@ export default function Register() {
           <option value="project">Project-wide</option>
           {meta.domains.map((d) => <option key={d.id} value={d.id}>{d.id} — {d.name}</option>)}
         </select>
+        {procCols.length > 0 && (
+          <select value={procFilter} onChange={(e) => setProcFilter(e.target.value)} aria-label="Process">
+            <option value="">All processes</option>
+            {procFilter && !processes.data?.some((p) => p.code === procFilter) && <option value={procFilter}>{procFilter}</option>}
+            {(processes.data || []).map((p) => <option key={p.code} value={p.code}>{p.code} — {p.name.slice(0, 60)}</option>)}
+          </select>
+        )}
         <span className="small"><b>{rows.length}</b> of {data?.length ?? 0}</span>
         {level(key, 'edit') === 'own' && <span className="lock">You can change records tagged {user.domains.join(', ') || '(no domain assigned — ask the PM)'}{statusFields.length > 0 && level(key, 'status') !== 'none' ? ', and update the status of project-wide records' : ''}</span>}
         {level(key, 'edit') === 'none' && (statusFields.length > 0 && level(key, 'status') !== 'none'
@@ -163,10 +209,11 @@ export default function Register() {
               <th>Domain</th>
               {isMs && <><th>Milestone / gate</th><th>Planned</th><th>Days</th></>}
               {listCols.map((c) => <th key={c.key}>{c.label}</th>)}
+              {linkRegs.map((lr) => <th key={lr.key}>{lr.label.replace(/ inventory$/i, '')}</th>)}
               <th />
             </tr></thead>
             <tbody>
-              {rows.length === 0 && <tr><td colSpan={listCols.length + (isMs ? 5 : 2)} className="empty">Nothing here yet{canAddAny ? ' — use Add to create the first record.' : '.'}</td></tr>}
+              {rows.length === 0 && <tr><td colSpan={listCols.length + linkRegs.length + (isMs ? 5 : 2)} className="empty">Nothing here yet{canAddAny ? ' — use Add to create the first record.' : '.'}</td></tr>}
               {rows.map((r) => (
                 <tr key={r.id}>
                   <td><DomainTag id={r.domain_id} user={user} /></td>
@@ -178,8 +225,13 @@ export default function Register() {
                   {listCols.map((c) => <td key={c.key} className={c.wide ? 'wide' : undefined}>
                     {statusFields.includes(c.key) && canStatus(r)
                       ? <StatusSelect value={r.data[c.key]} options={c.options} onChange={(v) => setStatus(r, c.key, v)} label={`${c.label} of ${r.data[reg.titleField] || r.id}`} />
-                      : <Cell col={c} v={r.data[c.key]} />}
+                      : <Cell col={c} v={r.data[c.key]} processes={processes.data} regKey={key} />}
                   </td>)}
+                  {linkRegs.map((lr) => {
+                    const n = linkedTo(r, lr.key).length;
+                    return <td key={lr.key}>{n ? <Link className="domain" to={`${regPath(lr.key)}?process=${encodeURIComponent(r.data[reg.codeField])}`}
+                      title={`${n} linked — open ${lr.label} filtered to ${r.data[reg.codeField]}`}>{n}</Link> : <span className="muted">—</span>}</td>;
+                  })}
                   <td style={{ whiteSpace: 'nowrap' }}>
                     <button className="btn sm ghost" onClick={() => startOpen(r)}>{canEdit(r) ? 'Edit' : canStatus(r) ? 'Update' : 'Open'}{r.comment_count ? ` (${r.comment_count})` : ''}</button>{' '}
                     {key === 'status_reports' && canAddAny && <button className="btn sm ghost" onClick={() => startNew({ ...r.data, week_ending: '' })}>Duplicate</button>}{' '}
@@ -215,13 +267,29 @@ export default function Register() {
             </label>
             {isMs && open.rec?.task && <p className="small"><b>{open.rec.task.name}</b> · planned {fmtShort(open.rec.task.start)} (from the master schedule)</p>}
             <div className="grid2">
-              {reg.columns.map((c) => (
-                <label key={c.key} className="field" style={c.type === 'textarea' ? { gridColumn: '1 / -1' } : undefined}>
-                  <span>{c.label}{reg.codeField === c.key && reg.codePrefix && open.mode === 'new' ? ' (leave blank to number automatically)' : ''}</span>
-                  <Field col={c} value={open.form[c.key]} onChange={(v) => setF(c.key, v)} disabled={!(editable || (statusMode && statusFields.includes(c.key)))} />
-                </label>
-              ))}
+              {reg.columns.map((c) => {
+                const Wrap = c.type === 'process' ? 'div' : 'label';   // the picker has its own inputs
+                return (
+                  <Wrap key={c.key} className={c.type === 'process' ? 'field as-label' : 'field'} style={c.type === 'textarea' || c.type === 'process' ? { gridColumn: '1 / -1' } : undefined}>
+                    <span>{c.label}{c.required && editable ? ' *' : ''}{reg.codeField === c.key && reg.codePrefix && open.mode === 'new' ? ' (leave blank to number automatically)' : ''}</span>
+                    <Field col={c} value={open.form[c.key]} processes={processes.data} disabled={!(editable || (statusMode && statusFields.includes(c.key)))}
+                      onChange={(v) => (c.type === 'process' ? setProcesses(c.key, v) : setF(c.key, v))} />
+                  </Wrap>
+                );
+              })}
             </div>
+            {open.rec && linkRegs.map((lr) => {
+              const list = linkedTo(open.rec, lr.key);
+              return (
+                <div key={lr.key} className="linked-recs">
+                  <h4>{lr.label} linked to {open.rec.data[reg.codeField] || 'this process'} <span className="muted small">({list.length})</span></h4>
+                  {list.length ? (
+                    <ul>{list.map((l) => <li key={l.id}><b>{l.code}</b> {l.title} <DomainTag id={l.domain_id} user={user} /></li>)}</ul>
+                  ) : <p className="small muted">Nothing linked yet.</p>}
+                  <Link className="small" to={`${regPath(lr.key)}?process=${encodeURIComponent(open.rec.data[reg.codeField] || '')}`}>Open {lr.label} for this process →</Link>
+                </div>
+              );
+            })}
             {open.rec && <p className="small">Last updated {fmtDateTime(open.rec.updated_at)}{open.rec.updated_by_name ? ` by ${open.rec.updated_by_name}` : ''}. Every change is kept in the audit log.</p>}
             {open.rec && <Comments type="tk_record" id={open.rec.id} />}
           </>

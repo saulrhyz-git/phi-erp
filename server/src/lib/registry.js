@@ -2,7 +2,7 @@
 // database and editable in the app. Each server process keeps a cached copy and re-reads it when
 // the shared version number changes (so both PM2 instances stay in step).
 import { createRequire } from 'node:module';
-import { pool } from '../db/pool.js';
+import { pool, tx } from '../db/pool.js';
 import { setRegistry } from './permissions.js';
 
 const require = createRequire(import.meta.url);
@@ -11,6 +11,7 @@ const DEFAULTS = require('./registers.json');
 // Status-like columns in the shipped registers (sign-offs and CCB decisions are deliberately excluded).
 const DEFAULT_STATUS_KEYS = {
   milestones: ['status'], comms: ['status'], raid: ['status'], change_requests: ['status'], process_inventory: ['status'],
+  forms_inventory: ['status'],
   data_migration: ['mock_1_result', 'mock_2_result', 'mock_3_result'], uat: ['round_1', 'round_2'], defects: ['status'],
   cutover: ['status'], go_no_go: ['rag'],
 };
@@ -45,16 +46,50 @@ let state = { version: -1, checkedAt: 0, registers: [], phases: [], guide: DEFAU
 export const statusFieldsOf = (reg) => reg.columns.filter((c) => c.status && c.type === 'select' && !c.archived).map((c) => c.key);
 const withDerived = (key, def, sort, archived) => ({ ...def, key, sort, archived, statusFields: statusFieldsOf(def) });
 
-// Loads defaults the first time (fresh install or upgrade from before migration 006).
+const defaultDef = (r) => {
+  const statusKeys = DEFAULT_STATUS_KEYS[r.key] || [];
+  const { key, ...def } = r;
+  def.columns = def.columns.map((c) => (statusKeys.includes(c.key) ? { ...c, status: true } : c));
+  return def;
+};
+
+// Registers shipped after the first release. On an existing install each is added once, right after
+// the register named in `after`, and custom roles get the same access they have to that register.
+// Registers are never deleted (only archived), so "already there" means it was added before.
+const ADDED_REGISTERS = [{ key: 'forms_inventory', after: 'process_inventory' }];
+
+async function addNewRegisters(db) {
+  // Both server instances start together: the transaction lock lets only one add each register.
+  await db.query('SELECT pg_advisory_xact_lock(hashtext($1))', ['phi:tk_registers:add']);
+  for (const { key, after } of ADDED_REGISTERS) {
+    const r = DEFAULTS.registers.find((x) => x.key === key);
+    if (!r) continue;
+    const { rowCount } = await db.query('SELECT 1 FROM tk_registers WHERE key=$1', [key]);
+    if (rowCount) continue;
+    const anchor = (await db.query('SELECT sort FROM tk_registers WHERE key=$1', [after])).rows[0];
+    const sort = anchor ? anchor.sort + 1 : (await db.query('SELECT COALESCE(max(sort),0)+1 AS n FROM tk_registers')).rows[0].n;
+    await db.query('UPDATE tk_registers SET sort = sort + 1 WHERE sort >= $1', [sort]);
+    await db.query('INSERT INTO tk_registers(key, def, sort) VALUES ($1,$2,$3) ON CONFLICT (key) DO NOTHING', [key, JSON.stringify(defaultDef(r)), sort]);
+    await db.query(
+      `UPDATE roles SET permissions = permissions || jsonb_build_object($1::text, permissions -> $2::text)
+        WHERE NOT is_system AND permissions ? $2::text AND NOT permissions ? $1::text`, [key, after]);
+    await db.query('UPDATE tk_registry_version SET version = version + 1 WHERE id=1');
+    console.log(`Toolkit: added the ${r.label} register.`);
+  }
+}
+
+// Loads defaults the first time (fresh install or upgrade from before migration 006),
+// then adds any register shipped since.
 export async function ensureDefaults(db = pool) {
   const { rows } = await db.query('SELECT count(*)::int AS n FROM tk_registers');
   if (rows[0].n === 0) {
     for (const [i, r] of DEFAULTS.registers.entries()) {
-      const statusKeys = DEFAULT_STATUS_KEYS[r.key] || [];
-      const { key, ...def } = r;
-      def.columns = def.columns.map((c) => (statusKeys.includes(c.key) ? { ...c, status: true } : c));
-      await db.query('INSERT INTO tk_registers(key, def, sort) VALUES ($1,$2,$3) ON CONFLICT (key) DO NOTHING', [key, JSON.stringify(def), i]);
+      await db.query('INSERT INTO tk_registers(key, def, sort) VALUES ($1,$2,$3) ON CONFLICT (key) DO NOTHING', [r.key, JSON.stringify(defaultDef(r)), i]);
     }
+  } else if (db === pool) {
+    await tx((c) => addNewRegisters(c));
+  } else {
+    await addNewRegisters(db);
   }
   await db.query(`INSERT INTO tk_settings(key, value) VALUES ('phases', $1) ON CONFLICT (key) DO NOTHING`, [JSON.stringify(DEFAULTS.phases)]);
   await db.query(`INSERT INTO tk_settings(key, value) VALUES ('guide', $1) ON CONFLICT (key) DO NOTHING`, [JSON.stringify(DEFAULT_GUIDE)]);

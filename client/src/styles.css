@@ -208,8 +208,8 @@ input:disabled,select:disabled,textarea:disabled{background:var(--lane); color:v
 ::placeholder{color:var(--ink-3); opacity:1}
 textarea{min-height:84px; resize:vertical; line-height:1.45}
 input[type=checkbox]{width:16px; height:16px; accent-color:var(--brand)}
-label.field{display:block; margin:0 0 14px}
-label.field > span{display:block; font-size:.8rem; color:var(--ink-2); margin-bottom:5px; font-weight:600}
+label.field,div.field.as-label{display:block; margin:0 0 14px}
+label.field > span,div.field.as-label > span{display:block; font-size:.8rem; color:var(--ink-2); margin-bottom:5px; font-weight:600}
 .toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:0 0 16px}
 .toolbar input[type=search]{flex:1 1 260px; width:auto; padding-left:34px;
   background:var(--field) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2364748B' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 11px 50%}
@@ -628,3 +628,11 @@ table.cfg-cols td:nth-child(2){min-width:200px}
 .g-access summary{cursor:pointer; font-size:.92rem}
 .g-access .tablewrap{margin-top:8px; max-height:340px}
 @media print{ .guide .tabs,.g-access{display:none!important} .g-task{break-inside:avoid} }
+
+/* Process links (Forms inventory ↔ Process inventory) */
+a.proc-ref{text-decoration:none}
+a.proc-ref:hover{text-decoration:underline}
+.linked-recs{margin:14px 0 6px; padding:10px 12px; border:1px solid var(--rule-2); border-radius:10px; background:var(--lane)}
+.linked-recs h4{margin:0 0 6px}
+.linked-recs ul{margin:0 0 8px; padding-left:18px}
+.linked-recs li{margin:2px 0}

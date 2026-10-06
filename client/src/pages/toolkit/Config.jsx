@@ -8,7 +8,7 @@ import { ErrorNote, Loading, Modal, SheetHead } from '../../components/ui.jsx';
 import { useToolkit } from './common.jsx';
 
 const TABS = [['registers', 'Registers'], ['phases', 'Schedule phases'], ['domains', 'Domains'], ['guide', 'Guide page']];
-const TYPES = [['text', 'Short text'], ['textarea', 'Long text'], ['date', 'Date'], ['select', 'Pick-list']];
+const TYPES = [['text', 'Short text'], ['textarea', 'Long text'], ['date', 'Date'], ['select', 'Pick-list'], ['process', 'Process link']];
 const lines = (t) => String(t || '').split('\n').map((x) => x.trim()).filter(Boolean);
 const move = (arr, i, d) => { const a = [...arr]; const j = i + d; if (j < 0 || j >= a.length) return a; [a[i], a[j]] = [a[j], a[i]]; return a; };
 
@@ -40,7 +40,7 @@ function RegisterEditor({ reg, groups, usage, editable, onSaved }) {
         titleField: f.titleField, codeField: f.codeField || null, codePrefix: f.codePrefix || null,
         columns: f.columns.map((c) => ({
           key: c.key || '', label: c.label, type: c.type, options: c.type === 'select' ? lines(c.optionsText) : undefined,
-          detail: !!c.detail, wide: !!c.wide, badge: !!c.badge, status: !!c.status, archived: !!c.archived,
+          detail: !!c.detail, wide: !!c.wide, badge: !!c.badge, status: !!c.status, required: !!c.required, archived: !!c.archived,
         })),
         ...(reg.special === 'signoffs' ? { forms: f.forms.map((x) => ({ title: x.title, fields: lines(x.fieldsText), statement: x.statement || '', signatories: lines(x.signText) })) } : {}),
         ...(archived !== undefined ? { archived } : {}),
@@ -79,10 +79,10 @@ function RegisterEditor({ reg, groups, usage, editable, onSaved }) {
       </div>
 
       <h4 style={{ margin: '8px 0 8px' }}>Columns</h4>
-      <p className="small muted" style={{ marginTop: 0 }}>Removing a column archives it: it disappears from forms and lists, and existing values are kept. Pick-list: one option per line. <b>Status</b> lets people with “Update status” change that column without full edit rights.</p>
+      <p className="small muted" style={{ marginTop: 0 }}>Removing a column archives it: it disappears from forms and lists, and existing values are kept. Pick-list: one option per line. <b>Status</b> lets people with “Update status” change that column without full edit rights. A <b>Process link</b> column links each record to entries in the Process inventory; <b>Required</b> columns must be filled in.</p>
       <div className="tablewrap">
         <table className="t cfg-cols">
-          <thead><tr><th /><th>Label</th><th>Type</th><th>Pick-list options</th><th title="Show in the register list">In list</th><th>Wide</th><th>Badge</th><th>Status</th><th /></tr></thead>
+          <thead><tr><th /><th>Label</th><th>Type</th><th>Pick-list options</th><th title="Show in the register list">In list</th><th>Wide</th><th>Badge</th><th>Status</th><th title="Must be filled in when a record is added or edited">Required</th><th /></tr></thead>
           <tbody>
             {f.columns.map((c, i) => (
               <tr key={c.key || `new${i}`} style={{ opacity: c.archived ? 0.5 : 1 }}>
@@ -95,11 +95,13 @@ function RegisterEditor({ reg, groups, usage, editable, onSaved }) {
                 <td><select value={c.type} onChange={(e) => setCol(i, 'type', e.target.value)} disabled={dis || c.archived || (c.key && usage > 0 && c.type === 'select')} aria-label="Column type">{TYPES.map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select></td>
                 <td style={{ minWidth: 200 }}>{c.type === 'select'
                   ? <textarea value={c.optionsText} onChange={(e) => setCol(i, 'optionsText', e.target.value)} disabled={dis || c.archived} style={{ minHeight: 60 }} aria-label="Options, one per line" />
+                  : c.type === 'process' ? <span className="muted small">Links to entries in the Process inventory (one or more)</span>
                   : <span className="muted small">—</span>}</td>
                 <td><input type="checkbox" checked={!c.detail} onChange={(e) => setCol(i, 'detail', !e.target.checked)} disabled={dis || c.archived} aria-label="Show in list" /></td>
                 <td><input type="checkbox" checked={!!c.wide} onChange={(e) => setCol(i, 'wide', e.target.checked)} disabled={dis || c.archived} aria-label="Wide" /></td>
                 <td><input type="checkbox" checked={!!c.badge} onChange={(e) => setCol(i, 'badge', e.target.checked)} disabled={dis || c.archived || c.type !== 'select'} aria-label="Show as badge" /></td>
                 <td><input type="checkbox" checked={!!c.status} onChange={(e) => setCol(i, 'status', e.target.checked)} disabled={dis || c.archived || c.type !== 'select'} aria-label="Status column" /></td>
+                <td><input type="checkbox" checked={!!c.required} onChange={(e) => setCol(i, 'required', e.target.checked)} disabled={dis || c.archived} aria-label="Required" /></td>
                 <td>{editable && (c.archived
                   ? <button className="btn sm ghost" onClick={() => setCol(i, 'archived', false)} title="Restore column"><RotateCcw size={14} /></button>
                   : c.key

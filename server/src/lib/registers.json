@@ -915,6 +915,165 @@
    "titleField": "domain"
   },
   {
+   "key": "forms_inventory",
+   "label": "Forms inventory",
+   "title": "Forms Inventory (As-Is)",
+   "group": "Pre-BRD",
+   "description": "Every form the business generates or uses — paper, spreadsheet, In4 Velocity print-out, PDF or e-mail template — each linked to the process(es) in the Process inventory where it appears. Feeds the Odoo report and template design.",
+   "howTo": [
+    "Log the form as people actually use it today, e.g. Reservation Agreement, Contract to Sell, Official Receipt, Statement of Account, PDC acknowledgement, Purchase Request, Purchase Order, Receiving Report, Check Voucher.",
+    "Link every form to at least one process from the Process inventory. A form used in several processes (e.g. an Official Receipt) is logged once and linked to all of them.",
+    "Generated = the process produces it; Used = the process receives or consumes it. Pick Both when a process fills in a form and then passes it on.",
+    "Save a blank and a filled-in (redacted) sample in 02_As-Is/Forms named <Form ID>_<Form>_Sample, and paste the link in Sample link.",
+    "List the fields printed or captured on the form: they become the field list for the Odoo report, template or custom layout."
+   ],
+   "columns": [
+    {
+     "key": "id",
+     "label": "Form ID",
+     "type": "text"
+    },
+    {
+     "key": "form_name",
+     "label": "Form name",
+     "type": "text"
+    },
+    {
+     "key": "processes",
+     "label": "Process(es)",
+     "type": "process",
+     "required": true
+    },
+    {
+     "key": "usage",
+     "label": "Generated / used",
+     "type": "select",
+     "options": [
+      "",
+      "Generated",
+      "Used",
+      "Both"
+     ]
+    },
+    {
+     "key": "medium",
+     "label": "Medium",
+     "type": "select",
+     "options": [
+      "",
+      "Paper (pre-printed)",
+      "Paper (printed from system)",
+      "In4 Velocity print-out / report",
+      "Spreadsheet template",
+      "Word / PDF template",
+      "E-mail",
+      "Online / portal",
+      "Other"
+     ]
+    },
+    {
+     "key": "purpose",
+     "label": "Purpose",
+     "type": "textarea",
+     "wide": true
+    },
+    {
+     "key": "prepared_by",
+     "label": "Prepared by (role / dept)",
+     "type": "text"
+    },
+    {
+     "key": "recipients",
+     "label": "Recipients / copies",
+     "type": "text",
+     "detail": true
+    },
+    {
+     "key": "approvals",
+     "label": "Signatories / approvals",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "key_fields",
+     "label": "Key fields on the form",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "monthly_volume",
+     "label": "Monthly volume",
+     "type": "text"
+    },
+    {
+     "key": "regulatory",
+     "label": "Regulatory requirement",
+     "type": "select",
+     "options": [
+      "",
+      "None",
+      "BIR",
+      "DHSUD",
+      "Pag-IBIG / HDMF",
+      "Bank / financing partner",
+      "LGU / Registry of Deeds",
+      "Other"
+     ],
+     "detail": true
+    },
+    {
+     "key": "form_owner",
+     "label": "Form owner",
+     "type": "text",
+     "detail": true
+    },
+    {
+     "key": "sample_link",
+     "label": "Sample link",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "odoo_treatment",
+     "label": "Odoo treatment",
+     "type": "select",
+     "options": [
+      "",
+      "Standard Odoo report",
+      "Configure template",
+      "Custom report / layout",
+      "Replace with workflow (no form)",
+      "Retire",
+      "TBD"
+     ],
+     "badge": true
+    },
+    {
+     "key": "notes",
+     "label": "Notes",
+     "type": "textarea",
+     "detail": true
+    },
+    {
+     "key": "status",
+     "label": "Status",
+     "type": "select",
+     "options": [
+      "",
+      "Not Started",
+      "In Progress",
+      "Complete",
+      "At Risk",
+      "Blocked"
+     ],
+     "badge": true
+    }
+   ],
+   "codeField": "id",
+   "codePrefix": "FRM-",
+   "titleField": "form_name"
+  },
+  {
    "key": "pain_points",
    "label": "Pain point log",
    "title": "Pain Point Log",

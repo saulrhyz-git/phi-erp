@@ -5,7 +5,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
 import { parse, notFound, logActivity } from '../lib/util.js';
-import { TASK_STATUSES, assertCan, can, requireView } from '../lib/permissions.js';
+import { TASK_STATUSES, assertCan, can, forbidden, requireView } from '../lib/permissions.js';
 import { getGuide, getPhases, getRegister, getRegisters } from '../lib/registry.js';
 
 const r = Router();
@@ -150,13 +150,57 @@ function cleanData(reg, raw, cur = {}) {
     const unchanged = v === (cur[col.key] ?? '');
     if (col.type === 'date' && v && !unchanged && !/^\d{4}-\d{2}-\d{2}$/.test(v)) { const e = new Error(`${col.label}: use YYYY-MM-DD`); e.status = 400; throw e; }
     if (col.type === 'select' && v && !unchanged && !(col.options || []).includes(v)) { const e = new Error(`${col.label}: "${v}" is not one of the allowed values`); e.status = 400; throw e; }
+    if (col.type === 'process') v = joinRefs(splitRefs(v));
+    if (col.required && !v && (cur[col.key] ?? '') !== '') { const e = new Error(`${col.label} can't be left empty.`); e.status = 400; throw e; }
+    if (col.required && !v && !Object.keys(cur).length) { const e = new Error(`${col.label} is required.`); e.status = 400; throw e; }
     out[col.key] = v;
   }
   for (const [k, v] of Object.entries(cur)) if (!(k in out)) out[k] = v;   // columns removed from config
   return out;
 }
 
-const PAD = { 'CR-': 3, 'REQ-': 3, 'DEF-': 3 };
+// ---------------------------------------------------------------- process links
+// A column of type 'process' links a record to one or more Process inventory entries, stored as a
+// comma list of their IDs ("SR-01, BC-02"). Links are checked on save, follow an ID when it is
+// renamed, and stop a linked process from being deleted.
+const PROCESS_REG = 'process_inventory';
+function splitRefs(s) { return [...new Set(String(s || '').split(',').map((x) => x.trim()).filter(Boolean))]; }
+function joinRefs(a) { return a.join(', '); }
+const processCode = () => getRegister(PROCESS_REG)?.codeField || 'id';
+const processTitle = (d) => d.process_workflow || d[getRegister(PROCESS_REG)?.titleField] || '';
+// Every live register column that links to processes: [{ reg, col }].
+const processLinkCols = () => getRegisters().flatMap((reg) => reg.columns.filter((c) => c.type === 'process' && !c.archived).map((col) => ({ reg, col })));
+
+async function assertProcessLinks(c, reg, data, cur = {}) {
+  for (const col of reg.columns.filter((x) => x.type === 'process' && !x.archived)) {
+    const added = splitRefs(data[col.key]).filter((x) => !splitRefs(cur[col.key]).includes(x));
+    if (!added.length) continue;
+    const { rows } = await c.query(`SELECT data->>$1 AS code FROM tk_records WHERE register=$2 AND data->>$1 = ANY($3::text[])`,
+      [processCode(), PROCESS_REG, added]);
+    const missing = added.filter((x) => !rows.some((r) => r.code === x));
+    if (missing.length) { const e = new Error(`${col.label}: ${missing.join(', ')} ${missing.length > 1 ? 'are' : 'is'} not in the Process inventory.`); e.status = 400; throw e; }
+  }
+}
+
+// Records (in registers the user can see) that link to the given process IDs.
+async function recordsLinkedTo(c, codes, user) {
+  const out = [];
+  for (const { reg, col } of processLinkCols()) {
+    if (user && !can(user, reg.key, 'view')) continue;
+    const { rows } = await c.query(
+      `SELECT id, domain_id, data FROM tk_records
+        WHERE register=$1 AND string_to_array(replace(COALESCE(data->>$2,''),' ',''), ',') && $3::text[] ORDER BY sort, id`,
+      [reg.key, col.key, codes]);
+    for (const r of rows) {
+      out.push({ register: reg.key, register_label: reg.label, column: col.key, id: r.id, domain_id: r.domain_id,
+        code: reg.codeField ? r.data[reg.codeField] || '' : '', title: String(r.data[reg.titleField] || ''),
+        processes: splitRefs(r.data[col.key]), data: r.data });
+    }
+  }
+  return out;
+}
+
+const PAD = { 'CR-': 3, 'REQ-': 3, 'DEF-': 3, 'FRM-': 3 };
 async function nextCode(c, reg) {
   const { rows } = await c.query(
     `SELECT COALESCE(max(substring(data->>$1 from $2)::int), 0) + 1 AS n FROM tk_records WHERE register=$3 AND data->>$1 ~ $4`,
@@ -167,6 +211,24 @@ async function nextCode(c, reg) {
 const label = (reg, data) => (reg.codeField && data[reg.codeField] ? `${data[reg.codeField]} ` : '') + String(data[reg.titleField] || '').slice(0, 120);
 
 const RecordBody = z.object({ data: z.record(z.string(), z.any()), domain_id: z.string().max(10).nullable().optional() });
+
+// Process inventory entries to pick from in a register that links to processes.
+r.get('/process-options', async (req, res) => {
+  const regs = processLinkCols().map((x) => x.reg.key);
+  if (!can(req.user, PROCESS_REG, 'view') && !regs.some((k) => can(req.user, k, 'view'))) throw forbidden();
+  const { rows } = await q(`SELECT domain_id, data FROM tk_records WHERE register=$1 ORDER BY sort, id`, [PROCESS_REG]);
+  res.json(rows.filter((x) => x.data[processCode()]).map((x) => ({ code: x.data[processCode()], name: processTitle(x.data), domain_id: x.domain_id })));
+});
+
+// What links to the Process inventory (forms and any other linking register), grouped by process ID.
+r.get('/process-links', requireView(PROCESS_REG), async (req, res) => {
+  const { rows } = await q(`SELECT data->>$1 AS code FROM tk_records WHERE register=$2`, [processCode(), PROCESS_REG]);
+  const codes = rows.map((x) => x.code).filter(Boolean);
+  const linked = codes.length ? await recordsLinkedTo({ query: q }, codes, req.user) : [];
+  const byCode = {};
+  for (const l of linked) for (const p of l.processes) if (codes.includes(p)) (byCode[p] ||= []).push({ ...l, data: undefined });
+  res.json({ registers: processLinkCols().filter(({ reg }) => can(req.user, reg.key, 'view')).map(({ reg, col }) => ({ key: reg.key, label: reg.label, column: col.key })), links: byCode });
+});
 
 r.get('/r/:register', async (req, res, next) => {
   const reg = register(req.params.register);
@@ -189,6 +251,11 @@ r.post('/r/:register', async (req, res) => {
   const data = cleanData(reg, b.data);
   const row = await tx(async (c) => {
     if (reg.codeField && reg.codePrefix && !data[reg.codeField]) data[reg.codeField] = await nextCode(c, reg);
+    await assertProcessLinks(c, reg, data);
+    if (reg.key === PROCESS_REG && data[processCode()]) {
+      const clash = await c.query('SELECT 1 FROM tk_records WHERE register=$1 AND data->>$2 = $3', [PROCESS_REG, processCode(), data[processCode()]]);
+      if (clash.rowCount) { const e = new Error(`${data[processCode()]} is already used by another process.`); e.status = 409; throw e; }
+    }
     const { rows } = await c.query(
       `INSERT INTO tk_records(register,domain_id,data,sort,created_by,updated_by)
        VALUES ($1,$2,$3,(SELECT COALESCE(max(sort),0)+1 FROM tk_records WHERE register=$1),$4,$4) RETURNING *`,
@@ -198,6 +265,20 @@ r.post('/r/:register', async (req, res) => {
   });
   res.status(201).json(row);
 });
+
+// A Process inventory ID was changed: linked records follow it (each change is audited).
+async function renameProcessLinks(c, userId, from, to) {
+  if (!from || from === to) return;
+  if (!to) { const e = new Error(`The ID can't be cleared while records link to ${from}.`); e.status = 400; if ((await recordsLinkedTo(c, [from])).length) throw e; return; }
+  const clash = await c.query('SELECT 1 FROM tk_records WHERE register=$1 AND data->>$2 = $3', [PROCESS_REG, processCode(), to]);
+  if (clash.rowCount) { const e = new Error(`${to} is already used by another process.`); e.status = 409; throw e; }
+  for (const l of await recordsLinkedTo(c, [from])) {
+    const next = joinRefs(splitRefs(l.data[l.column]).map((x) => (x === from ? to : x)));
+    await c.query('UPDATE tk_records SET data = jsonb_set(data, $1::text[], to_jsonb($2::text)), updated_at=now(), updated_by=$3 WHERE id=$4',
+      [[l.column], next, userId, l.id]);
+    await logActivity(c, userId, 'updated', `tk_${l.register}`, l.id, `${l.code ? `${l.code} ` : ''}${l.title.slice(0, 100)} — process ${from} renamed to ${to}`);
+  }
+}
 
 async function getRecord(reg, id) {
   const { rows } = await q('SELECT * FROM tk_records WHERE id=$1 AND register=$2', [id, reg.key]);
@@ -219,6 +300,8 @@ r.put('/r/:register/:id', async (req, res) => {
   }
   if (domain !== cur.domain_id) assertCan(req.user, reg.key, 'edit', { domain });
   await tx(async (c) => {
+    await assertProcessLinks(c, reg, data, cur.data);
+    if (reg.key === PROCESS_REG) await renameProcessLinks(c, req.user.id, cur.data[processCode()], data[processCode()]);
     await c.query('UPDATE tk_records SET data=$1, domain_id=$2, updated_at=now(), updated_by=$3 WHERE id=$4',
       [JSON.stringify(data), domain, req.user.id, cur.id]);
     const summary = statusOnly
@@ -233,6 +316,14 @@ r.delete('/r/:register/:id', async (req, res) => {
   const reg = register(req.params.register);
   const cur = await getRecord(reg, req.params.id);
   assertCan(req.user, reg.key, 'delete', { domain: cur.domain_id });
+  if (reg.key === PROCESS_REG && cur.data[processCode()]) {
+    const linked = await recordsLinkedTo({ query: q }, [cur.data[processCode()]]);
+    if (linked.length) {
+      const list = linked.slice(0, 8).map((l) => l.code || l.title).join(', ') + (linked.length > 8 ? ` and ${linked.length - 8} more` : '');
+      const e = new Error(`${cur.data[processCode()]} is still linked to ${linked.length} record${linked.length > 1 ? 's' : ''} (${list}). Unlink or relink ${linked.length > 1 ? 'them' : 'it'} first.`);
+      e.status = 409; throw e;
+    }
+  }
   await tx(async (c) => {
     await c.query('DELETE FROM tk_records WHERE id=$1', [cur.id]);
     await c.query("DELETE FROM comments WHERE entity_type='tk_record' AND entity_id=$1", [String(cur.id)]);

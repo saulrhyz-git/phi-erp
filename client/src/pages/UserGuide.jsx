@@ -194,7 +194,7 @@ function ProjectManager() {
       <Task title="Change the toolkit itself">
         <p>Go to <Go to="/toolkit/configure">Configure toolkit</Go>. It has four tabs:</p>
         <ul>
-          <li><b>Registers:</b> rename them, change the menu group, description and how-to notes. Add, reorder or remove columns, and change pick-list options. Mark <b>status</b> columns, the ones domain owners can update quickly. Create new registers or archive old ones.</li>
+          <li><b>Registers:</b> rename them, change the menu group, description and how-to notes. Add, reorder or remove columns, and change pick-list options. Mark <b>status</b> columns, the ones domain owners can update quickly, and <b>required</b> columns. A <b>Process link</b> column ties records to entries in the Process inventory, the way the Forms inventory does. Create new registers or archive old ones.</li>
           <li><b>Schedule phases:</b> names, colours and order.</li>
           <li><b>Domains:</b> add or rename them.</li>
           <li><b>Guide page:</b> rules, confirmations, folders and naming convention.</li>

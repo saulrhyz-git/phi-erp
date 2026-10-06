@@ -37,12 +37,13 @@ r.get('/', async (req, res) => {
 const Column = z.object({
   key: z.string().trim().max(40).optional().default(''),
   label: z.string().trim().min(1, 'Every column needs a label').max(80),
-  type: z.enum(['text', 'textarea', 'date', 'select']),
+  type: z.enum(['text', 'textarea', 'date', 'select', 'process']),   // process = link to Process inventory entries
   options: z.array(z.string().trim().max(120)).max(60).optional(),
   detail: z.boolean().optional(),      // true = shown only in the record dialog, not the list
   wide: z.boolean().optional(),
   badge: z.boolean().optional(),
   status: z.boolean().optional(),      // quick status updates allowed on this column
+  required: z.boolean().optional(),    // must have a value when a record is added or edited
   archived: z.boolean().optional(),    // hidden; existing values kept
 });
 const Form = z.object({
@@ -84,6 +85,7 @@ function normaliseColumns(cols, previous = []) {
     }
     if (c.detail) col.detail = true;
     if (c.wide) col.wide = true;
+    if (c.required) col.required = true;
     if (c.archived) col.archived = true;
     return col;
   });
