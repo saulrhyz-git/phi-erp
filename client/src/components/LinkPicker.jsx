@@ -6,7 +6,7 @@ export default function LinkPicker({ label, options, value, onChange, disabled, 
   const sel = new Set((value || []).map(String));
   const shown = useMemo(() => {
     const t = q.trim().toLowerCase();
-    const list = t ? options.filter((o) => `${o.value} ${o.label} ${o.hint || ''}`.toLowerCase().includes(t)) : options;
+    const list = t ? options.filter((o) => `${o.code ?? o.value} ${o.label} ${o.hint || ''}`.toLowerCase().includes(t)) : options;
     return [...list].sort((a, b) => Number(sel.has(String(b.value))) - Number(sel.has(String(a.value))));
   }, [q, options, value]); // eslint-disable-line react-hooks/exhaustive-deps
   const toggle = (v) => {
@@ -21,7 +21,7 @@ export default function LinkPicker({ label, options, value, onChange, disabled, 
         {shown.map((o) => (
           <label key={o.value} className={sel.has(String(o.value)) ? 'on' : ''}>
             <input type="checkbox" checked={sel.has(String(o.value))} onChange={() => toggle(o.value)} disabled={disabled} />
-            <span><b>{o.value}</b> {o.label}{o.hint && <small> · {o.hint}</small>}</span>
+            <span>{o.code !== '' && <><b>{o.code ?? o.value}</b> </>}{o.label}{o.hint && <small> · {o.hint}</small>}</span>
           </label>
         ))}
         {shown.length === 0 && <div className="muted small" style={{ padding: 6 }}>Nothing matches.</div>}

@@ -132,6 +132,9 @@ export default function ReEngineeringDetail() {
               <dt>Baseline</dt><dd>{r.kpi_baseline ? `${r.kpi_baseline} (${fmtDate(r.kpi_baseline_date) || 'undated'})` : <span className="flag">Not recorded yet</span>}</dd>
               <dt>Agreed target</dt><dd>{r.kpi_agreed_target || '—'}</dd>
               <dt>KPI owner</dt><dd>{r.kpi_owner || '—'}</dd>
+              <dt>Customer Requirements (KPI)</dt><dd>{(r.kpis || []).length
+                ? r.kpis.map((k) => <Link key={k.id} className="pill" to={`/kpis/${k.id}`} title={k.status}>{k.id} {k.name}</Link>)
+                : <span className="muted small">Not mapped to a KPI — map it from the KPI page.</span>}</dd>
             </dl>
           </div>
         </div>

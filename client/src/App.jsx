@@ -6,6 +6,9 @@ import Login from './pages/Login.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Processes from './pages/Processes.jsx';
 import ProcessDetail from './pages/ProcessDetail.jsx';
+import Kpis from './pages/Kpis.jsx';
+import KpiDetail from './pages/KpiDetail.jsx';
+import Reports, { ReportDetail } from './pages/Reports.jsx';
 import Matrix from './pages/Matrix.jsx';
 import Diagrams from './pages/Diagrams.jsx';
 import DiagramView from './pages/DiagramView.jsx';
@@ -49,6 +52,10 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route element={<Protected><Layout /></Protected>}>
         <Route index element={can('dashboard') ? <Dashboard /> : <Navigate to="/toolkit" replace />} />
+        <Route path="kpis" element={gate('kpis', <Kpis />)} />
+        <Route path="kpis/:id" element={gate('kpis', <KpiDetail />)} />
+        <Route path="reports" element={gate('reports', <Reports />)} />
+        <Route path="reports/:id" element={gate('reports', <ReportDetail />)} />
         <Route path="processes" element={gate('processes', <Processes />)} />
         <Route path="processes/:id" element={gate('processes', <ProcessDetail />)} />
         <Route path="matrix" element={gate('matrix', <Matrix />)} />

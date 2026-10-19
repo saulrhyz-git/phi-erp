@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
 import { assertCan } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
+import { kpisLinkedTo } from '../lib/trace.js';
 
 const r = Router();
 
@@ -31,7 +32,8 @@ r.get('/:id', async (req, res) => {
     ? (await q('SELECT code, title, status FROM sow_appendix WHERE code = ANY($1::text[]) ORDER BY sort',
       [rows[0].appendix_ref.split(',').map((s) => s.trim())])).rows : [];
   const steps = (await q(`SELECT id, ref, step, process_id FROM matrix_steps WHERE reengineering ? $1 ORDER BY sort`, [rows[0].id])).rows;
-  res.json({ ...rows[0], items, processes, appendix, steps });
+  const kpis = (await kpisLinkedTo({ query: q }, 'reengineering', [rows[0].id]))[rows[0].id] || [];
+  res.json({ ...rows[0], items, processes, appendix, steps, kpis });
 });
 
 const txt = z.string().trim().max(4000);

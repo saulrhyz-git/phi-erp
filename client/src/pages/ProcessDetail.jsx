@@ -4,7 +4,7 @@ import { api, fmtDateTime } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
 import { Comments, ErrorNote, Fit, Loading, SheetHead, Status, STATUS_LABEL } from '../components/ui.jsx';
-import CustomerRequirements from '../components/CustomerRequirements.jsx';
+import ProcessKpis from '../components/ProcessKpis.jsx';
 import { MappingPanel, StepModal } from '../components/ProcessForm.jsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -56,9 +56,10 @@ function StepCard({ s, color, canEdit, onSaved, onEditLinks }) {
           <div key={k}><h5>{label}</h5>{editing ? <textarea {...f(k)} /> : s[k]}</div>
         ))}
       </div>
-      {(s.diagrams?.length > 0 || s.reengineering?.length > 0 || s.sow_items?.length > 0) && (
+      {(s.diagrams?.length > 0 || s.reengineering?.length > 0 || s.sow_items?.length > 0 || s.kpis?.length > 0) && (
         <div className="steplinks">
           <span className="small muted">Mapped to</span>
+          {(s.kpis || []).map((k) => <Link key={k.id} className="pill kpi-pill" to={`/kpis/${k.id}`} title={k.name}>{k.id}</Link>)}
           {s.diagrams.map((d) => <Link key={d} className="pill" to={`/diagrams/${d}`}>Swimlane {d}</Link>)}
           {s.reengineering.map((r) => <Link key={r} className="pill" to={`/reengineering/${r}`}>{r}</Link>)}
           {s.sow_items.map((n) => <Link key={n} className="pill" to="/sow?tab=items">SOW #{n}</Link>)}
@@ -139,36 +140,32 @@ export default function ProcessDetail() {
           {p.group_name} · {p.stage_name || 'Cross-cutting'}{p.domain_id ? ` · domain ${p.domain_id} (${p.domain_name})` : ' · no domain'}{p.source === 'manual' ? ' · added in the app' : ''}{p.from_reference ? ' · numbered in reference flow' : ''}
         </SheetHead>
         <ErrorNote error={saveErr} />
-        {editing ? (
+        {editing && (
           <div className="grid2">
             <label className="field"><span>Process name</span><input type="text" {...f('name')} /></label>
             <label className="field"><span>Accountable owner (department)</span><input type="text" {...f('owner_dept')} /></label>
             <label className="field"><span>Indicative Odoo 19 home</span><input type="text" {...f('odoo_home')} /></label>
             <label className="field"><span>Fit</span><select {...f('fit')}>{['Standard', 'Configure', 'Extend'].map((x) => <option key={x}>{x}</option>)}</select></label>
           </div>
-        ) : (
-          <dl className="kv">
-            <dt>Accountable owner</dt><dd>{p.owner_dept}</dd>
-            <dt>Assigned owners</dt><dd>{p.owners.length ? p.owners.map((o) => o.name).join(', ') : <span className="muted">None yet — an admin assigns them under Users</span>}</dd>
-            <dt>Indicative Odoo 19 home</dt><dd>{p.odoo_home}</dd>
-            <dt>Fit</dt><dd><Fit fit={p.fit} /></dd>
-            {p.diagrams.length > 0 && <><dt>Swimlanes</dt><dd>{p.diagrams.map((d, i) => <span key={d.id}>{i > 0 && ' · '}<Link to={`/diagrams/${d.id}`}>{d.id}. {d.title}</Link></span>)}</dd></>}
-            {p.sow_gap && <><dt>AWB SOW coverage</dt><dd><Link to="/sow?tab=gaps"><span className={`rating ${p.sow_gap.rating}`}>{p.sow_gap.rating}</span></Link> <span className="small muted">{p.sow_gap.status}{p.sow_gap.rating !== 'Covered' ? ` · ${p.sow_gap.gaps}` : ''}</span></dd></>}
-            {p.reengineering.length > 0 && <><dt>Re-engineering</dt><dd>{p.reengineering.map((r) => <Link key={r.id} className="pill" to={`/reengineering/${r.id}`}>{r.id} {r.title}{r.phi_decision ? ` · ${r.phi_decision}` : ''}</Link>)}</dd></>}
-            {p.sow_items.length > 0 && <><dt>AWB SOW items</dt><dd>{p.sow_items.map((i) => <Link key={i.no} className="pill" to="/sow?tab=items" title={i.section}>#{i.no} {i.feature}</Link>)}</dd></>}
-            <dt>Last updated</dt><dd>{fmtDateTime(p.updated_at)}{p.updated_by_name && ` by ${p.updated_by_name}`}</dd>
-          </dl>
         )}
-        {!editing && <MappingPanel p={p} canManage={p.can_manage} canEdit={canEdit} onSaved={reload} />}
-        {!editing && <CustomerRequirements process={p} canEdit={canEdit} onSaved={reload} />}
-        <h3>COPIS</h3>
-        <p className="small muted" style={{ margin: '0 0 8px' }}>Begin with the end in mind: start from who this process serves and what they must receive, then work back to the steps, inputs and suppliers.</p>
+        {!editing && <ProcessKpis process={p} canEdit={canEdit} onSaved={reload} />}
+        <div className="row" style={{ margin: '26px 0 6px' }}>
+          <span className="kpi-level-n" aria-hidden="true">2</span><h3 style={{ margin: 0 }}>COPIS — designed backwards from the KPIs</h3>
+        </div>
+        <p className="small muted" style={{ margin: '0 0 8px' }}>Read customer-first: who this process serves and what they must receive to meet the KPIs above, then the steps, inputs and suppliers that produce it. Outputs that prove a KPI carry its ID; an output that proves none is flagged.</p>
         <div className="sgrid">
           {COPIS.map(([k, letter, label]) => (
             <div key={k}>
               <h4><em>{letter}</em>{label}</h4>
               {editing ? <textarea {...f(k)} aria-label={`${label}, one per line`} /> :
-                k === 'steps' ? <ol>{p[k].map((x, i) => <li key={i}>{x}</li>)}</ol> : <ul>{p[k].map((x, i) => <li key={i}>{x}</li>)}</ul>}
+                k === 'steps' ? <ol>{p[k].map((x, i) => <li key={i}>{x}</li>)}</ol>
+                  : k === 'outputs' ? <ul>{p[k].map((x, i) => {
+                    const by = (p.kpis || []).filter((kp) => (kp.outputs || []).includes(x));
+                    return <li key={i} className={by.length ? 'kpi-proves' : undefined}>{x}{' '}
+                      {by.length ? by.map((kp) => <Link key={kp.id} className="kpi-proves-tag" to={`/kpis/${kp.id}`} title={kp.name}>{kp.id}</Link>)
+                        : (p.kpis || []).length > 0 && <span className="small muted" title="This output proves no Customer Requirement (KPI)">· no KPI</span>}</li>;
+                  })}</ul>
+                    : <ul>{p[k].map((x, i) => <li key={i}>{x}</li>)}</ul>}
             </div>
           ))}
         </div>
@@ -180,6 +177,26 @@ export default function ProcessDetail() {
             <button className="btn primary" onClick={save}>Save COPIS</button>
           </div>
         )}
+        {editing && (p.kpis || []).some((kp) => (kp.outputs || []).length) && <p className="small muted">Renaming an output that proves a KPI leaves that KPI showing a gap until it is mapped to the new wording.</p>}
+        {!editing && (
+          <>
+            <div className="row" style={{ margin: '26px 0 10px' }}>
+              <span className="kpi-level-n" aria-hidden="true">3</span><h3 style={{ margin: 0 }}>Ownership, placement and mapping</h3>
+            </div>
+            <dl className="kv">
+              <dt>Accountable owner</dt><dd>{p.owner_dept}</dd>
+              <dt>Assigned owners</dt><dd>{p.owners.length ? p.owners.map((o) => o.name).join(', ') : <span className="muted">None yet — an admin assigns them under Users</span>}</dd>
+              <dt>Indicative Odoo 19 home</dt><dd>{p.odoo_home}</dd>
+              <dt>Fit</dt><dd><Fit fit={p.fit} /></dd>
+              {p.diagrams.length > 0 && <><dt>Swimlanes</dt><dd>{p.diagrams.map((d, i) => <span key={d.id}>{i > 0 && ' · '}<Link to={`/diagrams/${d.id}`}>{d.id}. {d.title}</Link></span>)}</dd></>}
+              {p.sow_gap && <><dt>AWB SOW coverage</dt><dd><Link to="/sow?tab=gaps"><span className={`rating ${p.sow_gap.rating}`}>{p.sow_gap.rating}</span></Link> <span className="small muted">{p.sow_gap.status}{p.sow_gap.rating !== 'Covered' ? ` · ${p.sow_gap.gaps}` : ''}</span></dd></>}
+              {p.reengineering.length > 0 && <><dt>Re-engineering</dt><dd>{p.reengineering.map((r) => <Link key={r.id} className="pill" to={`/reengineering/${r.id}`}>{r.id} {r.title}{r.phi_decision ? ` · ${r.phi_decision}` : ''}</Link>)}</dd></>}
+              {p.sow_items.length > 0 && <><dt>AWB SOW items</dt><dd>{p.sow_items.map((i) => <Link key={i.no} className="pill" to="/sow?tab=items" title={i.section}>#{i.no} {i.feature}</Link>)}</dd></>}
+              <dt>Last updated</dt><dd>{fmtDateTime(p.updated_at)}{p.updated_by_name && ` by ${p.updated_by_name}`}</dd>
+            </dl>
+          </>
+        )}
+        {!editing && <div style={{ marginTop: 14 }}><MappingPanel p={p} canManage={p.can_manage} canEdit={canEdit} onSaved={reload} /></div>}
       </section>
       <section className="sheet">
         <div className="row"><h3 style={{ margin: 0 }}>Hand-off steps ({p.matrix.length})</h3><span style={{ flex: 1 }} />

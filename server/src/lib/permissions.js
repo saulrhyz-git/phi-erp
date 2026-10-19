@@ -21,6 +21,8 @@ export const LEVELS = ['none', 'own', 'all'];
 // actions: the actions this module actually supports
 const BLUEPRINT = [
   { key: 'dashboard', label: 'World map & dashboard', actions: ['view'] },
+  { key: 'kpis', label: 'Customer Requirements (KPI)', scope: 'domain', actions: ['view', 'add', 'edit', 'delete'] },
+  { key: 'reports', label: 'Reports register', scope: 'domain', actions: ['view', 'add', 'edit', 'delete'] },
   { key: 'processes', label: 'S-1 COPIS & processes (add/delete world-map processes: Project Manager & Superadmin only)', scope: 'process', actions: ['view', 'add', 'edit', 'delete'] },
   { key: 'diagrams', label: 'S-2 Swimlane diagrams', actions: ['view', 'edit'] },
   { key: 'matrix', label: 'S-3 Data matrix steps & validation', scope: 'process', actions: ['view', 'add', 'edit', 'delete'] },

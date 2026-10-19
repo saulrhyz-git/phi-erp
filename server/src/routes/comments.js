@@ -5,7 +5,7 @@ import { parse, notFound } from '../lib/util.js';
 import { assertCan, can } from '../lib/permissions.js';
 
 const r = Router();
-const Type = z.enum(['process', 'step', 'diagram', 'open_item', 'reengineering', 'gap', 'observation', 'appendix', 'document', 'tk_record', 'tk_task']);
+const Type = z.enum(['process', 'step', 'diagram', 'open_item', 'reengineering', 'gap', 'observation', 'appendix', 'document', 'tk_record', 'tk_task', 'kpi', 'report']);
 
 r.get('/', async (req, res) => {
   const { type, id } = parse(z.object({ type: Type, id: z.string().min(1) }), req.query);

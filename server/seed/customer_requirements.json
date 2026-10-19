@@ -1,5 +1,5 @@
 {
- "_note": "Draft customer requirements derived from the re-engineering KPIs. Process owners validate them with the customer.",
+ "_note": "Draft Customer Requirements (KPI), keyed by process, derived from the re-engineering KPIs. Seeded once as KPI-nn records mapped to the process (Produces) and the source opportunity. Process owners validate them with the customer.",
  "01": [{"customer": "Department heads", "requirement": "Know whether budget is available before committing spend", "measure": "% of POs budget-checked at request", "target": "100%", "status": "Draft", "source": "RE-01"}],
  "04": [{"customer": "ManCom", "requirement": "A quick, comparable go/no-go decision on each land deal", "measure": "Working days from opportunity logged to go/no-go", "target": "≤ 15 working days", "status": "Draft", "source": "RE-03"}],
  "05": [{"customer": "Sales", "requirement": "Only sell units that are legally sellable", "measure": "Reservations made before License to Sell", "target": "Zero", "status": "Draft", "source": "RE-05"}],

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { q, tx } from '../db/pool.js';
 import { assertCan, can } from '../lib/permissions.js';
 import { assertLinkTargets, currentLinks, setProcessLinks } from '../lib/links.js';
+import { kpisLinkedTo } from '../lib/trace.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 
 const r = Router();
@@ -14,6 +15,8 @@ const LIST_SQL = `
     (SELECT count(*)::int FROM matrix_steps m WHERE m.process_id=p.id AND m.validation_status IN ('changes','rework')) AS flagged_count,
     COALESCE((SELECT json_agg(json_build_object('id',u.id,'name',u.name) ORDER BY u.name)
                 FROM process_owners po JOIN users u ON u.id=po.user_id WHERE po.process_id=p.id), '[]') AS owners,
+    COALESCE((SELECT json_agg(json_build_object('id',k.id,'name',k.name,'status',k.status,'role',kp.role) ORDER BY k.sort, k.id)
+                FROM kpi_processes kp JOIN kpis k ON k.id=kp.kpi_id WHERE kp.process_id=p.id), '[]') AS kpis,
     uu.name AS updated_by_name, dm.name AS domain_name
   FROM processes p
   LEFT JOIN domains dm ON dm.id=p.domain_id
@@ -52,19 +55,16 @@ r.get('/:id', async (req, res) => {
       WHERE $1 = ANY(string_to_array(replace(process_refs,' ',''), ',')) OR process_refs='All' ORDER BY sort`, [req.params.id]);
   const gap = await q('SELECT id, rating, gaps, action, priority, status FROM sow_gaps WHERE process_id=$1', [req.params.id]);
   const items = await q('SELECT no, section, feature FROM sow_items WHERE no = ANY($1::int[]) ORDER BY no', [links.sow_items]);
-  res.json({ ...rows[0], matrix: steps.rows, diagrams: diagrams.rows, reengineering: reeng.rows, sow_gap: gap.rows[0] || null,
+  // End in mind: the KPIs this process serves, its role and the outputs that prove each one.
+  const kpis = await q(
+    `SELECT k.id, k.customer, k.requirement, k.name, k.target, k.baseline, k.status, k.priority, k.domain_id, kp.role, kp.outputs
+       FROM kpi_processes kp JOIN kpis k ON k.id=kp.kpi_id WHERE kp.process_id=$1 ORDER BY kp.role DESC, k.sort, k.id`, [req.params.id]);
+  const stepKpis = await kpisLinkedTo({ query: q }, 'step', steps.rows.map((s) => s.id));
+  res.json({ ...rows[0], kpis: kpis.rows, matrix: steps.rows.map((s) => ({ ...s, kpis: stepKpis[s.id] || [] })), diagrams: diagrams.rows, reengineering: reeng.rows, sow_gap: gap.rows[0] || null,
     links, sow_items: items.rows, can_manage: can(req.user, 'processes', 'add') });
 });
 
 const list = z.array(z.string().trim().min(1).max(500)).max(40);
-const CustomerRequirement = z.object({
-  customer: z.string().trim().min(1, 'Each requirement needs a customer').max(200),
-  requirement: z.string().trim().min(1, 'Describe what the customer requires').max(600),
-  measure: z.string().trim().max(300).default(''),
-  target: z.string().trim().max(200).default(''),
-  status: z.enum(['Draft', 'Validated']).default('Draft'),
-  source: z.string().trim().max(60).default(''),
-});
 const Links = {
   diagrams: z.array(z.string().max(10)).max(20).optional(),
   reengineering: z.array(z.string().max(10)).max(50).optional(),
@@ -78,7 +78,6 @@ const Placement = {
 };
 const ProcessUpdate = z.object({
   ...Links, ...Placement,
-  customer_requirements: z.array(CustomerRequirement).max(30).optional(),
   name: z.string().trim().min(1).max(200).optional(),
   owner_dept: z.string().trim().max(200).optional(),
   odoo_home: z.string().trim().max(1000).optional(),
@@ -94,7 +93,7 @@ r.put('/:id', async (req, res) => {
   }
   const links = { diagrams, reengineering, sow_items: items };
   const hasLinks = Object.values(links).some((v) => v !== undefined);
-  const { sets, values } = buildUpdate(body, 1, ['suppliers', 'inputs', 'steps', 'outputs', 'customers', 'customer_requirements']);
+  const { sets, values } = buildUpdate(body, 1, ['suppliers', 'inputs', 'steps', 'outputs', 'customers']);
   if (!sets.length && !hasLinks) return res.status(400).json({ error: 'Nothing to update.' });
   await tx(async (c) => {
     const cur = await c.query('SELECT 1 FROM processes WHERE id=$1', [req.params.id]);

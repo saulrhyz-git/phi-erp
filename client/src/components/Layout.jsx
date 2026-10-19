@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Map, Layers, GitBranch, Table2, Database, ListChecks, Sparkles, FileSignature, FolderOpen,
-  Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X, Monitor, Leaf, Contrast, Moon, LifeBuoy,
+  Target, ChartColumn, Briefcase, Activity, ShieldCheck, Users, KeyRound, PanelLeftClose, PanelLeftOpen, Menu, LogOut, X, Monitor, Leaf, Contrast, Moon, LifeBuoy,
 } from 'lucide-react';
 import { THEMES, getTheme, setTheme } from '../theme.js';
 
@@ -11,6 +11,8 @@ import { useAuth } from '../auth.jsx';
 
 const BLUEPRINT = [
   ['/', 'S-0', 'World map', 'dashboard', Map, true],
+  ['/kpis', 'KPI', 'Customer Requirements (KPI)', 'kpis', Target],
+  ['/reports', 'RPT', 'Reports register', 'reports', ChartColumn],
   ['/processes', 'S-1', 'COPIS', 'processes', Layers],
   ['/diagrams', 'S-2', 'Swimlanes', 'diagrams', GitBranch],
   ['/matrix', 'S-3', 'Data matrix', 'matrix', Table2],

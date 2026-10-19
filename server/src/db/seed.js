@@ -103,24 +103,37 @@ async function seedProject() {
   console.log(done.length ? `Seeded ${done.join('; ')}.` : 'Project workspace data already present — skipping.');
 }
 
-// Draft customer requirements (COPIS), loaded once. A marker stops them coming back if people clear them.
-async function seedCustomerRequirements() {
-  const marker = await pool.query("SELECT 1 FROM sow_meta WHERE key='seed_customer_requirements'");
+// Draft Customer Requirements (KPI), loaded once from the re-engineering KPIs. A marker stops them coming
+// back if people delete them. Each becomes KPI-nn, mapped to its process (Produces, with the proving
+// outputs chosen later by the process owner) and to the re-engineering opportunity it came from.
+async function seedKpis() {
+  const marker = await pool.query("SELECT 1 FROM sow_meta WHERE key='seed_kpis'");
   if (marker.rowCount && !force) return;
   const data = JSON.parse(readFileSync(join(config.seedDir, 'customer_requirements.json'), 'utf8'));
   let n = 0;
   await tx(async (c) => {
-    for (const [id, reqs] of Object.entries(data)) {
-      if (id.startsWith('_')) continue;
-      const r = await c.query(
-        "UPDATE processes SET customer_requirements=$1 WHERE id=$2 AND (customer_requirements='[]'::jsonb OR $3)",
-        [JSON.stringify(reqs), id, force]);
-      n += r.rowCount;
+    if (force) await c.query('TRUNCATE trace_links, kpi_processes, kpis, reports');
+    const procs = Object.fromEntries((await c.query('SELECT id, sort, domain_id FROM processes')).rows.map((p) => [p.id, p]));
+    const rows = Object.entries(data).filter(([id]) => !id.startsWith('_') && procs[id])
+      .sort(([a], [b]) => procs[a].sort - procs[b].sort)
+      .flatMap(([id, reqs]) => reqs.map((r) => ({ ...r, process: procs[id] })));
+    for (const r of rows) {
+      n += 1;
+      const id = `KPI-${String(n).padStart(2, '0')}`;
+      await c.query(
+        `INSERT INTO kpis(id, customer, requirement, name, target, status, domain_id, sort)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (id) DO NOTHING`,
+        [id, r.customer, r.requirement, r.measure || r.requirement, r.target || '', r.status === 'Validated' ? 'Validated' : 'Draft', r.process.domain_id, n]);
+      await c.query("INSERT INTO kpi_processes(kpi_id, process_id, role) VALUES ($1,$2,'Produces') ON CONFLICT DO NOTHING", [id, r.process.id]);
+      if (r.source) {
+        await c.query(`INSERT INTO trace_links(from_type, from_id, to_type, to_id)
+                       SELECT 'kpi', $1, 'reengineering', id FROM reengineering WHERE id=$2 ON CONFLICT DO NOTHING`, [id, r.source]);
+      }
     }
-    await c.query(`INSERT INTO sow_meta(key,value) VALUES ('seed_customer_requirements', to_jsonb(now()::text))
+    await c.query(`INSERT INTO sow_meta(key,value) VALUES ('seed_kpis', to_jsonb(now()::text))
                    ON CONFLICT (key) DO UPDATE SET value=EXCLUDED.value`);
   });
-  console.log(`Seeded draft customer requirements for ${n} processes.`);
+  console.log(`Seeded ${n} draft Customer Requirements (KPI).`);
 }
 
 async function seedAdmin() {
@@ -167,4 +180,4 @@ async function seedToolkit() {
   console.log(done.length ? `Seeded toolkit: ${done.join('; ')}.` : 'Toolkit data already present — skipping.');
 }
 
-import('../lib/registry.js').then((m) => m.ensureDefaults()).then(seedContent).then(seedProject).then(seedCustomerRequirements).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });
+import('../lib/registry.js').then((m) => m.ensureDefaults()).then(seedContent).then(seedProject).then(seedKpis).then(seedToolkit).then(seedAdmin).then(() => pool.end()).catch((e) => { console.error(e); process.exit(1); });

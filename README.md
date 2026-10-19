@@ -3,7 +3,14 @@
 The living master blueprint for PHI's Odoo 19 implementation. The team reviews and validates it in the browser:
 
 - **S-0 World map** — Level 0 value chain with validation progress per process.
-- **S-1 COPIS** — one COPIS per Level 1 process, read customer-first (Customers → Outputs → Process → Inputs → Suppliers) so every process is designed from the result backwards. Admins and assigned owners can edit it. Each process starts with **Customer requirements**: what each customer needs from the outputs, with a measure, a target and a Draft/Validated status. Twelve processes come with draft requirements taken from the re-engineering KPIs, which process owners confirm with their customers.
+- **Customer Requirements (KPI)** — the top of the hierarchy: begin with the end in mind. Each requirement (KPI-01…) is a record of its own: customer, requirement in their words, KPI and definition, unit, direction, baseline, target, frequency, data source, owner, domain, priority and Draft / Validated / Retired status.
+  - **Mapped to everything:** the processes that *produce* or *contribute* to it (and which of their COPIS outputs prove it), hand-off steps, master data, reports, swimlanes, re-engineering, open items, documents, and toolkit fit-gap, UAT and pain-point records. Mapping is edited from the KPI or, for processes, from the process page.
+  - **Trace check:** ten checks per KPI (agreed, defined, baseline, target, owner, producing process, proving outputs, report, data source, UAT). The list shows the score; filter to the ones with gaps.
+  - **Implementor-neutral:** KPIs and reports are never linked to a vendor SOW, so the mapping survives a change of implementation partner.
+  - Process Owners add and edit KPIs in their own domain(s); Project Manager and Superadmin for all and project-wide ones.
+  - Migration `010` moved the requirements that used to sit inside each process into 13 KPI records, mapped to their process and re-engineering opportunity. Proving outputs are left for owners to choose.
+- **Reports register** — every report, dashboard, statement, statutory form, export and alert (RPT-01…): purpose, audience, frequency, format, contents, data sources, owner and status (Proposed → Specified → Built → Tested → Live). Mapped to the KPIs it shows, the processes that produce its data, master data, UAT scripts and documents.
+- **S-1 COPIS** — one COPIS per Level 1 process, read customer-first (Customers → Outputs → Process → Inputs → Suppliers) and designed backwards from the KPIs. A process page reads 1 · KPIs served → 2 · COPIS (outputs that prove a KPI carry its ID; outputs that prove none are flagged) → 3 · ownership and mapping. A process with no KPI shows "No end in mind yet".
 - **S-2 Swimlanes** — seven BPMN 2.0 collaboration diagrams. They are viewed and edited in the browser with bpmn-js; every save becomes a new version, older versions can be restored, and each can be downloaded as `.bpmn`.
 - **S-3 Data & interconnection matrix** — for each hand-off step: trigger, data fields, system hand-off, exceptions and fit. Process owners approve each step, approve it with changes, or send it back for rework.
 - **S-4 Master data & Lot** — shared records, plus the vendor-proposed Lot master model and which fields each process needs on it.
@@ -41,7 +48,7 @@ The living master blueprint for PHI's Odoo 19 implementation. The team reviews a
 | Who | Can do |
 |---|---|
 | Project Manager and Superadmin only | **Add process** on the world map: ID, name, stage (or cross-cutting), colour group, domain, customers and outputs, plus links. Move a process between stages, change its domain, or remove a process that was added in the app. Blueprint processes can't be removed. |
-| Domain owners (e.g. Process Owner with domain SR) | Edit the COPIS and customer requirements of processes **in their domain** (not only processes assigned to them). Add hand-off steps to those processes and map them. |
+| Domain owners (e.g. Process Owner with domain SR) | Edit the COPIS of processes **in their domain** (not only processes assigned to them) and choose which KPIs they serve. Add and edit Customer Requirements (KPI) and reports in their domain. Add hand-off steps to those processes and map them. |
 
 These rules are enforced on the server, and custom roles can't be given the add/remove-process right.
 

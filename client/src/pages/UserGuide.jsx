@@ -31,7 +31,7 @@ function Everyone() {
       <h3>What this app is</h3>
       <p>The PHI Process Blueprint is the single place for the Odoo 19 rollout. It holds:</p>
       <ul>
-        <li><b>The process blueprint:</b> the world map of PHI's processes, each process's COPIS, its hand-off steps, the swimlane diagrams and master data.</li>
+        <li><b>The process blueprint:</b> the Customer Requirements (KPI) everything is designed to deliver, the reports that show them, the world map of PHI's processes, each process's COPIS, its hand-off steps, the swimlane diagrams and master data.</li>
         <li><b>The work around the vendor:</b> the re-engineering opportunities, the review of AWB's SOW S343096 and the document library.</li>
         <li><b>The project toolkit:</b> the schedule, RAID log, change requests, UAT, cutover and other registers the team runs the project with.</li>
       </ul>
@@ -64,7 +64,9 @@ function Everyone() {
       <h3>Key ideas</h3>
       <dl className="kv">
         <dt>World map (S-0)</dt><dd>Every PHI process in value-chain order. The bar under each shows how many of its hand-off steps are validated.</dd>
-        <dt>COPIS (S-1)</dt><dd>Customers → Outputs → Process → Inputs → Suppliers. Read from the customer backwards: "begin with the end in mind". Each process starts with <b>customer requirements</b>: what the customer needs, a measure and a target, marked Draft until the customer agrees it, then Validated.</dd>
+        <dt>Customer Requirements (KPI)</dt><dd>The top of the hierarchy — "begin with the end in mind". Each one (KPI-01, KPI-02…) names a customer, what they need, and the KPI, baseline and target that prove it is delivered. It is Draft until the customer agrees it, then Validated. Everything else is mapped back to it: the processes that <i>produce</i> or <i>contribute</i> to it and the COPIS outputs that prove it, the hand-off steps and master data where it is measured, the reports that show it, and the re-engineering, open items, documents, fit-gap and UAT scripts behind it. A 10-point <b>trace check</b> shows what is still missing. KPIs are never tied to a vendor's SOW, so they stay valid if the implementation partner changes.</dd>
+        <dt>Reports register</dt><dd>Every report, dashboard, statement, statutory form, export and alert the business needs (RPT-01…), with its purpose, audience and status from Proposed to Live. Each report lists the KPIs it shows and the processes that produce its data. A report that shows no KPI is flagged — check whether it is really needed.</dd>
+        <dt>COPIS (S-1)</dt><dd>Customers → Outputs → Process → Inputs → Suppliers, designed backwards from the KPIs. A process page reads top-down: 1 · the KPIs it serves, 2 · its COPIS (outputs that prove a KPI carry its ID), 3 · ownership and mapping. A process with no KPI shows "No end in mind yet".</dd>
         <dt>Hand-off step</dt><dd>A point where work or data passes between people or systems. It has a trigger, data fields, system hand-off and exceptions. Process owners validate each one as <i>Approved</i>, <i>Approved with changes</i> or <i>Needs rework</i>. The last two need a comment.</dd>
         <dt>Swimlanes (S-2)</dt><dd>BPMN 2.0 diagrams of the end-to-end flows. Every save is a new version.</dd>
         <dt>Domain</dt><dd>An area of the business: SR Sales & Reservation, BC Billing & Collection, AF Accounting & Finance, IP Inventory & Project Management, IT IT & Data. Domain owners can change the processes, steps and toolkit records of their own domain.</dd>
@@ -141,7 +143,8 @@ function ProjectManager() {
     <>
       <p className="lede">The Project Manager runs the project in the app. You see and change everything, except adding or deleting user accounts and changing Superadmin accounts; those are for Superadmins.</p>
       <CanTable rows={[
-        ['World map & COPIS', 'Add processes to the world map, move them between stages, set each process\'s domain, remove processes added in the app. Edit any COPIS and customer requirements.'],
+        ['World map & COPIS', 'Add processes to the world map, move them between stages, set each process\'s domain, remove processes added in the app. Edit any COPIS.'],
+        ['Customer Requirements (KPI) & reports', 'Add, edit, map and delete any KPI or report, including project-wide ones.'],
         ['Hand-off steps', 'Add, edit, validate and delete steps for any process; map them to diagrams, re-engineering and SOW items.'],
         ['Diagrams & master data', 'Edit swimlanes (new versions), restore old versions; maintain master data and Lot touchpoints.'],
         ['Re-engineering & SOW', 'Record PHI decisions and KPI baselines; edit opportunity content; track AWB responses, estimates and status on gaps, Appendix A/B and observations.'],
@@ -167,7 +170,7 @@ function ProjectManager() {
 
       <Task title="Run the validation cycle">
         <Steps>
-          <li>Ask each owner to review their processes: customer requirements first, then COPIS, then each hand-off step.</li>
+          <li>Ask each owner to review their domain: Customer Requirements (KPI) first, then the COPIS of each process that delivers them, then each hand-off step.</li>
           <li>Watch progress on the <Go to="/">World map</Go> (bars under each process) and in the <Go to="/matrix">Data matrix</Go>. Filter it by validation status, e.g. "Needs rework".</li>
           <li>Resolve rework items with the owner in the step's comments, then re-validate.</li>
         </Steps>
@@ -259,19 +262,22 @@ function ProcessOwner() {
     <>
       <p className="lede">Process Owners are the project team members who own an area of the business (your <b>domains</b>, shown under your name at the bottom of the menu). You can read everything and change what belongs to your domain.</p>
       <CanTable rows={[
-        ['COPIS', 'Edit the COPIS and customer requirements of processes in your domain (and any processes assigned to you).'],
+        ['Customer Requirements (KPI)', 'Add KPIs in your domain, edit them and map them to processes, reports, steps, data and tests. On your own processes, choose which KPIs they serve and the outputs that prove them — whichever domain the KPI is in.'],
+        ['Reports register', 'Add and edit reports in your domain and map them to KPIs and processes.'],
+        ['COPIS', 'Edit the COPIS of processes in your domain (and any processes assigned to you).'],
         ['Hand-off steps', 'Add steps to your processes, edit them, map them to diagrams / re-engineering / SOW items, and validate them.'],
         ['Swimlanes', 'Edit diagrams and save new versions.'],
         ['Toolkit', 'Add and edit records tagged with your domain; update the status of your records and of project-wide records.'],
         ['Re-engineering & SOW', 'Record PHI decisions, owners and KPI baselines; record AWB responses on gaps, Appendix A/B and observations.'],
         ['Documents & open items', 'Upload documents and new versions; add and update open items.'],
-        ['Not available', 'Adding processes to the world map, changing a process\'s domain, editing other domains\' records, users, roles, key dates, toolkit configuration — ask the Project Manager.'],
+        ['Not available', 'Deleting KPIs or reports, project-wide KPIs and reports, adding processes to the world map, changing a process\'s domain, editing other domains\' records, users, roles, key dates, toolkit configuration — ask the Project Manager.'],
       ]} />
 
       <Task title="Validate your processes (start here)">
         <Steps>
-          <li>Open <Go to="/processes">COPIS</Go>. Your domain's processes have a domain tag; open one.</li>
-          <li><b>Customer requirements first</b>: for each customer, write what they need, how it's measured and the target. Agree it with the customer, then mark it <i>Validated</i>.</li>
+          <li><b>Customer Requirements (KPI) first.</b> Open <Go to="/kpis">Customer Requirements (KPI)</Go> and review your domain's: who the customer is, what they need, how it is measured, the baseline and the target. Agree it with the customer, then set it to <i>Validated</i>. Missing one? <Ui>Add requirement</Ui>.</li>
+          <li>On each KPI, <Ui>Edit mapping</Ui>: pick the processes that produce or contribute to it and tick the outputs that prove it, then the reports, steps, master data and UAT scripts. Work down the trace check until it reads 10/10.</li>
+          <li>Open <Go to="/processes">COPIS</Go>. Your domain's processes have a domain tag; open one. Check section 1 lists every KPI the process serves (<Ui>Map KPIs</Ui>).</li>
           <li><Ui>Edit COPIS</Ui>: check customers, outputs, process steps, inputs and suppliers, one item per line.</li>
           <li>Hand-off steps: read each one and choose <i>Approved</i>, <i>Approved with changes</i> or <i>Needs rework</i>, then <Ui>Save validation</Ui>. Explain what must change in the comment.</li>
           <li>Missing a step? <Ui>Add hand-off step</Ui>. Fill in trigger, data fields, system hand-off and exceptions, and tick the swimlane, re-engineering opportunity and SOW items it relates to.</li>
@@ -349,7 +355,9 @@ function Faq() {
   const terms = [
     ['AWB', 'Achieve Without Borders Inc., the Odoo implementation partner (SOW S343096).'],
     ['BRD', 'Business Requirements Document, agreed with AWB before build.'],
-    ['COPIS', 'Customers, Outputs, Process, Inputs, Suppliers — the customer-first process summary.'],
+    ['COPIS', 'Customers, Outputs, Process, Inputs, Suppliers — the customer-first process summary, designed backwards from the KPIs.'],
+    ['KPI', 'Key performance indicator — here, the measure and target that prove a customer requirement is delivered.'],
+    ['Trace check', 'The 10 things a KPI needs before every process is proven to deliver it: agreed, defined, baseline, target, owner, a producing process, proving outputs, a report, a data source and a UAT script.'],
     ['CTS', 'Contract to Sell.'],
     ['DOA', 'Delegation of Authority — who may approve what, up to which amount.'],
     ['Fit', 'How well Odoo 19 covers a need: Standard, Configure or Extend (custom).'],
