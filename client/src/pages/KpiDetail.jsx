@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowDown } from 'lucide-react';
 import { api, fmtDate, fmtDateTime } from '../api.js';
 import { useApi } from '../hooks.js';
+import CopisEditor from '../components/CopisEditor.jsx';
 import { useAuth } from '../auth.jsx';
 import { Comments, ErrorNote, Loading, SheetHead } from '../components/ui.jsx';
 import {
@@ -21,8 +22,10 @@ function Level({ n, title, hint, children }) {
 }
 
 // One process under the KPI: its role, its COPIS read customer-first, the proving outputs highlighted.
-function ProcessUnderKpi({ p }) {
+function ProcessUnderKpi({ p, kpiId, onSaved }) {
+  const [editing, setEditing] = useState(false);
   const stale = new Set(p.stale_outputs || []);
+  const others = (o) => (p.kpi_outputs || []).filter((k) => k.kpi_id !== kpiId && (k.outputs || []).includes(o)).map((k) => k.kpi_id);
   const proving = new Set(p.outputs.filter((o) => !stale.has(o)));
   const missing = proving.size === 0;
   return (
@@ -31,19 +34,31 @@ function ProcessUnderKpi({ p }) {
         <Link to={`/processes/${p.process_id}`} className="kpi-proc-name"><b>{p.process_id}</b> {p.name}</Link>
         <span className={`badge ${p.role === 'Produces' ? 'info' : 'neutral'}`}>{p.role}</span>
         <span className="small muted">{p.stage} · {p.owner_dept}{p.owners?.length ? ` · ${p.owners.join(', ')}` : ''}</span>
+        <span style={{ flex: 1 }} />
+        {p.can_edit_copis && !editing && <button className="btn sm" onClick={() => setEditing(true)}>Edit COPIS</button>}
       </header>
       {missing && <div className="notice small" style={{ margin: '8px 0' }}>No output has been chosen as proof yet — say which output of {p.process_id} shows this KPI is met.</div>}
       {p.stale_outputs?.length > 0 && <div className="notice error small" style={{ margin: '8px 0' }}>No longer an output of {p.process_id}: {p.stale_outputs.join('; ')}. Update the mapping.</div>}
+      {editing ? (
+        <div style={{ padding: 12 }}>
+          <CopisEditor
+            process={{ id: p.process_id, customers: p.customers, outputs: p.copis_outputs, steps: p.steps, inputs: p.inputs, suppliers: p.suppliers }}
+            kpiOutputs={p.kpi_outputs} proving={{ kpiId, outputs: [...proving] }}
+            onCancel={() => setEditing(false)} onSaved={() => { setEditing(false); onSaved(p.process_id); }} />
+        </div>
+      ) : (
       <div className="sgrid kpi-copis">
         {COPIS.map(([k, letter, label]) => (
           <div key={k}>
             <h4><em>{letter}</em>{label}</h4>
             {k === 'steps' ? <ol>{(p[k] || []).map((x, i) => <li key={i}>{x}</li>)}</ol>
               : <ul>{((k === 'outputs' ? p.copis_outputs : p[k]) || []).map((x, i) => <li key={i} className={k === 'outputs' && proving.has(x) ? 'kpi-proves' : undefined}>
-                {x}{k === 'outputs' && proving.has(x) && <span className="kpi-proves-tag">proves it</span>}</li>)}</ul>}
+                {x}{k === 'outputs' && proving.has(x) && <span className="kpi-proves-tag">proves it</span>}
+                {k === 'outputs' && others(x).map((o) => <Link key={o} to={`/kpis/${o}`} className="kpi-proves-tag other" title={`Also proves ${o}`}>{o}</Link>)}</li>)}</ul>}
           </div>
         ))}
       </div>
+      )}
       {p.hand_off_steps?.length > 0 && (
         <div className="kpi-steps">
           <span className="small muted">Hand-off steps</span>
@@ -64,6 +79,7 @@ export default function KpiDetail() {
   const [edit, setEdit] = useState(null); // 'form' | 'map'
   const [err, setErr] = useState(null);
   const [lane, setLane] = useState(null); // { busy } | { ok }
+  const [copisNote, setCopisNote] = useState(null);
   const { can } = useAuth();
   if (loading && !k) return <div className="sheet"><Loading /></div>;
   if (error) return <div className="sheet"><ErrorNote error={error} /></div>;
@@ -75,10 +91,11 @@ export default function KpiDetail() {
   const contributes = k.processes.filter((p) => p.role === 'Contributes');
   const L = k.links;
   const swimlane = (L.diagram || []).find((d) => d.id === k.id);
+  const copisSaved = (pid) => { setCopisNote(pid); reload(); };
   const generate = async () => {
     if (swimlane && !window.confirm(`Regenerate the ${k.id} swimlane from the current mapping? It is saved as a new version — edits made in the diagram editor stay in the earlier version and can be restored.`)) return;
     setLane({ busy: true }); setErr(null);
-    try { const r = await api(`/kpis/${k.id}/swimlane`, { method: 'POST' }); setLane({ ok: r }); reload(); }
+    try { const r = await api(`/kpis/${k.id}/swimlane`, { method: 'POST' }); setLane({ ok: r }); setCopisNote(null); reload(); }
     catch (e) { setErr(e); setLane(null); }
   };
   const tests = L.tk_record || [];
@@ -153,9 +170,10 @@ export default function KpiDetail() {
               {lane?.busy ? 'Generating…' : swimlane ? 'Regenerate swimlane' : 'Generate swimlane'}</button>}
           </div>
           {k.processes.length === 0 && <div className="empty small">No process is mapped yet. Which process produces this result?</div>}
-          {produces.map((p) => <ProcessUnderKpi key={p.process_id} p={p} />)}
+          {copisNote && <div className="notice ok small">COPIS of {copisNote} saved — the process page, its KPIs and reports already show the change.{swimlane && can('diagrams', 'edit') ? <> The swimlane still shows the old steps: <button className="btn sm" onClick={generate}>Regenerate swimlane</button></> : ''}</div>}
+          {produces.map((p) => <ProcessUnderKpi key={p.process_id} p={p} kpiId={k.id} onSaved={copisSaved} />)}
           {contributes.length > 0 && <h4 className="kpi-sub">Contributing processes</h4>}
-          {contributes.map((p) => <ProcessUnderKpi key={p.process_id} p={p} />)}
+          {contributes.map((p) => <ProcessUnderKpi key={p.process_id} p={p} kpiId={k.id} onSaved={copisSaved} />)}
         </Level>
 
         <div className="kpi-arrow" aria-hidden="true"><ArrowDown size={18} /></div>

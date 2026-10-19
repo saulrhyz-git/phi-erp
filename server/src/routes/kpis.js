@@ -65,10 +65,13 @@ r.get('/:id', async (req, res) => {
         WHERE t.from_type='report' AND t.to_type='process' AND t.from_id = ANY($1::text[])`, [(links[k.id].report || []).map((x) => x.id)]),
   ]);
   // `outputs` on a mapped process means the proving outputs; its full COPIS outputs go in copis_outputs.
+  const allKpiOutputs = (await q('SELECT process_id, kpi_id, outputs FROM kpi_processes WHERE process_id = ANY($1::text[]) ORDER BY kpi_id', [pids])).rows;
   const byId = Object.fromEntries(copis.rows.map(({ outputs, ...p }) => [p.id, { ...p, copis_outputs: outputs }]));
   const linkedSteps = new Set((links[k.id].step || []).map((s) => s.id));
   const processes = procs[k.id].map((p) => ({
     ...byId[p.process_id], ...p,
+    kpi_outputs: allKpiOutputs.filter((x) => x.process_id === p.process_id).map(({ kpi_id, outputs }) => ({ kpi_id, outputs })),
+    can_edit_copis: can(req.user, 'processes', 'edit', { processId: p.process_id }),
     hand_off_steps: steps.rows.filter((s) => s.process_id === p.process_id).map((s) => ({ ...s, linked: linkedSteps.has(s.id) })),
   }));
   const reports = (links[k.id].report || []).map((rep) => ({ ...rep, processes: reportProcs.rows.filter((x) => x.report_id === rep.id).map((x) => x.process_id) }));
@@ -218,6 +221,28 @@ r.put('/by-process/:processId', async (req, res) => {
         [k.kpi_id, pid, k.role, JSON.stringify([...new Set(k.outputs)])]);
     }
     await logActivity(c, req.user.id, 'updated', 'process', pid, `KPIs served: ${ids.join(', ') || 'none'}`);
+  });
+  res.json({ ok: true });
+});
+
+// From a KPI page: which outputs of one mapped process prove this KPI (and its role). Allowed for whoever may
+// edit the KPI, or the process.
+r.put('/:id/process/:processId', async (req, res) => {
+  const b = parse(z.object({ role: ProcLink.shape.role.optional(), outputs: ProcLink.shape.outputs }), req.body);
+  await tx(async (c) => {
+    const k = (await c.query('SELECT domain_id FROM kpis WHERE id=$1', [req.params.id])).rows[0];
+    if (!k) throw notFound('KPI');
+    if (!can(req.user, 'kpis', 'edit', { domain: k.domain_id }) && !can(req.user, 'processes', 'edit', { processId: req.params.processId })) {
+      throw forbidden(`You can change which outputs prove ${req.params.id} only for KPIs in your domain or processes you own.`);
+    }
+    const proc = (await c.query('SELECT outputs FROM processes WHERE id=$1', [req.params.processId])).rows[0];
+    if (!proc) throw notFound('Process');
+    assertOutputs(req.params.processId, proc.outputs, b.outputs);
+    const u = await c.query(
+      `UPDATE kpi_processes SET outputs=$1${b.role ? ', role=$4' : ''} WHERE kpi_id=$2 AND process_id=$3`,
+      [JSON.stringify([...new Set(b.outputs)]), req.params.id, req.params.processId, ...(b.role ? [b.role] : [])]);
+    if (!u.rowCount) { const e = new Error(`${req.params.processId} is not mapped to ${req.params.id}. Add it with Edit mapping first.`); e.status = 400; throw e; }
+    await logActivity(c, req.user.id, 'updated', 'kpi', req.params.id, `Proving outputs of ${req.params.processId}: ${b.outputs.join('; ') || 'none'}`);
   });
   res.json({ ok: true });
 });

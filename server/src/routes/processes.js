@@ -83,11 +83,28 @@ const ProcessUpdate = z.object({
   odoo_home: z.string().trim().max(1000).optional(),
   fit: z.enum(['Standard', 'Configure', 'Extend']).optional(),
   suppliers: list.optional(), inputs: list.optional(), steps: list.optional(), outputs: list.optional(), customers: list.optional(),
+  // Outputs reworded in the editor: the KPIs they prove follow the new wording.
+  output_renames: z.array(z.object({ from: z.string().max(500), to: z.string().trim().min(1).max(500) })).max(40).optional(),
 });
+
+// Keep every KPI's proving outputs in step with the process's outputs: follow renames, drop removed ones.
+async function syncKpiOutputs(c, processId, outputs, renames = []) {
+  const map = new Map(renames.map((r) => [r.from, r.to]));
+  const { rows } = await c.query('SELECT kpi_id, outputs FROM kpi_processes WHERE process_id=$1', [processId]);
+  let changed = 0;
+  for (const row of rows) {
+    const next = [...new Set((row.outputs || []).map((o) => map.get(o) ?? o).filter((o) => outputs.includes(o)))];
+    if (JSON.stringify(next) !== JSON.stringify(row.outputs || [])) {
+      await c.query('UPDATE kpi_processes SET outputs=$1 WHERE kpi_id=$2 AND process_id=$3', [JSON.stringify(next), row.kpi_id, processId]);
+      changed += 1;
+    }
+  }
+  return changed;
+}
 
 r.put('/:id', async (req, res) => {
   assertCan(req.user, 'processes', 'edit', { processId: req.params.id });
-  const { diagrams, reengineering, sow_items: items, ...body } = parse(ProcessUpdate, req.body);
+  const { diagrams, reengineering, sow_items: items, output_renames: renames, ...body } = parse(ProcessUpdate, req.body);
   if (['group_id', 'stage_id', 'domain_id'].some((k) => body[k] !== undefined)) {
     assertCan(req.user, 'processes', 'add', {}, 'Only the Project Manager or a Superadmin can move a process on the world map or change its domain.');
   }
@@ -103,6 +120,7 @@ r.put('/:id', async (req, res) => {
       await c.query(`UPDATE processes SET ${sets.join(', ')}, updated_at=now(), updated_by=$${values.length - 1} WHERE id=$${values.length}`, values);
     }
     if (hasLinks) { await assertLinkTargets(c, links); await setProcessLinks(c, req.params.id, links); }
+    if (body.outputs) await syncKpiOutputs(c, req.params.id, body.outputs, renames);
     await logActivity(c, req.user.id, 'updated', 'process', req.params.id,
       `Updated ${[...Object.keys(body), ...Object.keys(links).filter((k) => links[k] !== undefined).map((k) => `${k} links`)].join(', ')}`);
   });

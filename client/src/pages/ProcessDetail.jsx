@@ -5,13 +5,12 @@ import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
 import { Comments, ErrorNote, Fit, Loading, SheetHead, Status, STATUS_LABEL } from '../components/ui.jsx';
 import ProcessKpis from '../components/ProcessKpis.jsx';
+import CopisEditor from '../components/CopisEditor.jsx';
 import { MappingPanel, StepModal } from '../components/ProcessForm.jsx';
 import { useNavigate } from 'react-router-dom';
 
 // COPIS: read customer-first — begin with the end in mind.
 const COPIS = [['customers', 'C', 'Customers'], ['outputs', 'O', 'Outputs'], ['steps', 'P', 'Process'], ['inputs', 'I', 'Inputs'], ['suppliers', 'S', 'Suppliers']];
-const toText = (a) => (a || []).join('\n');
-const toList = (t) => t.split('\n').map((s) => s.trim()).filter(Boolean);
 
 function StepCard({ s, color, canEdit, onSaved, onEditLinks }) {
   const [status, setStatus] = useState(s.validation_status);
@@ -111,15 +110,14 @@ export default function ProcessDetail() {
     try { await api(`/processes/${id}`, { method: 'DELETE' }); nav('/'); } catch (e) { setSaveErr(e); }
   };
 
+  const [copisEdit, setCopisEdit] = useState(false);
   const startEdit = () => {
-    setForm({ name: p.name, owner_dept: p.owner_dept, odoo_home: p.odoo_home, fit: p.fit,
-      ...Object.fromEntries(COPIS.map(([k]) => [k, toText(p[k])])) });
-    setEditing(true);
+    setForm({ name: p.name, owner_dept: p.owner_dept, odoo_home: p.odoo_home, fit: p.fit });
+    setEditing(true); setCopisEdit(false);
   };
   const save = async () => {
     try {
-      const body = { name: form.name, owner_dept: form.owner_dept, odoo_home: form.odoo_home, fit: form.fit,
-        ...Object.fromEntries(COPIS.map(([k]) => [k, toList(form[k])])) };
+      const body = { name: form.name, owner_dept: form.owner_dept, odoo_home: form.odoo_home, fit: form.fit };
       await api(`/processes/${id}`, { method: 'PUT', body });
       setEditing(false); setSaveErr(null); reload();
     } catch (e) { setSaveErr(e); }
@@ -132,9 +130,10 @@ export default function ProcessDetail() {
   return (
     <>
       <section className="sheet">
-        <SheetHead code={p.id} title={editing ? 'Edit process' : p.name}
+        <SheetHead code={p.id} title={editing ? 'Edit process details' : p.name}
           actions={!editing ? <>
-            {canEdit && <button className="btn" onClick={startEdit}>Edit COPIS</button>}
+            {canEdit && <button className="btn" onClick={startEdit}>Edit details</button>}
+            {canEdit && !copisEdit && <button className="btn primary" onClick={() => setCopisEdit(true)}>Edit COPIS</button>}
             {p.can_manage && p.source === 'manual' && <button className="btn danger" onClick={removeProcess}>Remove process</button>}
           </> : null}>
           {p.group_name} · {p.stage_name || 'Cross-cutting'}{p.domain_id ? ` · domain ${p.domain_id} (${p.domain_name})` : ' · no domain'}{p.source === 'manual' ? ' · added in the app' : ''}{p.from_reference ? ' · numbered in reference flow' : ''}
@@ -146,6 +145,9 @@ export default function ProcessDetail() {
             <label className="field"><span>Accountable owner (department)</span><input type="text" {...f('owner_dept')} /></label>
             <label className="field"><span>Indicative Odoo 19 home</span><input type="text" {...f('odoo_home')} /></label>
             <label className="field"><span>Fit</span><select {...f('fit')}>{['Standard', 'Configure', 'Extend'].map((x) => <option key={x}>{x}</option>)}</select></label>
+            <div className="row" style={{ gridColumn: '1/-1' }}><span style={{ flex: 1 }} />
+              <button className="btn ghost" onClick={() => setEditing(false)}>Cancel</button>
+              <button className="btn primary" onClick={save}>Save details</button></div>
           </div>
         )}
         {!editing && <ProcessKpis process={p} canEdit={canEdit} onSaved={reload} />}
@@ -153,12 +155,15 @@ export default function ProcessDetail() {
           <span className="kpi-level-n" aria-hidden="true">2</span><h3 style={{ margin: 0 }}>COPIS — designed backwards from the KPIs</h3>
         </div>
         <p className="small muted" style={{ margin: '0 0 8px' }}>Read customer-first: who this process serves and what they must receive to meet the KPIs above, then the steps, inputs and suppliers that produce it. Outputs that prove a KPI carry its ID; an output that proves none is flagged.</p>
+        {copisEdit ? (
+          <CopisEditor process={p} kpiOutputs={(p.kpis || []).map((kp) => ({ kpi_id: kp.id, outputs: kp.outputs }))}
+            onCancel={() => setCopisEdit(false)} onSaved={() => { setCopisEdit(false); reload(); }} />
+        ) : (
         <div className="sgrid">
           {COPIS.map(([k, letter, label]) => (
             <div key={k}>
               <h4><em>{letter}</em>{label}</h4>
-              {editing ? <textarea {...f(k)} aria-label={`${label}, one per line`} /> :
-                k === 'steps' ? <ol>{p[k].map((x, i) => <li key={i}>{x}</li>)}</ol>
+              {k === 'steps' ? <ol>{p[k].map((x, i) => <li key={i}>{x}</li>)}</ol>
                   : k === 'outputs' ? <ul>{p[k].map((x, i) => {
                     const by = (p.kpis || []).filter((kp) => (kp.outputs || []).includes(x));
                     return <li key={i} className={by.length ? 'kpi-proves' : undefined}>{x}{' '}
@@ -169,15 +174,7 @@ export default function ProcessDetail() {
             </div>
           ))}
         </div>
-        {editing && (
-          <div className="row" style={{ marginTop: 12 }}>
-            <span className="muted small">One item per line.</span>
-            <span style={{ flex: 1 }} />
-            <button className="btn ghost" onClick={() => setEditing(false)}>Cancel</button>
-            <button className="btn primary" onClick={save}>Save COPIS</button>
-          </div>
         )}
-        {editing && (p.kpis || []).some((kp) => (kp.outputs || []).length) && <p className="small muted">Renaming an output that proves a KPI leaves that KPI showing a gap until it is mapped to the new wording.</p>}
         {!editing && (
           <>
             <div className="row" style={{ margin: '26px 0 10px' }}>
