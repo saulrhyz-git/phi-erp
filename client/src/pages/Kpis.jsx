@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { api } from '../api.js';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth.jsx';
 import { useApi } from '../hooks.js';
@@ -9,8 +10,15 @@ import { HealthBar, KPI_STATUS_BADGE, KpiFormModal, LinkPills, PRIORITY_BADGE } 
 export default function Kpis() {
   const { can } = useAuth();
   const nav = useNavigate();
-  const { data, error, loading } = useApi('/kpis');
+  const { data, error, loading, reload } = useApi('/kpis');
   const [adding, setAdding] = useState(false);
+  const [gen, setGen] = useState(null);
+  const generateAll = async () => {
+    if (!window.confirm('Generate a swimlane for every active KPI that has processes mapped? Existing KPI swimlanes get a new version; earlier versions can be restored.')) return;
+    setGen({ busy: true });
+    try { const r = await api('/kpis/swimlanes/generate', { method: 'POST' }); setGen({ ok: r }); reload(); }
+    catch (e) { setGen({ error: e }); }
+  };
   const [f, setF] = useState({ q: '', domain: '', status: '', gaps: false });
   const rows = useMemo(() => (data || []).filter((k) => {
     if (f.domain && (k.domain_id || '') !== (f.domain === '-' ? '' : f.domain)) return false;
@@ -35,10 +43,15 @@ export default function Kpis() {
   return (
     <section className="sheet">
       <SheetHead code="KPI · begin with the end in mind" title="Customer Requirements (KPI)"
-        actions={can('kpis', 'add') && <button className="btn primary" onClick={() => setAdding(true)}>Add requirement</button>}>
+        actions={<>
+          {can('diagrams', 'edit') && <button className="btn" onClick={generateAll} disabled={gen?.busy}>{gen?.busy ? 'Generating swimlanes…' : 'Generate all swimlanes'}</button>}
+          {can('kpis', 'add') && <button className="btn primary" onClick={() => setAdding(true)}>Add requirement</button>}
+        </>}>
         Start here. Each requirement names a customer, what they need, and the KPI and target that prove it is delivered.
         Every process, output, hand-off step, data object and report in the blueprint is mapped back to the KPI it delivers — anything that serves no KPI shows up as a gap.
       </SheetHead>
+      <ErrorNote error={gen?.error} />
+      {gen?.ok && <div className="notice ok">{gen.ok.generated} swimlane{gen.ok.generated === 1 ? '' : 's'} generated ({gen.ok.created} new). They are under <Link to="/diagrams">Swimlanes</Link>, one per KPI. KPIs with no process mapped were skipped.</div>}
       <div className="stats">
         <div className="stat"><b>{live.length}</b><span>Active requirements · {validated} agreed with the customer</span></div>
         <div className="stat"><b>{traced}/{live.length}</b><span>Fully traced (all 10 checks)</span></div>

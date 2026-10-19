@@ -6,6 +6,7 @@ import { q, tx } from '../db/pool.js';
 import { assertCan, can, forbidden } from '../lib/permissions.js';
 import { parse, notFound, logActivity, buildUpdate } from '../lib/util.js';
 import { LINK_TYPES, kpiHealth, linkOptions, nextCode, resolveLinks, setLinks } from '../lib/trace.js';
+import { buildKpiSwimlane } from '../lib/kpiSwimlane.js';
 
 const r = Router();
 
@@ -219,6 +220,63 @@ r.put('/by-process/:processId', async (req, res) => {
     await logActivity(c, req.user.id, 'updated', 'process', pid, `KPIs served: ${ids.join(', ') || 'none'}`);
   });
   res.json({ ok: true });
+});
+
+// ---------------------------------------------------------------------------
+// Swimlanes from the KPI: one BPMN diagram per KPI (diagram id = KPI id), built from the mapped processes'
+// COPIS steps in value-chain order, a lane per accountable department, the proving outputs as data objects
+// and the measurement steps as annotations. Regenerating saves a new version; older versions can be restored.
+async function generateSwimlane(c, user, kpiId) {
+  const k = (await c.query('SELECT * FROM kpis WHERE id=$1', [kpiId])).rows[0];
+  if (!k) throw notFound('KPI');
+  const { rows: procs } = await c.query(
+    `SELECT p.id, p.name, p.owner_dept, p.steps, p.outputs AS copis_outputs, kp.role, kp.outputs
+       FROM kpi_processes kp JOIN processes p ON p.id=kp.process_id WHERE kp.kpi_id=$1 ORDER BY p.sort`, [kpiId]);
+  if (!procs.length) { const e = new Error(`Map ${kpiId} to at least one process first — the swimlane is built from their steps.`); e.status = 400; throw e; }
+  const { rows: measured } = await c.query(
+    `SELECT m.process_id, m.ref, m.step FROM trace_links t JOIN matrix_steps m ON m.id::text=t.to_id
+      WHERE t.from_type='kpi' AND t.from_id=$1 AND t.to_type='step' ORDER BY m.sort, m.ref`, [kpiId]);
+  const processes = procs.map((p) => ({
+    id: p.id, name: p.name, owner_dept: p.owner_dept, role: p.role, steps: p.steps || [],
+    proving: (p.outputs || []).filter((o) => (p.copis_outputs || []).includes(o)),
+    measured: measured.filter((m) => m.process_id === p.id).map((m) => `${m.ref} ${m.step}`),
+  }));
+  const xml = buildKpiSwimlane(k, processes);
+  const title = `${k.id} · ${k.name}`.slice(0, 200);
+  const covers = processes.map((p) => `${p.id} ${p.name}`).join(' · ');
+  const description = `Generated from ${k.id}: ${k.customer} requires “${k.requirement}”. Lanes are the departments of the mapped processes; regenerate from the KPI after the mapping changes.`;
+  const cur = (await c.query('SELECT current_version FROM diagrams WHERE id=$1 FOR UPDATE', [k.id])).rows[0];
+  let version;
+  if (cur) {
+    version = cur.current_version + 1;
+    await c.query('UPDATE diagrams SET title=$1, covers=$2, description=$3, current_version=$4 WHERE id=$5', [title, covers, description, version, k.id]);
+  } else {
+    version = 1;
+    await c.query(
+      `INSERT INTO diagrams(id, title, covers, description, file_name, sort, current_version)
+       VALUES ($1,$2,$3,$4,$5,(SELECT COALESCE(max(sort),0)+1 FROM diagrams),1)`,
+      [k.id, title, covers, description, `PHI_${k.id}_swimlane.bpmn`]);
+  }
+  await c.query('INSERT INTO diagram_versions(diagram_id, version, xml, note, created_by) VALUES ($1,$2,$3,$4,$5)',
+    [k.id, version, xml, cur ? `Regenerated from ${k.id} (${processes.length} process${processes.length === 1 ? '' : 'es'})` : `Generated from ${k.id}`, user.id]);
+  for (const p of processes) await c.query('INSERT INTO process_diagrams(process_id, diagram_id) VALUES ($1,$2) ON CONFLICT DO NOTHING', [p.id, k.id]);
+  await c.query("INSERT INTO trace_links(from_type, from_id, to_type, to_id) VALUES ('kpi',$1,'diagram',$1) ON CONFLICT DO NOTHING", [k.id]);
+  await logActivity(c, user.id, cur ? 'saved_version' : 'created', 'diagram', k.id, `${cur ? `v${version} regenerated` : 'Generated'} from ${k.id} ${k.name}`);
+  return { diagram_id: k.id, version, created: !cur, processes: processes.length };
+}
+
+// All active KPIs that have at least one process (Project Manager / anyone who may edit every diagram).
+r.post('/swimlanes/generate', async (req, res) => {
+  assertCan(req.user, 'diagrams', 'edit');
+  const ids = (await q(`SELECT k.id FROM kpis k WHERE k.status <> 'Retired' AND EXISTS (SELECT 1 FROM kpi_processes kp WHERE kp.kpi_id=k.id) ORDER BY k.sort, k.id`)).rows.map((x) => x.id);
+  const done = [];
+  for (const id of ids) done.push(await tx((c) => generateSwimlane(c, req.user, id)));
+  res.json({ generated: done.length, created: done.filter((d) => d.created).length, diagrams: done });
+});
+
+r.post('/:id/swimlane', async (req, res) => {
+  assertCan(req.user, 'diagrams', 'edit', {}, 'Your role cannot create or edit swimlane diagrams.');
+  res.json(await tx((c) => generateSwimlane(c, req.user, req.params.id)));
 });
 
 export default r;

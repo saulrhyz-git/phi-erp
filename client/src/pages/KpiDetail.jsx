@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowDown } from 'lucide-react';
 import { api, fmtDate, fmtDateTime } from '../api.js';
 import { useApi } from '../hooks.js';
+import { useAuth } from '../auth.jsx';
 import { Comments, ErrorNote, Loading, SheetHead } from '../components/ui.jsx';
 import {
   HealthList, KPI_LINKS, KPI_STATUS_BADGE, KpiFormModal, KpiMappingModal, LinkPills, PRIORITY_BADGE, REPORT_STATUS_BADGE,
@@ -62,6 +63,8 @@ export default function KpiDetail() {
   const { data: k, error, loading, reload } = useApi(`/kpis/${id}`);
   const [edit, setEdit] = useState(null); // 'form' | 'map'
   const [err, setErr] = useState(null);
+  const [lane, setLane] = useState(null); // { busy } | { ok }
+  const { can } = useAuth();
   if (loading && !k) return <div className="sheet"><Loading /></div>;
   if (error) return <div className="sheet"><ErrorNote error={error} /></div>;
   const remove = async () => {
@@ -71,6 +74,13 @@ export default function KpiDetail() {
   const produces = k.processes.filter((p) => p.role === 'Produces');
   const contributes = k.processes.filter((p) => p.role === 'Contributes');
   const L = k.links;
+  const swimlane = (L.diagram || []).find((d) => d.id === k.id);
+  const generate = async () => {
+    if (swimlane && !window.confirm(`Regenerate the ${k.id} swimlane from the current mapping? It is saved as a new version — edits made in the diagram editor stay in the earlier version and can be restored.`)) return;
+    setLane({ busy: true }); setErr(null);
+    try { const r = await api(`/kpis/${k.id}/swimlane`, { method: 'POST' }); setLane({ ok: r }); reload(); }
+    catch (e) { setErr(e); setLane(null); }
+  };
   const tests = L.tk_record || [];
 
   return (
@@ -80,6 +90,10 @@ export default function KpiDetail() {
           actions={<>
             {k.can_edit && <button className="btn" onClick={() => setEdit('form')}>Edit requirement</button>}
             {k.can_edit && <button className="btn primary" onClick={() => setEdit('map')}>Edit mapping</button>}
+            {swimlane && <Link className="btn" to={`/diagrams/${k.id}`}>Open swimlane</Link>}
+            {can('diagrams', 'edit') && <button className="btn" onClick={generate} disabled={lane?.busy || k.processes.length === 0}
+              title={k.processes.length === 0 ? 'Map at least one process first' : 'Draw this KPI as a BPMN swimlane from its mapped processes'}>
+              {lane?.busy ? 'Generating…' : swimlane ? 'Regenerate swimlane' : 'Generate swimlane'}</button>}
             {k.can_delete && <button className="btn danger" onClick={remove}>Delete</button>}
           </>}>
           <span className={`badge ${KPI_STATUS_BADGE[k.status]}`}>{k.status}</span>{' '}
@@ -88,6 +102,7 @@ export default function KpiDetail() {
           <span className="small muted"> · updated {fmtDateTime(k.updated_at)}{k.updated_by_name ? ` by ${k.updated_by_name}` : ''}</span>
         </SheetHead>
         <ErrorNote error={err} />
+        {lane?.ok && <div className="notice ok small">{lane.ok.created ? 'Swimlane created' : `Saved as version ${lane.ok.version}`} — <Link to={`/diagrams/${k.id}`}>open it in the diagram editor</Link> to fine-tune.</div>}
 
         <div className="kpi-top">
           <Level n="1" title="The end in mind" hint="Who requires it, what they need, and the number that proves it is delivered.">
@@ -127,6 +142,16 @@ export default function KpiDetail() {
 
         <div className="kpi-arrow" aria-hidden="true"><ArrowDown size={18} /></div>
         <Level n="3" title="Processes that deliver it — with their COPIS" hint="Each process is read customer-first. Highlighted outputs are the ones that prove the KPI is met.">
+          <div className="row kpi-lane-bar">
+            <span className="small">{swimlane
+              ? <>Swimlane: <Link to={`/diagrams/${k.id}`}>{swimlane.label}</Link></>
+              : <span className="muted">No swimlane yet. Generate one from the processes below: a lane per department, their steps in value-chain order, from the customer’s request to “{k.id} met”.</span>}</span>
+            <span style={{ flex: 1 }} />
+            {swimlane && <Link className="btn sm" to={`/diagrams/${k.id}`}>Open swimlane</Link>}
+            {can('diagrams', 'edit') && <button className="btn sm primary" onClick={generate} disabled={lane?.busy || k.processes.length === 0}
+              title={k.processes.length === 0 ? 'Map at least one process first' : undefined}>
+              {lane?.busy ? 'Generating…' : swimlane ? 'Regenerate swimlane' : 'Generate swimlane'}</button>}
+          </div>
           {k.processes.length === 0 && <div className="empty small">No process is mapped yet. Which process produces this result?</div>}
           {produces.map((p) => <ProcessUnderKpi key={p.process_id} p={p} />)}
           {contributes.length > 0 && <h4 className="kpi-sub">Contributing processes</h4>}
